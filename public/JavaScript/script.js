@@ -1,9 +1,23 @@
 
 
 var xhr = new XMLHttpRequest();
-console.log("Script loaded")
-xhr.open('POST',"http://192.168.0.103:3000/visit",true);
+xhr.withCredentials = true;
+xhr.open('POST',"http://192.168.0.103:3000/visit",true); //TODO : Change URL.
+xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+var elements = document.getElementsByName("page-source");
+var siteId = null;
+for (var i = 0; i < elements.length; ++i)
+{
+    var elem = elements[i];
+    if(elem.tagName == 'META')
+    {
+        siteId = elem.getAttribute("site-id");
+        break;
+    }
+}
 
-xhr.send();
-
-console.log('visited');
+if(siteId != null)
+{
+    var params = "siteId=" + siteId;
+    xhr.send(params);
+}
