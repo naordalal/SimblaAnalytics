@@ -14,7 +14,7 @@ var sitePerVisits = new HashMap();
 var sitePerFirstVisits = new HashMap();
 
 router.route('/').post(function(req, res, next) {
-    console.log("New entrance with post");
+    console.log("New entrance with postt");
     console.log(req.ip);
     var siteId = req.body.siteId;
     var visits = (sitePerVisits.get(siteId) == undefined) ? 0 : sitePerVisits.get(siteId);
