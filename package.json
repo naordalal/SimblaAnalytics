@@ -10,8 +10,11 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.15.5",
+    "express-sse": "^0.4.1",
+    "hashmap": "^2.3.0",
     "jade": "~1.11.0",
     "morgan": "~1.9.0",
+    "request-ip": "^2.0.2",
     "serve-favicon": "~2.4.5"
   }
 }
