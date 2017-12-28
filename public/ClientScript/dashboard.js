@@ -37,7 +37,7 @@ function getCountryList()
             }
         }
     };
-    var params = "siteId="  + getSiteId();
+    var params = "siteId = "  + getSiteId();
     xhr.send(params);
 }
 $(document).ready(function() {
@@ -53,6 +53,7 @@ $(document).ready(function() {
         document.getElementById("numFirstVisits").innerText = "First Visits: "+ data;
     });
     getCountryList()
+    draw();
 });
 
 
@@ -73,3 +74,29 @@ function getSiteId()
     return siteId;
 }
 
+
+function draw() {
+
+    var ctx = document.getElementById("myChart").getContext('2d');
+
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ["1", "2", "3", "4", "5", "6"],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+}

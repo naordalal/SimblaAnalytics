@@ -3,33 +3,51 @@
 
 <html>
 	<head>
-	<title>dashboard</title>
-	<link rel="stylesheet" href="/stylesheets/style.css">
-    <script src="/jquery-3.2.1.min.js"></script>
-    <script src="/ClientScript/dashboard.js"></script>
+		<title>dashboard</title>
+		<link rel="stylesheet" href="/stylesheets/style.css">
+		<link href='https://fonts.googleapis.com/css?family=Arbutus' rel='stylesheet'>
+    	<script src="/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 
-	<link href="../dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css">
+		<!-- Graph script -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="../dist/jquery.vmap.js"></script>
-	<script type="text/javascript" src="../dist/maps/jquery.vmap.world.js" charset="utf-8"></script>
-	<script type="text/javascript" src="/ClientScript/map.js"></script>
-  </head>
+		<!-- map scripts -->
+		<link href="../dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="../dist/jquery.vmap.js"></script>
+		<script type="text/javascript" src="../dist/maps/jquery.vmap.world.js" charset="utf-8"></script>
+		<script type="text/javascript" src="/ClientScript/dashboard.js"></script>
+		<script type="text/javascript" src="/ClientScript/map.js"></script>
+
+
+
+
+
+
+	</head>
 	<body>
 		<meta name="page-source" site-id= <%=siteId%>>
 
 		<center>
 			<h1 id="MainHeader" class="header">Welcome to Dashboard</h1>
 		</center>
-		<h2 class="header">Visits</h2>
-		<h3 id="numVisits">Number of Visits: <%=visits%></h3>
-		<h3 id="numFirstVisits">First Visits:  <%=firstVisits%></h3>
-		<h2 class="header">Countries</h2>
-      <div id="countries"></div>
+		<div class="Wrapper">
+			<div class="left">
+				<h2 class="header">Visits</h2>
+				<h3 id="numVisits">Number of Visits: <%=visits%></h3>
+				<h3 id="numFirstVisits">First Visits:  <%=firstVisits%></h3>
+			</div>
+			<div class="right">
+				<h2 class="header">Countries</h2>
+     			 <div id="countries"></div>
+			</div>
+		</div>
 
 		<center>
 			<div id="vmap" style="width: 600px; height: 400px;"></div>
+			<div class="chart-container" style="position: relative; height:40vh; width:80vw">
+				<canvas id="myChart"></canvas>
+			</div>
 		</center>
-
 	</body>
 </html>
