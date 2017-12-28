@@ -1,5 +1,4 @@
-
-$( document ).ready(function() {
+$(document).ready(function() {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
     xhr.open('POST',"http://132.73.211.205:3000/visit",true); //TODO : Change URL.

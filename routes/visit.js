@@ -1,5 +1,6 @@
 var express = require('express');
 var geoip = require('geoip-lite');
+var countries  = require('country-list')();
 
 var router = express.Router();
 
@@ -29,7 +30,10 @@ router.route('/').post(function(req, res, next) {
 
     //TODO save visits count per siteId
     //TODO: Take care of it before deployment to cloud.
-    //console.log(geoip.lookup(req.ip.substr(7))); //Will not work with LAN ip (return null);
+    var countryCode = geoip.lookup(req.ip.substr(7)).country;
+    console.log(countryCode); //Will not work with LAN ip (return null);
+    var country = countries.getName(countryCode);
+    console.log(country);
     visits++;
     console.log(visits);
     sitePerVisits.set(siteId , visits);
