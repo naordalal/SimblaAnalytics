@@ -19,6 +19,7 @@ router.get('/', function(req, res, next) {
 
 //Send countryList to the client.
 router.post('/',function (req,res,next) {
-   res.send(countryList);
+
+   res.send(JSON.stringify(countryList));
 });
 module.exports = router;
