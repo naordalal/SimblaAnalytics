@@ -76,10 +76,10 @@ module.exports.insertVisit = function (siteId, siteURL, date , country, firstVis
 }
 
 module.exports.getVistsCountByCountry = function(siteid) {
-    var sqlQuery = "SELECT Country, COUNT(Country)" +
+    var sqlQuery = "SELECT Country, COUNT(Country) as visits" +
                 "FROM [simbla-analytics:test_dataset.visits]" +
                 "WHERE siteId = " + siteid +
-                " GROUP BY Country LIMIT 1000;";
+                " GROUP BY Country ORDER BY visits DESC;";
 
     const options = {
         query: sqlQuery,
