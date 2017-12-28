@@ -81,6 +81,8 @@ module.exports.getVistsCountByCountry = function(siteid) {
                 "WHERE siteId = " + siteid +
                 " GROUP BY Country ORDER BY visits DESC;";
 
+    let res;
+
     const options = {
         query: sqlQuery,
         useLegacySql: false, // Use standard SQL syntax for queries.
@@ -89,9 +91,10 @@ module.exports.getVistsCountByCountry = function(siteid) {
     bigquery
         .startQuery(options)
         .then(results => {
-            return results;
+            res = results;
         })
         .catch(err => {
             console.error('ERROR:', err);
         });
+    return res;
 }
