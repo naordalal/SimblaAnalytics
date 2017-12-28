@@ -1,6 +1,4 @@
 const datasetId = "test_dataset";
-const visitsTable = "visits";
-const sessionsTable = "sessions";
 
 // Creates a client
 const BigQuery = require('@google-cloud/bigquery');
@@ -57,7 +55,7 @@ function insertData(tableid, data) {
 module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit) {
     bigquery
         .dataset(datasetId)
-        .table(visitsTable)
+        .table("visits")
         .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit}])
         .then(() => {
             console.log(`Inserted`);
@@ -77,7 +75,7 @@ module.exports.insertVisit = function (siteId, siteURL, date , country, firstVis
 module.exports.insertSession = function (siteId,siteURL, startSessionTime ,endSessionDate) {
     bigquery
         .dataset(datasetId)
-        .table(sessionsTable)
+        .table("sessions")
         .insert([{SiteID: siteId, SiteURL: siteURL, StartSessionTime: startSessionTime, EndSessionTime: endSessionDate}])
         .then(() => {
             console.log(`Session inserted`);
@@ -97,7 +95,7 @@ module.exports.insertSession = function (siteId,siteURL, startSessionTime ,endSe
 module.exports.insertPageChange = function (siteid ,pageid , time) {
     bigquery
         .dataset(datasetId)
-        .table(sessionsTable)
+        .table("pages")
         .insert([{SiteId: siteid, PageId: pageid, Time: time}])
         .then(() => {
             console.log(`page change inserted`);
@@ -124,7 +122,7 @@ module.exports.getPagePopularity = function(siteid) {
         query: sqlQuery,
         useLegacySql: true, // Use standard SQL syntax for queries.
     };
-    return runQuery(options);
+    return runQuery(options)
 }
 
 module.exports.getSessionsAverageTime = function(siteid) {
@@ -161,7 +159,7 @@ module.exports.getVistsFromSpecificCountry = function(siteid, country) {
     return runQuery(options)
 }
 
-module.exports.getVistsByHours = function(siteid) {
+module.exports.getVisitsByHours = function(siteid) {
     var nowTime = new Date().toLocaleString();
     var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer, COUNT(HOUR(TIMESTAMP(Time))) " +
                    "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
@@ -174,7 +172,7 @@ module.exports.getVistsByHours = function(siteid) {
     return runQuery(options);
 }
 
-module.exports.getFirstVistsByHours = function(siteid) {
+module.exports.getFirstVisitsByHours = function(siteid) {
     var nowTime = new Date().toLocaleString();
     var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer, COUNT(HOUR(TIMESTAMP(Time))) " +
                    "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
