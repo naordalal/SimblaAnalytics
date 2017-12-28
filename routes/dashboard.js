@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
-
+var countryList = [{
+    name: 'John Smith',
+    phone: '+78503569987'},{name: 'Ohad Dali', phone:'0525302429'}];
 
 /* GET home page. */
 router.get('/:siteId', function(req, res, next) {
@@ -15,4 +17,8 @@ router.get('/', function(req, res, next) {
     //TODO  - TO add menu. (select site - id)
 });
 
+//Send countryList to the client.
+router.post('/',function (req,res,next) {
+   res.send(countryList);
+});
 module.exports = router;
