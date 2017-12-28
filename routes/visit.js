@@ -1,6 +1,7 @@
 var express = require('express');
 var geoip = require('geoip-lite');
 var countries  = require('country-list')();
+var bigquery = require('../queries');
 
 var router = express.Router();
 
@@ -19,13 +20,18 @@ router.route('/').post(function(req, res, next) {
     console.log("New entrance with postt");
     console.log(req.ip);
     var siteId = req.body.siteId;
+    //var siteURL = req.body.siteURL;
+    var siteURL = "4";
+    
+    
     var visits = (sitePerVisits.get(siteId) == undefined) ? 0 : sitePerVisits.get(siteId);
     var firstVisits = (sitePerFirstVisits.get(siteId) == undefined) ? 0 : sitePerFirstVisits.get(siteId);
-
+    var firstVisit = false;
     if(req.cookies.visited != 'true') //Check if visited before.
     {
         //TODO: save as first visit
         firstVisits++;
+        firstVisit = true;
         console.log('first visit');
     }
 
@@ -40,7 +46,7 @@ router.route('/').post(function(req, res, next) {
     sitePerVisits.set(siteId , visits);
     sitePerFirstVisits.set(siteId , firstVisits);
     countryPerVisits.set(countryCode.toLowerCase() , visits);
-
+    bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit);
     //update the dashboard in realTime.
     sse.send(visits, "NewVisit/" + siteId , null);
     sse.send(firstVisits, "FirstVisit/" + siteId , null);
