@@ -77,9 +77,9 @@ module.exports.insertVisit = function (siteId, siteURL, date , country, firstVis
 
 module.exports.getVistsCountByCountry = function(siteid) {
     var sqlQuery = "SELECT Country, COUNT(Country) as visits " +
-                "FROM test_dataset.visits " +
-                "WHERE siteId = '" + siteid +
-                "' GROUP BY Country ORDER BY visits DESC;";
+        "FROM test_dataset.visits " +
+        "WHERE siteId = '" + siteid +
+        "' GROUP BY Country ORDER BY visits DESC;";
     const options = {
         query: sqlQuery,
         useLegacySql: false, // Use standard SQL syntax for queries.

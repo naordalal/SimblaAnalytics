@@ -37,7 +37,7 @@ function getCountryList()
             }
         }
     };
-    var params = "siteId = "  + getSiteId();
+    var params = "siteId="  + getSiteId();
     xhr.send(params);
 }
 $(document).ready(function() {
