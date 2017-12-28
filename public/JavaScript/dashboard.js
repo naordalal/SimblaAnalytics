@@ -16,6 +16,7 @@ es.addEventListener('FirstVisit', function (event) {
     document.getElementById("numFirstVisits").innerText = "First Visits: "+ data;
 });
 
+
 function getCountryList()
 {
     var xhr = new XMLHttpRequest();
@@ -28,7 +29,7 @@ function getCountryList()
             countryList = JSON.parse(xhr.response);
             var list = document.getElementById('countries');
             var i;
-            for (i=0 ; i<countryList.length;i++)
+            for (i=0 ; i<countryList.length;i++) //Add the list to the view.
             {
                 var entry = document.createElement('li');
                 entry.appendChild(document.createTextNode(countryList[i].name + ":" + countryList[i].phone));
