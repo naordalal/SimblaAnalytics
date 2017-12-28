@@ -1,5 +1,6 @@
 const datasetId = "test_dataset";
 const visitsTable = "visits";
+const sessionsTable = "sessions";
 
 // Creates a client
 const BigQuery = require('@google-cloud/bigquery');
@@ -73,18 +74,40 @@ module.exports.insertVisit = function (siteId, siteURL, date , country, firstVis
         });
 }
 
+module.exports.insertSession = function (siteId,siteURL, startSessionTime ,endSessionDate) {
+    bigquery
+        .dataset(datasetId)
+        .table(sessionsTable)
+        .insert([{SiteID: siteId, SiteURL: siteURL, StartSessionTime: startSessionTime, EndSessionTime: endSessionDate}])
+        .then(() => {
+            console.log(`Session inserted`);
+        })
+        .catch(err => {
+            if (err && err.name === 'PartialFailureError') {
+                if (err.errors && err.errors.length > 0) {
+                    console.log('Insert errors:');
+                    err.errors.forEach(err => console.error(err));
+                }
+            } else {
+                console.error('ERROR:', err);
+            }
+        });
+}
+
+module.exports.getSessionsAverageTime = function(siteid) {
+    var sqlQuery = "SELECT AVG(TIMESTAMP_TO_SEC(TIMESTAMP(StartSessionTime)) - TIMESTAMP_TO_SEC(TIMESTAMP(EndSessionTime)) " +
+        "FROM [simbla-analytics:test_dataset.visits]";
+}
+
 module.exports.getVistsCountByCountry = function(siteid) {
     var sqlQuery = "SELECT Country, COUNT(Country) as visits " +
-        "FROM test_dataset.visits " +
-        "WHERE siteId = '" + siteid +
+        "FROM test_dataset.visits WHERE siteId = '" + siteid +
         "' GROUP BY Country ORDER BY visits DESC;";
     const options = {
         query: sqlQuery,
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
-
     return runQuery(options);
-
 }
 
 module.exports.getVistsFromSpecificCountry = function(siteid, country) {
@@ -96,7 +119,6 @@ module.exports.getVistsFromSpecificCountry = function(siteid, country) {
         query: sqlQuery,
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
-
     return runQuery(options)
 }
 
@@ -106,6 +128,19 @@ module.exports.getVistsByHours = function(siteid) {
                    "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
                    "WHERE TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24) " +
                    "GROUP BY timer ORDER BY timer";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getVistsByHours = function(siteid, starttime, endtime) {
+    var nowTime = new Date().toLocaleString();
+    var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer, COUNT(HOUR(TIMESTAMP(Time))) " +
+        "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
+        "WHERE TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24) " +
+        "GROUP BY timer ORDER BY timer";
     const options = {
         query: sqlQuery,
         useLegacySql: true, // Use standard SQL syntax for queries.
