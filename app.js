@@ -14,13 +14,14 @@ var app = express();
 
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'jade');
 
 // To use html instead of jade.
-//app.engine('html', require('ejs').renderFile);
-//app.set('view engine', 'html');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
+/*
 app.use(function (req, res, next) {
 
     if(req.get('origin'))
@@ -30,7 +31,7 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     // Pass to next layer of middleware
     next();
-});
+});*/
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
