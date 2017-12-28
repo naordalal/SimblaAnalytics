@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 
+
 <html>
 	<head>
 	<title>dashboard</title>
 	<link rel="stylesheet" href="/stylesheets/style.css">
     <script src="/jquery-3.2.1.min.js"></script>
     <script src="/ClientScript/dashboard.js"></script>
-	</head>
+  </head>
 	<body>
+		<meta name="page-source" site-id= <%=siteId%>>
+
 		<center>
 			<h1 id="MainHeader" class="header">Welcome to Dashboard</h1>
 		</center>
 		<h2 class="header">Visits</h2>
 		<h3 id="numVisits">Number of Visits: <%=visits%></h3>
 		<h3 id="numFirstVisits">First Visits:  <%=firstVisits%></h3>
-
 		<h2 class="header">Countries</h2>
-        <div id="countries"></div>
-
+      <div id="countries"></div>
 	</body>
 </html>

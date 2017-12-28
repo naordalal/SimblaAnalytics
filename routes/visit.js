@@ -13,6 +13,7 @@ var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
 var HashMap = require('hashmap');
 var sitePerVisits = new HashMap();
 var sitePerFirstVisits = new HashMap();
+var countryPerVisits = new HashMap();
 
 router.route('/').post(function(req, res, next) {
     console.log("New entrance with postt");
@@ -38,12 +39,20 @@ router.route('/').post(function(req, res, next) {
     console.log(visits);
     sitePerVisits.set(siteId , visits);
     sitePerFirstVisits.set(siteId , firstVisits);
+    countryPerVisits.set(countryCode.toLowerCase() , visits);
 
     //update the dashboard in realTime.
-    sse.send(visits, "NewVisit" , null);
-    sse.send(firstVisits, "FirstVisit" , null);
+    sse.send(visits, "NewVisit/" + siteId , null);
+    sse.send(firstVisits, "FirstVisit/" + siteId , null);
 
     res.cookie('visited', 'true').send("set cookie");
+});
+
+router.route('/getVisitsCount').post(function(req, res, next) {
+    var countryCode = req.body.countryCode;
+    var visitsCount = (countryPerVisits.get(countryCode) == undefined) ? 0 : countryPerVisits.get(countryCode);
+    var param = {name :  countries.getName(countryCode).toString() , count : visitsCount.toString()};
+    res.send(JSON.stringify(param));
 });
 
 
@@ -53,6 +62,9 @@ module.exports.getVisits = function (siteId) {
 };
 module.exports.getFirstVisits = function (siteId) {
     return (sitePerFirstVisits.get(siteId) == undefined) ? 0 : sitePerFirstVisits.get(siteId);
+};
+module.exports.getCountryVisits = function (countryCode) {
+    return (countryPerVisits.get(countryCode) == undefined) ? 0 : countryPerVisits.get(countryCode);
 };
 
 module.exports.sse = sse;
