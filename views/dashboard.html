@@ -4,7 +4,8 @@
 	<head>
 	<title>dashboard</title>
 	<link rel="stylesheet" href="/stylesheets/style.css">
-	<script src="/JavaScript/dashboard.js"></script>
+    <script src="/jquery-3.2.1.min.js"></script>
+    <script src="/JavaScript/dashboard.js"></script>
 	</head>
 	<body>
 		<center>
@@ -13,5 +14,9 @@
 		<h2 class="header">Visits</h2>
 		<h3 id="numVisits">Number of Visits: <%=visits%></h3>
 		<h3 id="numFirstVisits">First Visits:  <%=firstVisits%></h3>
+
+		<h2 class="header">Countries</h2>
+        <div id="countries"></div>
+
 	</body>
 </html>
