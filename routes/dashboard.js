@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var countryList = [{
-    name: 'John Smith',
-    phone: '+78503569987'},{name: 'Ohad Dali', phone:'0525302429'}];
+var bigquery = require('../queries');
 
 /* GET home page. */
 router.get('/:siteId', function(req, res, next) {
@@ -21,7 +19,10 @@ router.get('/', function(req, res, next) {
 
 //Send countryList to the client.
 router.post('/',function (req,res,next) {
+    bigquery.getVistsCountByCountry(req.body.siteId).then(function (results) {
+        console.log(JSON.stringify(results) + " --- " + req.body.siteId)
+        res.send(JSON.stringify(results));
+    })
 
-   res.send(JSON.stringify(countryList));
 });
 module.exports = router;

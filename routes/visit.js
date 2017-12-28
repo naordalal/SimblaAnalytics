@@ -42,7 +42,6 @@ router.route('/').post(function(req, res, next) {
     var country = countries.getName(countryCode);
     console.log(country);
     visits++;
-    console.log(visits);
 
     sitePerVisits.set(siteId , visits);
     sitePerFirstVisits.set(siteId , firstVisits);
@@ -51,6 +50,7 @@ router.route('/').post(function(req, res, next) {
     countryVisitsPerSite.set(siteId , visitsCounts);
 
     bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit);
+
     //update the dashboard in realTime.
     sse.send(visits, "NewVisit/" + siteId , null);
     sse.send(firstVisits, "FirstVisit/" + siteId , null);

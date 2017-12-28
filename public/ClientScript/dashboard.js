@@ -19,12 +19,12 @@ function getCountryList()
             var i;
             for (i=0 ; i<countryList.length;i++) //Add the list to the view.
             {
-                countryMap.set(countryList[i].name,countryList[i].phone);
+                countryMap.set(countryList[i].Country,countryList[i].visits);
                 var entry = document.createElement('li');
-                var country = document.createTextNode(countryList[i].name);
+                var country = document.createTextNode(countryList[i].Country);
                 var flag = document.createElement('img');
                 flag.setAttribute("src","https://raw.githubusercontent.com/hjnilsson/country-flags/master/png100px/il.png")
-                var quantity = document.createTextNode(countryList[i].phone);
+                var quantity = document.createTextNode(countryList[i].visits);
 
                 entry.setAttribute("class","countryEntry");
                 flag.setAttribute("class","flag");
@@ -37,7 +37,8 @@ function getCountryList()
             }
         }
     };
-    xhr.send();
+    var params = "siteId = "  + getSiteId();
+    xhr.send(params);
 }
 $(document).ready(function() {
     var siteId = getSiteId();

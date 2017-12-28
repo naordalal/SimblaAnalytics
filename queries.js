@@ -76,20 +76,45 @@ module.exports.insertVisit = function (siteId, siteURL, date , country, firstVis
 }
 
 module.exports.getVistsCountByCountry = function(siteid) {
-    var sqlQuery = "SELECT Country, COUNT(Country) as visits" +
-                "FROM [simbla-analytics:test_dataset.visits]" +
-                "WHERE siteId = " + siteid +
-                " GROUP BY Country ORDER BY visits DESC;";
-
+    var sqlQuery = "SELECT Country, COUNT(Country) as visits " +
+                "FROM test_dataset.visits " +
+                "WHERE siteId = '" + siteid +
+                "' GROUP BY Country ORDER BY visits DESC;";
     const options = {
         query: sqlQuery,
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
 
-    bigquery
+    return runQuery(options);
+
+}
+
+
+function runQuery(options)
+{
+    return bigquery
         .startQuery(options)
         .then(results => {
-            return results;
+            job = results[0];
+            return job.promise();
+        })
+        .then(() => {
+            // Get the job's status
+            return job.getMetadata();
+        })
+        .then(metadata => {
+            // Check the job's status for errors
+            const errors = metadata[0].status.errors;
+            if (errors && errors.length > 0) {
+                throw errors;
+            }
+        })
+        .then(() => {;
+            return job.getQueryResults();
+        })
+        .then(results => {
+            const rows = results[0];
+            return rows;
         })
         .catch(err => {
             console.error('ERROR:', err);
