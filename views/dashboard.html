@@ -7,6 +7,13 @@
 	<link rel="stylesheet" href="/stylesheets/style.css">
     <script src="/jquery-3.2.1.min.js"></script>
     <script src="/ClientScript/dashboard.js"></script>
+
+	<link href="../dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css">
+
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../dist/jquery.vmap.js"></script>
+	<script type="text/javascript" src="../dist/maps/jquery.vmap.world.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/ClientScript/map.js"></script>
   </head>
 	<body>
 		<meta name="page-source" site-id= <%=siteId%>>
@@ -19,5 +26,10 @@
 		<h3 id="numFirstVisits">First Visits:  <%=firstVisits%></h3>
 		<h2 class="header">Countries</h2>
       <div id="countries"></div>
+
+		<center>
+			<div id="vmap" style="width: 600px; height: 400px;"></div>
+		</center>
+
 	</body>
 </html>

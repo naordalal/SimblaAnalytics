@@ -14,7 +14,7 @@ router.get('/:siteId', function(req, res, next) {
 
 router.get('/', function(req, res, next) {
     //res.render('index', { title: 'Visits: '+require('./users').getVisits()});
-    res.render('dashboard', {visits : require('./visit').getVisits(3) , firstVisits : require('./visit').getFirstVisits(3) ,
+    res.render('dashboard', {visits : require('./visit').getVisits('3') , firstVisits : require('./visit').getFirstVisits('3') ,
         siteId : 3})
     //TODO  - TO add menu. (select site - id)
 });

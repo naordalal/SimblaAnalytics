@@ -5,10 +5,11 @@ jQuery(document).ready(function() {
     jQuery('#vmap').bind('labelShow.jqvmap',
         function(event, label, code)
         {
+            var siteId = getSiteId();
             event.preventDefault();
             var xhr = new XMLHttpRequest();
             xhr.withCredentials = true;
-            xhr.open('POST',"/visit/getVisitsCount",true); //TODO : Change URL.
+            xhr.open('POST',"/visit/getVisitsCount/" + siteId,true); //TODO : Change URL.
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.responseType = "json";
             xhr.onload = function(e) {

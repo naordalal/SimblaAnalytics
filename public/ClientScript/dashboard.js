@@ -8,7 +8,7 @@ function getCountryList()
 {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',"",true);
+    xhr.open('POST',"/dashboard",true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.responseType = "json";
     xhr.onreadystatechange = function(next) {
@@ -40,7 +40,6 @@ function getCountryList()
     xhr.send();
 }
 $(document).ready(function() {
-    var es = new EventSource('/visitEvent');
     var siteId = getSiteId();
 
     es.addEventListener('NewVisit/' + siteId, function (event) {
@@ -52,7 +51,7 @@ $(document).ready(function() {
         var data = event.data;
         document.getElementById("numFirstVisits").innerText = "First Visits: "+ data;
     });
-  getCountryList()
+    getCountryList()
 });
 
 
