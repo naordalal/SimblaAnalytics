@@ -26,4 +26,6 @@ function getSiteId()
             break;
         }
     }
+
+    return siteId;
 }

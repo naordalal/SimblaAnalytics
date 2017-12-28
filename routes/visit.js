@@ -14,7 +14,7 @@ var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
 var HashMap = require('hashmap');
 var sitePerVisits = new HashMap();
 var sitePerFirstVisits = new HashMap();
-var countryPerVisits = new HashMap();
+var countryVisitsPerSite = new HashMap();
 
 router.route('/').post(function(req, res, next) {
     console.log("New entrance with postt");
@@ -43,9 +43,13 @@ router.route('/').post(function(req, res, next) {
     console.log(country);
     visits++;
     console.log(visits);
+
     sitePerVisits.set(siteId , visits);
     sitePerFirstVisits.set(siteId , firstVisits);
-    countryPerVisits.set(countryCode.toLowerCase() , visits);
+    var visitsCounts = (countryVisitsPerSite.get(siteId) == undefined) ? new HashMap() : countryVisitsPerSite.get(siteId);
+    visitsCounts.set(countryCode.toLowerCase() , visits);
+    countryVisitsPerSite.set(siteId , visitsCounts);
+
     bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit);
     //update the dashboard in realTime.
     sse.send(visits, "NewVisit/" + siteId , null);
@@ -54,10 +58,12 @@ router.route('/').post(function(req, res, next) {
     res.cookie('visited', 'true').send("set cookie");
 });
 
-router.route('/getVisitsCount').post(function(req, res, next) {
+router.route('/getVisitsCount/:siteId').post(function(req, res, next) {
+    var siteId = req.params.siteId;
     var countryCode = req.body.countryCode;
-    var visitsCount = (countryPerVisits.get(countryCode) == undefined) ? 0 : countryPerVisits.get(countryCode);
-    var param = {name :  countries.getName(countryCode).toString() , count : visitsCount.toString()};
+    var visitsCount = (countryVisitsPerSite.get(siteId) == undefined) ? new HashMap() : countryVisitsPerSite.get(siteId);
+    var count = (visitsCount.get(countryCode) == undefined) ? 0 : visitsCount.get(countryCode);
+    var param = {name :  countries.getName(countryCode).toString() , count : count.toString()};
     res.send(JSON.stringify(param));
 });
 
