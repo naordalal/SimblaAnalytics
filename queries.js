@@ -53,13 +53,11 @@ function insertData(tableid, data) {
             }
         });
 }
-
-
 module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit) {
     bigquery
         .dataset(datasetId)
         .table(visitsTable)
-        .insert([{SiteID:siteId, SiteURL:siteURL, Time:date, Country:country, FirstVisit:firstVisit}])
+        .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit}])
         .then(() => {
             console.log(`Inserted`);
         })
@@ -89,6 +87,32 @@ module.exports.getVistsCountByCountry = function(siteid) {
 
 }
 
+module.exports.getVistsFromSpecificCountry = function(siteid, country) {
+    var sqlQuery = "SELECT COUNT(Country) as visits " +
+        "FROM test_dataset.visits " +
+        "WHERE siteId = '" + siteid + "' && Country = '" + country + "';";
+
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options)
+}
+
+module.exports.getVistsByHours = function(siteid) {
+    var nowTime = new Date().toLocaleString();
+    var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer, COUNT(HOUR(TIMESTAMP(Time))) " +
+                   "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
+                   "WHERE TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24) " +
+                   "GROUP BY timer ORDER BY timer";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options);
+}
 
 function runQuery(options)
 {
