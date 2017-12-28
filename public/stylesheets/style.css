@@ -13,4 +13,14 @@ a {
   color: red;
 }
 
+.countryEntry
+{
+  list-style-type: none;
+}
 
+.flag {
+  padding-left: 30px;
+  padding-right: 100px;
+  height: 10px;
+  width: 20px;
+}

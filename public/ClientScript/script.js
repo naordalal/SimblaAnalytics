@@ -3,6 +3,7 @@ $(document).ready(function() {
     xhr.withCredentials = true;
     xhr.open('POST',"http://132.73.211.205:3000/visit",true); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
     var siteId = getSiteId();
 
     if(siteId != null)
@@ -25,6 +26,4 @@ function getSiteId()
             break;
         }
     }
-
-    return siteId;
 }
