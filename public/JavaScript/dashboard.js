@@ -2,7 +2,22 @@
 
 var es = new EventSource('/visitEvent');
 var countryList;
-$(document).ready(function() {
+
+$(document).ready(getCountryList);
+
+
+es.addEventListener('NewVisit', function (event) {
+        var data = event.data;
+        document.getElementById("numVisits").innerText = "Number of Visits: "+ data;
+});
+
+es.addEventListener('FirstVisit', function (event) {
+    var data = event.data;
+    document.getElementById("numFirstVisits").innerText = "First Visits: "+ data;
+});
+
+function getCountryList()
+{
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
     xhr.open('POST',"",true);
@@ -22,14 +37,4 @@ $(document).ready(function() {
         }
     };
     xhr.send();
-})
-console.log(countryList)
-es.addEventListener('NewVisit', function (event) {
-        var data = event.data;
-        document.getElementById("numVisits").innerText = "Number of Visits: "+ data;
-});
-
-es.addEventListener('FirstVisit', function (event) {
-    var data = event.data;
-    document.getElementById("numFirstVisits").innerText = "First Visits: "+ data;
-});
+}
