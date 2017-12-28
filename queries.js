@@ -1,8 +1,5 @@
 const datasetId = "test_dataset";
 const visitsTable = "visits";
-const tableId = visitsTable;
-const Schema = {schema: "SiteID:string, SiteURL:string, Time:string, Country:string, FirstVisit:boolean",};
-const rows = [{Name: "Tom", Age: 4}];
 
 // Creates a client
 const BigQuery = require('@google-cloud/bigquery');
@@ -10,10 +7,6 @@ const projectId = "simbla-analytics";
 const bigquery = new BigQuery({
     projectId: projectId,
 });
-
-//createDataSet(datasetId);
-createTable(datasetId, tableId, Schema);
-//insertData(datasetId, tableId, rows);
 
 // Creates a new dataset
 function createDataSet(datasetid) {
@@ -79,5 +72,26 @@ module.exports.insertVisit = function (siteId, siteURL, date , country, firstVis
             } else {
                 console.error('ERROR:', err);
             }
+        });
+}
+
+module.exports.getVistsCountByCountry = function(siteid) {
+    var sqlQuery = "SELECT Country, COUNT(Country)" +
+                "FROM [simbla-analytics:test_dataset.visits]" +
+                "WHERE siteId = " + siteid +
+                " GROUP BY Country LIMIT 1000;";
+
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    bigquery
+        .startQuery(options)
+        .then(results => {
+            return results;
+        })
+        .catch(err => {
+            console.error('ERROR:', err);
         });
 }
