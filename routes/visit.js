@@ -24,7 +24,7 @@ router.route('/').post(function(req, res, next) {
     {
         //TODO: save as first visit
         firstVisits++;
-        console.log('first visit')
+        console.log('first visit');
     }
 
     //TODO save visits count per siteId

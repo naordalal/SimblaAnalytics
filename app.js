@@ -23,8 +23,10 @@ app.set('view engine', 'jade');
 
 app.use(function (req, res, next) {
 
-    res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
-
+    if(req.get('origin'))
+        res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
+    else
+        res.setHeader('Access-Control-Allow-Origin', '132.73.211.205');
     res.setHeader('Access-Control-Allow-Credentials', true);
     // Pass to next layer of middleware
     next();
