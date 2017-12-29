@@ -6,6 +6,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var cookieSession = require('cookie-session')
 
 var index = require('./routes/index');
 var visit = require('./routes/visit');
@@ -21,7 +22,10 @@ var app = express();
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
-
+app.use(cookieSession({
+    name: 'session',
+    keys: ['key'],
+}));
 
 app.use(function (req, res, next) {
 

@@ -4,6 +4,7 @@ const visitsTable = "visits";
 // Creates a client
 const BigQuery = require('@google-cloud/bigquery');
 const projectId = "simbla-analytics";
+var sync = require('sync');
 const bigquery = new BigQuery({
     projectId: projectId,
 });
@@ -85,7 +86,7 @@ module.exports.getVistsCountByCountry = function(siteid) {
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
 
-    return runQuery(options);
+    return sync(runQuery(options));
 
 }
 
@@ -93,7 +94,7 @@ module.exports.getVistsCountByCountry = function(siteid) {
 function runQuery(options)
 {
     return bigquery
-        .startQuery(options)
+        .query(options)
         .then(results => {
             job = results[0];
             return job.promise();

@@ -20,7 +20,6 @@ router.get('/', function(req, res, next) {
 //Send countryList to the client.
 router.post('/',function (req,res,next) {
     bigquery.getVistsCountByCountry(req.body.siteId).then(function (results) {
-        console.log(JSON.stringify(results) + " --- " + req.body.siteId)
         res.send(JSON.stringify(results));
     })
 

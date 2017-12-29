@@ -41,7 +41,14 @@ router.route('/').post(function(req, res, next) {
     console.log(countryCode); //Will not work with LAN ip (return null);
     var country = countries.getName(countryCode);
     console.log(country);
-    visits++;
+    console.log(req.session.first)
+    if(!req.session.first)
+    {
+        visits++;
+        bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit);
+    }
+
+    req.session.first = true;
 
     sitePerVisits.set(siteId , visits);
     sitePerFirstVisits.set(siteId , firstVisits);
@@ -49,7 +56,6 @@ router.route('/').post(function(req, res, next) {
     visitsCounts.set(countryCode.toLowerCase() , visits);
     countryVisitsPerSite.set(siteId , visitsCounts);
 
-    bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit);
 
     //update the dashboard in realTime.
     sse.send(visits, "NewVisit/" + siteId , null);
