@@ -18,11 +18,21 @@ router.get('/', function(req, res, next) {
 });
 
 //Send countryList to the client.
-router.post('/',function (req,res,next) {
+router.post('/countryList',function (req,res,next) {
     bigquery.getVistsCountByCountry(req.body.siteId).then(function (results) {
-        console.log(JSON.stringify(results) + " --- " + req.body.siteId)
+        //console.log(JSON.stringify(results) + " --- " + req.body.siteId)
+        console.log("a == " + results);
         res.send(JSON.stringify(results));
-    })
+    });
+
 
 });
-module.exports = router;
+
+router.post('/graph',function (req,res,next) {
+    bigquery.getVistsByHours(req.body.siteId).then(function (results) {
+        console.log("b == " + results);
+        res.send(JSON.stringify(results));
+    });
+
+});
+module.exports = router ;
