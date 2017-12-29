@@ -4,6 +4,7 @@ const datasetId = "test_dataset";
 // Creates a client
 const BigQuery = require('@google-cloud/bigquery');
 const projectId = "simbla-analytics";
+var sync = require('sync');
 const bigquery = new BigQuery({
     projectId: projectId,
 });
