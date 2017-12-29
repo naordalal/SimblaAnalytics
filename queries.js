@@ -1,5 +1,6 @@
 const datasetId = "test_dataset";
 
+
 // Creates a client
 const BigQuery = require('@google-cloud/bigquery');
 const projectId = "simbla-analytics";
@@ -188,30 +189,9 @@ module.exports.getFirstVisitsByHours = function(siteid) {
 function runQuery(options)
 {
     return bigquery
-        .startQuery(options)
+        .query(options)
         .then(results => {
-            job = results[0];
-            return job.promise();
-        })
-        .then(() => {
-            // Get the job's status
-            return job.getMetadata();
-        })
-        .then(metadata => {
-            // Check the job's status for errors
-            const errors = metadata[0].status.errors;
-            if (errors && errors.length > 0) {
-                throw errors;
-            }
-        })
-        .then(() => {;
-            return job.getQueryResults();
-        })
-        .then(results => {
-            const rows = results[0];
+            var rows = results[0];
             return rows;
-        })
-        .catch(err => {
-            console.error('ERROR:', err);
         });
 }
