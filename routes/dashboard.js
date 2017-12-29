@@ -18,10 +18,18 @@ router.get('/', function(req, res, next) {
 });
 
 //Send countryList to the client.
-router.post('/',function (req,res,next) {
+router.post('/countryList',function (req,res,next) {
     bigquery.getVistsCountByCountry(req.body.siteId).then(function (results) {
         res.send(JSON.stringify(results));
-    })
+    });
+
 
 });
-module.exports = router;
+
+router.post('/graph',function (req,res,next) {
+    bigquery.getVistsByHours(req.body.siteId).then(function (results) {
+        res.send(JSON.stringify(results));
+    });
+
+});
+module.exports = router ;

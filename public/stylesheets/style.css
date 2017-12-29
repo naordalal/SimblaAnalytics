@@ -1,16 +1,22 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background : indigo;
-  color: darkred;;
+  background : #e6ffff;
+  color: #0000cc;
+  font-family: "Arial Rounded MT Bold";
 }
 
+#MainHeader
+{
+  margin-top: -50px;
+  font-family: Arbutus;
+  color: indigo;
+}
 a {
   color: #00B7FF;
 }
 
 .header{
-  color: red;
 }
 
 .countryEntry
@@ -26,5 +32,27 @@ a {
 }
 
 #vmap{
- margin-top: 50px;
+
+  margin-top: 100px;
+  align-self: center;
+}
+
+.left {
+  float: left;
+  width: 65%;
+  overflow: hidden;
+}
+
+.right {
+  overflow: hidden;
+}
+.Wrapper
+{
+  margin-left: 70px;
+
+}
+
+.countryEntry {
+  display: flex;
+  justify-content: space-between;
 }
