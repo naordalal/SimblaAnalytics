@@ -12,7 +12,7 @@ function getCountryList()
     xhr.open('POST',"/dashboard/countryList",true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.responseType = "json";
-    xhr.onreadystatechange =function(next) {
+    xhr.onload =function(next) {
 
         if(xhr.readyState==4) {
             var countryList = xhr.response;
@@ -36,8 +36,11 @@ function getCountryList()
 
                 list.appendChild(entry);
             }
-            draw();
+
+
+
         }
+
     };
     var params = "siteId="  + getSiteId();
     xhr.send(params);
@@ -75,8 +78,8 @@ $(document).ready(function() {
             }
         }
     });
-    getCountryList()
-
+    getCountryList();
+    draw();
 });
 
 

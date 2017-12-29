@@ -1,8 +1,9 @@
 const datasetId = "test_dataset";
 const visitsTable = "visits";
 const sessionsTable = "sessions";
+
 // Creates a client
-var BigQuery = require('@google-cloud/bigquery');
+const BigQuery = require('@google-cloud/bigquery');
 const projectId = "simbla-analytics";
 const bigquery = new BigQuery({
     projectId: projectId,
@@ -123,7 +124,7 @@ module.exports.getVistsFromSpecificCountry = function(siteid, country) {
 
 module.exports.getVistsByHours = function(siteid) {
     var nowTime = new Date().toLocaleString();
-    var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer, COUNT(HOUR(TIMESTAMP(Time))) " +
+    var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer, COUNT(HOUR(TIMESTAMP(Time))) as Vis " +
                    "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
                    "WHERE TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24) " +
                    "GROUP BY timer ORDER BY timer";
@@ -146,36 +147,14 @@ module.exports.getVistsByHours = function(siteid, starttime, endtime) {
     };
 
     return runQuery(options);
-};
+}
 
 function runQuery(options)
 {
-
     return bigquery
-        .startQuery(options)
+        .query(options)
         .then(results => {
-            job = results[0];
-            return job.promise();
-        })
-        .then(() => {
-            // Get the job's status
-            return job.getMetadata();
-        })
-        .then(metadata => {
-            // Check the job's status for errors
-            const errors = metadata[0].status.errors;
-            if (errors && errors.length > 0) {
-                throw errors;
-            }
-        })
-        .then(() => {;
-            return job.getQueryResults();
-        })
-        .then(results => {
-            const rows = results[0];
+            var rows = results[0];
             return rows;
-        })
-        .catch(err => {
-            console.error('ERROR:', err);
         });
-};
+}
