@@ -27,7 +27,7 @@ router.post('/countryList',function (req,res,next) {
 });
 
 router.post('/graph',function (req,res,next) {
-    bigquery.getVistsByHours(req.body.siteId).then(function (results) {
+    bigquery.getVisitsByHours(req.body.siteId).then(function (results) {
         res.send(JSON.stringify(results));
     });
 
