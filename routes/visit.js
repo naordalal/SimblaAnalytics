@@ -10,11 +10,7 @@ var SSE = require('express-sse');
 var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
 
 
-//TODO - delete when database is working.
-var HashMap = require('hashmap');
-var sitePerVisits = new HashMap();
-var sitePerFirstVisits = new HashMap();
-var countryVisitsPerSite = new HashMap();
+
 
 router.route('/').post(function(req, res, next) {
     console.log("New entrance with postt");
@@ -24,8 +20,8 @@ router.route('/').post(function(req, res, next) {
     var siteURL = "4";
     
     
-    var visits = (sitePerVisits.get(siteId) == undefined) ? 0 : sitePerVisits.get(siteId);
-    var firstVisits = (sitePerFirstVisits.get(siteId) == undefined) ? 0 : sitePerFirstVisits.get(siteId);
+    var visits = bigquery.getTotalVisits(siteId);
+    var firstVisits = bigquery.getTotalFirstVisits(siteId);
     var firstVisit = false;
     if(req.cookies.visited != 'true') //Check if visited before.
     {
@@ -37,10 +33,11 @@ router.route('/').post(function(req, res, next) {
 
     //TODO save visits count per siteId
     //TODO: Take care of it before deployment to cloud.
-    var countryCode = geoip.lookup(req.ip.substr(7)).country;
-    console.log(countryCode); //Will not work with LAN ip (return null);
-    var country = countries.getName(countryCode);
-    console.log(country);
+    var countryCode = 'il';//geoip.lookup(req.ip.substr(7)).country;
+    //console.log(countryCode); //Will not work with LAN ip (return null);
+    var country = 'Israel';//countries.getName(countryCode);
+    //console.log(country);
+
     console.log(req.session.first)
     if(!req.session.first)
     {
@@ -50,12 +47,6 @@ router.route('/').post(function(req, res, next) {
 
     req.session.first = true;
 
-    sitePerVisits.set(siteId , visits);
-    sitePerFirstVisits.set(siteId , firstVisits);
-    var visitsCounts = (countryVisitsPerSite.get(siteId) == undefined) ? new HashMap() : countryVisitsPerSite.get(siteId);
-    visitsCounts.set(countryCode.toLowerCase() , visits);
-    countryVisitsPerSite.set(siteId , visitsCounts);
-
 
     //update the dashboard in realTime.
     sse.send(visits, "NewVisit/" + siteId , null);
@@ -64,25 +55,19 @@ router.route('/').post(function(req, res, next) {
     res.cookie('visited', 'true').send("set cookie");
 });
 
-router.route('/getVisitsCount/:siteId').post(function(req, res, next) {
-    var siteId = req.params.siteId;
-    var countryCode = req.body.countryCode;
-    var visitsCount = (countryVisitsPerSite.get(siteId) == undefined) ? new HashMap() : countryVisitsPerSite.get(siteId);
-    var count = (visitsCount.get(countryCode) == undefined) ? 0 : visitsCount.get(countryCode);
-    var param = {name :  countries.getName(countryCode).toString() , count : count.toString()};
-    res.send(JSON.stringify(param));
-});
-
 
 module.exports = router;
 module.exports.getVisits = function (siteId) {
-    return (sitePerVisits.get(siteId) == undefined) ? 0 : sitePerVisits.get(siteId);
+
+   return bigquery.getTotalVisits(siteId).then(function (result) {
+       console.log(result[0])
+       return result;
+   })
 };
 module.exports.getFirstVisits = function (siteId) {
-    return (sitePerFirstVisits.get(siteId) == undefined) ? 0 : sitePerFirstVisits.get(siteId);
-};
-module.exports.getCountryVisits = function (countryCode) {
-    return (countryPerVisits.get(countryCode) == undefined) ? 0 : countryPerVisits.get(countryCode);
+    return bigquery.getTotalFirstVisits(siteId).then(function (result) {
+        return result;
+    })
 };
 
 module.exports.sse = sse;

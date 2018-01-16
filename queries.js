@@ -163,10 +163,10 @@ module.exports.getVistsFromSpecificCountry = function(siteid, country) {
 
 module.exports.getVisitsByHours = function(siteid) {
     var nowTime = new Date().toLocaleString();
-    var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer, COUNT(HOUR(TIMESTAMP(Time))) " +
+    var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer , COUNT(*) " +
                    "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
                    "WHERE  SiteId = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24) " +
-                   "GROUP BY timer ORDER BY timer";
+                   "GROUP BY timer ORDER BY timer" ;
     const options = {
         query: sqlQuery,
         useLegacySql: true, // Use standard SQL syntax for queries.
@@ -186,6 +186,30 @@ module.exports.getFirstVisitsByHours = function(siteid) {
     };
     return runQuery(options);
 }
+
+module.exports.getTotalVisits = function(siteid) {
+    var sqlQuery = "SELECT COUNT(Time) as visits " +
+        "FROM test_dataset.visits WHERE SiteId = '" + siteid +
+        "'";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getTotalFirstVisits = function(siteid) {
+    var sqlQuery = "SELECT COUNT(Time) as visits " +
+        "FROM test_dataset.visits WHERE SiteId = '" + siteid +
+        "' AND firstVisit = true";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+
 
 function runQuery(options)
 {

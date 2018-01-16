@@ -1,12 +1,17 @@
 
 
 var es = new EventSource('/visitEvent');
-//var HashMap = require('hashmap');
 var countryMap = new Map();
 var myChart;
 var ctx;
+var gdpData = {};
+var paintMap = function () {
+    console.log("empty Function ... look at map.js")
+}
+
 function getCountryList()
 {
+
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
     xhr.open('POST',"/dashboard/countryList",true);
@@ -20,7 +25,11 @@ function getCountryList()
             var i;
             for (i = 0; i < countryList.length; i++) //Add the list to the view.
             {
-                countryMap.set(countryList[i].Country, countryList[i].visits);
+
+                countryMap.set(countryList[i].Country.toUpperCase(), countryList[i].visits);
+                gdpData[getCountryCode(countryList[i].Country).toLowerCase()] = countryList[i].visits;
+
+
                 var entry = document.createElement('li');
                 var country = document.createTextNode(countryList[i].Country);
                 var flag = document.createElement('img');
@@ -36,6 +45,7 @@ function getCountryList()
 
                 list.appendChild(entry);
             }
+            paintMap();
 
 
 
@@ -45,17 +55,21 @@ function getCountryList()
     var params = "siteId="  + getSiteId();
     xhr.send(params);
 }
+
+
 $(document).ready(function() {
     var siteId = getSiteId();
     ctx = document.getElementById("myChart").getContext('2d');
     es.addEventListener('NewVisit/' + siteId, function (event) {
         var data = event.data;
-        document.getElementById("numVisits").innerText = "Number of Visits: "+ data;
+        var number = parseInt(document.getElementById("numVisits").innerText.split(": ")[1]);
+        document.getElementById("numVisits").innerText = "Number of Visits: "+ (number+1);
     });
 
     es.addEventListener('FirstVisit/' + siteId, function (event) {
         var data = event.data;
-        document.getElementById("numFirstVisits").innerText = "First Visits: "+ data;
+        var number = parseInt(document.getElementById("numVisits").innerText.split(": ")[1]);
+        document.getElementById("numFirstVisits").innerText = "First Visits: "+ (number+1);
     });
 
     myChart = new Chart(ctx, {
@@ -112,31 +126,39 @@ function draw() {
     var hours , visits;
     xhr.onload = function (e) {
         var data = xhr.response;
-        hours = data.map(x => x.timer+":00");
+        hours = data.map(x => x.timer);
         visits = data.map(x => x.f0_);
-        myChart.data.labels = hours
-        myChart.data.datasets[0].data = visits
-        myChart.update();
-     /*   myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: hours,
-                datasets: [{
-                    label: '# of Visitors',
-                    data: visits,
+        var map = new Map();
+        for(var i = 0 ; i < hours.length ; i++)
+            map.set(hours[i] , visits[i]);
+        var now = new Date().getHours();
+        var labels = new Array(24);
+        var data = new Array(24);
+        for(var i = 23 ; i >= 0 ; i--)
+        {
+            var str;
+            if(now < 10)
+                str = '0' +now +":00";
+            else
+                str = now + ":00";
+            labels[i] = str;
 
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
-                    }]
-                }
+            if(!map.get(now))
+            {
+                data[i] = 0;
             }
-        }); */
+            else
+            {
+                data[i] = map.get(now);
+            }
+
+            now = ((now - 1) + 24) % 24;
+
+        }
+
+        myChart.data.labels = labels;
+        myChart.data.datasets[0].data = data;
+        myChart.update();
     }
 
 
