@@ -1,5 +1,5 @@
 var $ ;
-(function() { //Load JQuery because SimblaSite do not include that.
+(function() { //Load JQuery because Simbla's sites do not load it.
     // Load the script
     var script = document.createElement("SCRIPT");
     script.src = 'jquery-3.2.1.min.js';
@@ -24,6 +24,7 @@ var visitSite = function() {
     {
         var params = "siteId=" + siteId;
         params += "&referrer="+extractRootDomain(referrer);
+        params += "&os="+getOs();
         xhr.send(params);
     }
 };
@@ -81,4 +82,17 @@ function extractRootDomain(url) {
         }
     }
     return domain;
+}
+
+function getOs()
+{
+    var OSName="Unknown OS";
+    if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
+    else if (navigator.appVersion.indexOf("like Mac OS")!=-1) OSName="ios";
+    else if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
+    else if (navigator.appVersion.indexOf("Android")!=-1) OSName="Android";
+    else if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
+    else if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+
+    return OSName;
 }
