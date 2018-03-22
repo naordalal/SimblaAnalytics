@@ -68,7 +68,7 @@ function getCountryList()
 
 $(document).ready(function() {
     var siteId = getSiteId();
-    ctx = document.getElementById("myChart").getContext('2d');
+    //ctx = document.getElementById("myChart").getContext('2d');
     //pieCtx = document.getElementById("pieChart").getContext('2d');
     es.addEventListener('NewVisit/' + siteId, function (event) {
         var data = event.data;
@@ -82,7 +82,7 @@ $(document).ready(function() {
         document.getElementById("numFirstVisits").innerText = "First Visits: "+ (number+1);
     });
 
-    myChart = new Chart(ctx, {
+    /*myChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: [0],
@@ -104,7 +104,7 @@ $(document).ready(function() {
 
     });
 
-    /*pieChart =  new Chart(pieCtx,{
+    pieChart =  new Chart(pieCtx,{
         type: 'pie',
         data: {
             labels: [0],
@@ -115,9 +115,15 @@ $(document).ready(function() {
         }
     });*/
     getCountryList();
-    drawLineChart();
+
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawPieChart);
+
+    google.charts.load('current', {'packages':['table']});
+    google.charts.setOnLoadCallback(getRefererList );
+
+    google.charts.load('current', {'packages':['line']});
+    google.charts.setOnLoadCallback(drawLineChart);
 });
 
 
@@ -141,7 +147,7 @@ function getSiteId()
 
 function drawLineChart() {
 
-    ctx = document.getElementById("myChart").getContext('2d');
+    //ctx = document.getElementById("myChart").getContext('2d');
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
     xhr.open('POST', "/dashboard/graph", true);
@@ -167,19 +173,31 @@ function drawLineChart() {
             labels[i] = str;
 
             if (!map.get(now)) {
-                data[i] = 0;
+                data[i] = [labels[i],0];
             }
             else {
-                data[i] = map.get(now);
+                data[i] = [labels[i],map.get(now)];
             }
 
             now = ((now - 1) + 24) % 24;
 
         }
 
-        myChart.data.labels = labels;
-        myChart.data.datasets[0].data = data;
-        myChart.update();
+        var dataTable = new google.visualization.DataTable();
+        dataTable.addColumn('string', 'Hour');
+        dataTable.addColumn('number', '');
+        dataTable.addRows(data);
+        var options = {
+            chart: {
+                title: 'Visits per hour',
+            },
+            backgroundColor:'transparent',
+            titleTextStyle:{ fontSize : 15, color: "#e6e6e8"}
+        };
+
+        var chart = new google.charts.Line(document.getElementById('linechart_material'));
+
+        chart.draw(dataTable, google.charts.Line.convertOptions(options));
     }
     var params = "siteId=" + getSiteId();
     xhr.send(params);
@@ -190,7 +208,7 @@ function drawPieChart() {
         var options = {
             title: 'OS Distribution',
             backgroundColor:"transparent",
-            legend :{ alignment:'center', textStyle: {fontName:"Lucida Grande", fontSize : 15, color: "#e6e6e8"}},
+            legend :{ alignment:'center', textStyle: {fontSize : 12, color: "#e6e6e8"}},
             titleTextStyle:{ fontSize : 15, color: "#e6e6e8"},
             chartArea:{width:'100%',height:'75%'}
         };
@@ -215,10 +233,34 @@ function drawPieChart() {
 
             var chart = new google.visualization.PieChart(document.getElementById('piechart'));
             chart.draw(readyData, options);
-            }
+        }
 
         var params = "siteId=" + getSiteId();
         xhr.send(params);
+}
+
+
+function getRefererList()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST',"/dashboard/ReferrList",true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.responseType = "json";
+    var data = new google.visualization.DataTable();
+    data.addColumn('string','Referrer');
+    data.addColumn('number','Visits');
+    xhr.onload = function (e)
+    {
+        var list = xhr.response;
+        data.addRows(list.map(x => [x.Referr, x.visits]));
+
+        var table = new google.visualization.Table(document.getElementById('Referr_table_div'));
+        table.draw(data, {width: '100%', height: '100%'});
+    }
+
+    var params = "siteId=" + getSiteId();
+    xhr.send(params);
 }
 
 
