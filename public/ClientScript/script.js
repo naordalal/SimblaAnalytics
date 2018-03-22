@@ -19,10 +19,12 @@ var visitSite = function() {
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     var siteId = getSiteId();
+    var pageId = getPageId();
     var referrer  = document.referrer;
     if(siteId != null)
     {
         var params = "siteId=" + siteId;
+        params += "&pageId=" + pageId;
         params += "&referrer="+extractRootDomain(referrer);
         params += "&os="+getOs();
         xhr.send(params);
@@ -44,6 +46,23 @@ function getSiteId()
     }
 
     return siteId;
+}
+
+function getPageId()
+{
+    var elements = document.getElementsByName("page-source");
+    var pageId = null;
+    for (var i = 0; i < elements.length; ++i)
+    {
+        var elem = elements[i];
+        if(elem.tagName == 'META')
+        {
+            pageId = elem.getAttribute("page-id");
+            break;
+        }
+    }
+
+    return pageId;
 }
 
 
