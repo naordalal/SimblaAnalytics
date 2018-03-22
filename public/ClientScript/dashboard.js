@@ -196,13 +196,13 @@ $(window).load(function(){
     getCountryList();
 
     google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawPieChart);
+    //google.charts.setOnLoadCallback(drawPieChart);
 
     google.charts.load('current', {'packages':['table']});
-    google.charts.setOnLoadCallback(getRefererList );
+    //google.charts.setOnLoadCallback(getRefererList );
 
     google.charts.load('current', {'packages':['line']});
-    google.charts.setOnLoadCallback(drawLineChart);
+    //google.charts.setOnLoadCallback(drawLineChart);
 });
 
 
@@ -274,7 +274,7 @@ function drawLineChart() {
             titleTextStyle:{ fontSize : 15, color: "#e6e6e8"}
 
         };
-
+        addDiv('linechart_material');
         var chart = new google.charts.Line(document.getElementById('linechart_material'));
 
         chart.draw(dataTable, google.charts.Line.convertOptions(options));
@@ -311,6 +311,7 @@ function drawPieChart() {
             data.unshift(['OS','Visits']);
              var readyData = google.visualization.arrayToDataTable(data);
 
+            addDiv('piechart');
             var chart = new google.visualization.PieChart(document.getElementById('piechart'));
             chart.draw(readyData, options);
         }
@@ -334,7 +335,7 @@ function getRefererList()
     {
         var list = xhr.response;
         data.addRows(list.map(x => [x.Referr, x.visits]));
-
+        addDiv('Referr_table_div');
         var table = new google.visualization.Table(document.getElementById('Referr_table_div'));
         table.draw(data, {width: '100%', height: '100%'});
     }
@@ -345,16 +346,48 @@ function getRefererList()
 
 
 function MenuItemClicked(but) {
+    var graph = but.getAttribute("data-graph");
     if(but.value == 0) {
-        but.style.color = "#87CEEB";
-        but.value = 1;
+        but.style.textDecoration = "none";
+        but.value = 1
+        addGraph(graph);
+
     }
     else {
-        but.style.color = "#000000";
+        but.style.textDecoration = "line-through";
         but.value = 0;
+        document.getElementById(graph).remove();
+
     }
 }
 
+function addGraph(item)
+{
+
+    switch(item){
+        case 'piechart':
+            drawPieChart();
+            break;
+        case 'linechart_material':
+            drawLineChart();
+            break;
+        case 'Referr_table_div':
+            getRefererList();
+            break;
+        default:
+            break;
+    }
+}
+
+function addDiv(item)
+{
+    var container = document.getElementById('graphsGrid');
+    var element = document.createElement('div');
+    element.setAttribute('id',item);
+    element.setAttribute('class','grid-item');
+    element.setAttribute('style',"width: 100%; height: 100%;");
+    container.appendChild(element);
+}
 function w3_open() {
     document.getElementById("main").style.marginLeft = "25%";
     document.getElementById("mySidebar").style.width = "25%";

@@ -6,8 +6,7 @@
 		<title>dashboard</title>
 
 		<link rel="stylesheet" href="/stylesheets/style.css">
-		<link rel="stylesheet" href="/stylesheets/hamburgerMenu.css">
-
+		<link rel="stylesheet" href="/stylesheets/KorenMenu.css">
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 		<link href='https://fonts.googleapis.com/css?family=Arbutus' rel='stylesheet'>
@@ -16,7 +15,7 @@
 
 		<!-- Graph script -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 		<!-- map scripts -->
 		<link href="../dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css">
@@ -39,11 +38,11 @@
 
 			<ul>
 				<li><a class="OptionMenu"> Options:</a></li>
-				<li><button class="buttonMenu" value="0" onclick="MenuItemClicked(this)"> Menu Item </button></li>
-				<li><button class="buttonMenu" value="0" onclick="MenuItemClicked(this)"> Menu Item </button></li>
-				<li><button class="buttonMenu" value="0" onclick="MenuItemClicked(this)"> Menu Item </button></li>
-				<li><button class="buttonMenu" value="0" onclick="MenuItemClicked(this)"> Menu Item </button></li>
-				<li><button class="buttonMenu" value="0" onclick="MenuItemClicked(this)"> Menu Item </button></li>
+				<li><button class="buttonMenu" value="0" data-graph="piechart" onclick="MenuItemClicked(this)"> OS Distribution </button></li>
+				<li><button class="buttonMenu" value="0" data-graph="linechart_material" onclick="MenuItemClicked(this)"> Last day visits </button></li>
+				<li><button class="buttonMenu" value="0" data-graph="Referr_table_div" onclick="MenuItemClicked(this)"> Referrers </button></li>
+				<li><button class="buttonMenu" value="0" data-graph="" onclick="MenuItemClicked(this)"> Menu Item </button></li>
+				<li><button class="buttonMenu" value="0" data-graph="" onclick="MenuItemClicked(this)"> Menu Item </button></li>
 			</ul>
 		</div>
 
@@ -101,10 +100,10 @@
             </div>-->
 		</center>
 	<center>
-			<div class="grid-container">
-				<div id="piechart" class="grid-item" style="width: 100%; height: 100%;"></div>
+			<div id="graphsGrid" class="grid-container">
+<!--				<div id="piechart" class="grid-item" style="width: 100%; height: 100%;"></div>
 				<div id="Referr_table_div" class="grid-item" style="width: 100%; height: 100%;"></div>
-				<div id="linechart_material" class="grid-item" style="width: 100%; height: 100%"></div>
+				<div id="linechart_material" class="grid-item" style="width: 100%; height: 100%"></div>-->
 			</div>
 	</center>
 

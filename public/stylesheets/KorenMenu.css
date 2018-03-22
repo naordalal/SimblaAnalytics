@@ -15,6 +15,8 @@ body, html {
     overflow: hidden;
     outline:none;
     font-weight: bold;
+    color : #000000;
+    text-decoration: line-through;
 }
 
 .buttonMenu:hover
@@ -30,6 +32,8 @@ body, html {
     transition: 1000ms all cubic-bezier(0.19, 1, 0.22, 1);
     transform: translateX(-100%);
     left: 60px;
+    z-index: 1000;
+
 }
 
 #menu.expanded {
