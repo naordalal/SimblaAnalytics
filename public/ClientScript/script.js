@@ -1,7 +1,7 @@
 $(document).ready(function() {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',"http://132.73.211.244:3000/visit",true); //TODO : Change URL.
+    xhr.open('POST',"http://localhost:3000/visit",true); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     var siteId = getSiteId();
@@ -10,6 +10,7 @@ $(document).ready(function() {
     {
         var params = "siteId=" + siteId;
         params += "&referrer="+extractRootDomain(referrer);
+        params += "&os="+getOs();
         xhr.send(params);
     }
 });
@@ -67,4 +68,17 @@ function extractRootDomain(url) {
         }
     }
     return domain;
+}
+
+function getOs()
+{
+    var OSName="Unknown OS";
+    if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
+    else if (navigator.appVersion.indexOf("like Mac OS")!=-1) OSName="ios";
+    else if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
+    else if (navigator.appVersion.indexOf("Android")!=-1) OSName="Android";
+    else if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
+    else if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+
+    return OSName;
 }
