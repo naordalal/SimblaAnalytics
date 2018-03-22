@@ -150,14 +150,14 @@ $(window).load(function(){
     //ctx = document.getElementById("myChart").getContext('2d');
     //pieCtx = document.getElementById("pieChart").getContext('2d');
     es.addEventListener('NewVisit/' + siteId, function (event) {
-        var data = event.data;
+
         var number = parseInt(document.getElementById("numVisits").innerText.split(": ")[1]);
         document.getElementById("numVisits").innerText = "Number of Visits: "+ (number+1);
     });
 
     es.addEventListener('FirstVisit/' + siteId, function (event) {
-        var data = event.data;
-        var number = parseInt(document.getElementById("numVisits").innerText.split(": ")[1]);
+
+        var number = parseInt(document.getElementById("numFirstVisits").innerText.split(": ")[1]);
         document.getElementById("numFirstVisits").innerText = "First Visits: "+ (number+1);
     });
 
@@ -272,6 +272,7 @@ function drawLineChart() {
             },
             backgroundColor:'transparent',
             titleTextStyle:{ fontSize : 15, color: "#e6e6e8"}
+
         };
 
         var chart = new google.charts.Line(document.getElementById('linechart_material'));
