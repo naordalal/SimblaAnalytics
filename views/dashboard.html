@@ -5,12 +5,14 @@
 	<head>
 		<title>dashboard</title>
 		<link rel="stylesheet" href="/stylesheets/style.css">
+		<link rel="stylesheet" href="/stylesheets/hamburgerMenu.css">
 		<link href='https://fonts.googleapis.com/css?family=Arbutus' rel='stylesheet'>
     	<script src="/jquery-3.2.1.min.js"></script>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 
 		<!-- Graph script -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+
 
 		<!-- map scripts -->
 		<link href="../dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css">
@@ -19,19 +21,48 @@
 		<script type="text/javascript" src="/ClientScript/ISO_CountryCode.js"></script>
 		<script type="text/javascript" src="/ClientScript/dashboard.js"></script>
 		<script type="text/javascript" src="/ClientScript/map.js"></script>
-
-
-
-
-
-
+		<script src="../routes/dashboard.js"></script>
 	</head>
-	<body>
-		<meta name="page-source" site-id= <%=siteId%>>
 
+	<body>
+
+	<header>
+		<nav class="myNav" role="navigation">
+			<div class="menuToggle">
+				<!--
+                A fake / hidden checkbox is used as click reciever,
+                so you can use the :checked selector on it.
+                -->
+				<input type="checkbox" />
+
+				<!--
+                Some spans to act as a hamburger.
+
+                They are acting like a real hamburger,
+                not that McDonalds stuff.
+                -->
+				<span></span>
+				<span></span>
+				<span></span>
+
+				<!--
+                Too bad the menu has to be inside of the button
+                but hey, it's pure CSS magic.
+                -->
+				<ul id="accordion" class="menu" class="accordion">
+					<li><a href="/index.html">Home</a></li>
+					<li><a href="/about.html">About</a></li>
+
+					<li id="contact"><a href="/contact.html">Contact</a></li>
+				</ul>
+			</div>
+		</nav>
 		<center>
 			<h1 id="MainHeader" class="header">Simbla Dashboard</h1>
 		</center>
+	</header>
+		<meta name="page-source" site-id= <%=siteId%>>
+
 		<div class="Wrapper">
 			<div class="left">
 				<h2 class="header">Visits</h2>

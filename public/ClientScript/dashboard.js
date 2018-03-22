@@ -79,7 +79,7 @@ $(document).ready(function() {
             datasets: [{
                 label: '# of Visitors',
                 data: [0],
-
+                borderColor : "#e6e6e8",
             }]
         },
         options: {
@@ -91,6 +91,7 @@ $(document).ready(function() {
                 }]
             }
         }
+
     });
     getCountryList();
     draw();
@@ -164,7 +165,5 @@ function draw() {
 
     var params = "siteId="  + getSiteId();
     xhr.send(params);
-
-
 
 }

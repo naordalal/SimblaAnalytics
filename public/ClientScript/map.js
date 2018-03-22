@@ -1,7 +1,7 @@
 
 jQuery(document).ready(function() {
     jQuery('#vmap').vectorMap({ map: 'world_en' });
-
+    $('#vmap').css('background-color', 'transparent');
     jQuery('#vmap').bind('labelShow.jqvmap',
         function(event, label, code)
         {
