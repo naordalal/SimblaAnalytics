@@ -18,7 +18,7 @@ var app = express();
 //app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'jade');
 
-// To use html instead of jade.
+//Using html to render the pages.
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
@@ -51,6 +51,7 @@ app.use('/', index);
 app.use('/visit', visit);
 app.use('/dashboard',dashboard);
 app.get('/visitEvent' , visit.sse.init);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
