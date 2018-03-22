@@ -74,28 +74,8 @@ module.exports.insertVisit = function (siteId, siteURL, date , country, firstVis
             }
         });
 }
-/*
-module.exports.insertSession = function (siteId,siteURL, startSessionTime ,endSessionDate) {
-    bigquery
-        .dataset(datasetId)
-        .table("sessions")
-        .insert([{SiteID: siteId, SiteURL: siteURL, StartSessionTime: startSessionTime, EndSessionTime: endSessionDate}])
-        .then(() => {
-            console.log(`Session inserted`);
-        })
-        .catch(err => {
-            if (err && err.name === 'PartialFailureError') {
-                if (err.errors && err.errors.length > 0) {
-                    console.log('session insert errors:');
-                    err.errors.forEach(err => console.error(err));
-                }
-            } else {
-                console.error('ERROR:', err);
-            }
-        });
-}
-*/
-module.exports.insertPageChange = function (siteid, sessionid ,pageid , time) {
+
+module.exports.insertPage = function (siteid, sessionid ,pageid , time) {
     bigquery
         .dataset(datasetId)
         .table("pages")
@@ -246,11 +226,14 @@ module.exports.getRecencyRate = function(siteid) {
     var resultLength = runQuery(options).size;
     return resultLength / (getTotalFirstVisits(siteid).size + resultLength);
 }
-Bounce
 
 module.exports.getEngagementRate = function(siteid) {
-    var sqlQuery = "SELECT AVG(TIMESTAMP_TO_SEC(StartSessionTime) - TIMESTAMP_TO_SEC(EndSessionTime) " +
-        "FROM [simbla-analytics:test_dataset.sessions] WHERE SiteID = '" + siteid + "'";
+    var sqlQuery =
+        "SELECT AVG(max - min) as avg " +
+        "FROM (SELECT SessionID, MAX(Time) as max, MIN(Time) as min " +
+              "FROM [simbla-analytics:test_dataset.pages] " +
+              "WHERE SiteID = '" + siteid + "' " +
+              "GROUP BY SessionID ";
 
     const options = {
         query: sqlQuery,
