@@ -33,14 +33,12 @@ router.post('/countryList',function (req,res,next) {
 
 router.post('/PageList',function (req,res,next) {
     bigquery.getPagePopularity(req.body.siteId).then(function (results) {
-
         res.send(JSON.stringify(results));
     });
 });
 
 router.post('/ReferrList',function (req,res,next) {
     bigquery.getVisitsCountByReferr(req.body.siteId).then(function (results) {
-
         res.send(JSON.stringify(results));
     });
 });
