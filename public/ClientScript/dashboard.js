@@ -69,7 +69,7 @@ function getCountryList()
 $(document).ready(function() {
     var siteId = getSiteId();
     ctx = document.getElementById("myChart").getContext('2d');
-    pieCtx = document.getElementById("pieChart").getContext('2d');
+    //pieCtx = document.getElementById("pieChart").getContext('2d');
     es.addEventListener('NewVisit/' + siteId, function (event) {
         var data = event.data;
         var number = parseInt(document.getElementById("numVisits").innerText.split(": ")[1]);
@@ -104,7 +104,7 @@ $(document).ready(function() {
 
     });
 
-    pieChart =  new Chart(pieCtx,{
+    /*pieChart =  new Chart(pieCtx,{
         type: 'pie',
         data: {
             labels: [0],
@@ -113,10 +113,11 @@ $(document).ready(function() {
                 data: [0]
             }]
         }
-    });
+    });*/
     getCountryList();
     drawLineChart();
-    drawPieChart();
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawPieChart);
 });
 
 
@@ -186,45 +187,38 @@ function drawLineChart() {
 
 
 function drawPieChart() {
+        var options = {
+            title: 'OS Distribution',
+            backgroundColor:"transparent",
+            legend :{ alignment:'center', textStyle: {fontName:"Lucida Grande", fontSize : 15, color: "#e6e6e8"}},
+            titleTextStyle:{ fontSize : 15, color: "#e6e6e8"},
+            chartArea:{width:'100%',height:'75%'}
+        };
 
-    //ctx = document.getElementById("pieChart").getContext('2d');
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-    xhr.open('POST', "/dashboard/pieChart", true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.responseType = "json";
 
-    xhr.onload = function (e) {
-        var data = xhr.response;
-        console.log(data)
-        data = data.filter(x => x.Os);
-        if(data!=null) {
-            var labels = new Array(data.length);
-            var visits = new Array(data.length);
-            var colors = new Array(data.length);
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.open('POST', "/dashboard/pieChart", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.responseType = "json";
 
-            for (var i = 0; i < data.length; i++) {
-                labels[i] = data[i].Os;
-                visits[i] = data[i].visits;
-                if(data[i].Os == 'Windows')
-                {
-                    colors[i]= "#2a21f4"
-                }
-                else if(data[i].Os == 'ios')
-                {
-                    colors[i]= "#ae9dc6"
-                }
+        xhr.onload = function (e) {
+            var data = xhr.response;
+            console.log(data)
+            data = data.filter(x => x.Os);
+            if(data!=null)
+             {
+              data = data.map(x => [x.Os , x.visits]);
+             }
+            data.unshift(['OS','Visits']);
+             var readyData = google.visualization.arrayToDataTable(data);
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            chart.draw(readyData, options);
             }
-            //colors[0]='red';
-            //  colors[1]='yellow';
-            pieChart.data.labels = labels;
-            pieChart.data.datasets[0].data = visits;
-            pieChart.data.datasets[0].backgroundColor = colors;
-            pieChart.update();
-        }
-    }
-    var params = "siteId=" + getSiteId();
-    xhr.send(params);
+
+        var params = "siteId=" + getSiteId();
+        xhr.send(params);
 }
 
 
