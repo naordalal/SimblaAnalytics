@@ -1,11 +1,24 @@
 body {
-  padding: 50px;
-  font: 12px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
   background : #300032;
   color: #e6e6e8;
   font-family: "Arial Rounded MT Bold";
 }
 
+h2{
+  font: 25px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+h3{
+  font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+div .jqvmap-zoomin, div .jqvmap-zoomout{
+  padding: 0px;
+}
+.w3-bar-block .w3-bar-item
+{
+  color: black;
+}
 #MainHeader
 {
   margin-left: 10px;
@@ -53,17 +66,5 @@ a {
   margin-left: 70px;
 }
 
-.myNav{
-  background: #c43235;
-
-}
-.Wrapper2
-{
-  display: table;
-}
-.chart-container
-{
-  display: table-row;
-}
 
 

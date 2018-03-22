@@ -197,6 +197,7 @@ function drawPieChart() {
     xhr.onload = function (e) {
         var data = xhr.response;
         console.log(data)
+        data = data.filter(x => x.Os);
         if(data!=null) {
             var labels = new Array(data.length);
             var visits = new Array(data.length);
@@ -205,9 +206,17 @@ function drawPieChart() {
             for (var i = 0; i < data.length; i++) {
                 labels[i] = data[i].Os;
                 visits[i] = data[i].visits;
+                if(data[i].Os == 'Windows')
+                {
+                    colors[i]= "#2a21f4"
+                }
+                else if(data[i].Os == 'ios')
+                {
+                    colors[i]= "#ae9dc6"
+                }
             }
-            colors[0]='red';
-            colors[1]='yellow';
+            //colors[0]='red';
+            //  colors[1]='yellow';
             pieChart.data.labels = labels;
             pieChart.data.datasets[0].data = visits;
             pieChart.data.datasets[0].backgroundColor = colors;
