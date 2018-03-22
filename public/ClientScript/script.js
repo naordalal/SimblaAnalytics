@@ -1,4 +1,18 @@
-$(document).ready(function() {
+var $ ;
+(function() { //Load JQuery because SimblaSite do not include that.
+    // Load the script
+    var script = document.createElement("SCRIPT");
+    script.src = 'jquery-3.2.1.min.js';
+    script.type = 'text/javascript';
+    script.onload = function() {
+        $ = window.jQuery;
+        $(document).ready(visitSite());
+    };
+    document.getElementsByTagName("head")[0].appendChild(script);
+})();
+
+
+var visitSite = function() {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
     xhr.open('POST',"http://132.73.211.244:3000/visit",true); //TODO : Change URL.
@@ -12,7 +26,7 @@ $(document).ready(function() {
         params += "&referrer="+extractRootDomain(referrer);
         xhr.send(params);
     }
-});
+};
 
 function getSiteId()
 {
