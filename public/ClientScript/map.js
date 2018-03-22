@@ -1,6 +1,6 @@
 
 jQuery(document).ready(function() {
-    jQuery('#vmap').vectorMap({ map: 'world_en' });
+    jQuery('#vmap').vectorMap({ map: 'world_en' ,color:'black'});
     $('#vmap').css('background-color', 'transparent');
     jQuery('#vmap').bind('labelShow.jqvmap',
         function(event, label, code)

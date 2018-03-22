@@ -271,7 +271,7 @@ function drawLineChart() {
                 title: 'Visits per hour',
             },
             backgroundColor:'transparent',
-            titleTextStyle:{ fontSize : 15, color: "#e6e6e8"}
+            titleTextStyle:{ fontSize : 15, color: "black"}
 
         };
         addDiv('linechart_material');
@@ -288,8 +288,8 @@ function drawPieChart() {
         var options = {
             title: 'OS Distribution',
             backgroundColor:"transparent",
-            legend :{ alignment:'center', textStyle: {fontSize : 12, color: "#e6e6e8"}},
-            titleTextStyle:{ fontSize : 15, color: "#e6e6e8"},
+            legend :{ alignment:'center', textStyle: {fontSize : 12, color: "black"}},
+            titleTextStyle:{ fontSize : 15, color: "black"},
             chartArea:{width:'100%',height:'75%'}
         };
 
