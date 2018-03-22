@@ -54,11 +54,12 @@ function insertData(tableid, data) {
             }
         });
 }
-module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit) {
+module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit, referr, os) {
     bigquery
         .dataset(datasetId)
         .table("visits")
-        .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit}])
+        .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit,
+                    Referr: referr, Os:os}])
         .then(() => {
             console.log(`Inserted`);
         })
@@ -98,7 +99,7 @@ module.exports.insertPageChange = function (siteid ,pageid , time) {
     bigquery
         .dataset(datasetId)
         .table("pages")
-        .insert([{SiteId: siteid, PageId: pageid, Time: time}])
+        .insert([{SiteID: siteid, PageID: pageid, Time: time}])
         .then(() => {
             console.log(`page change inserted`);
         })
@@ -127,16 +128,6 @@ module.exports.getPagePopularity = function(siteid) {
     return runQuery(options)
 }
 
-module.exports.getSessionsAverageTime = function(siteid) {
-    var sqlQuery = "SELECT AVG(TIMESTAMP_TO_SEC(StartSessionTime) - TIMESTAMP_TO_SEC(EndSessionTime) " +
-        "FROM [simbla-analytics:test_dataset.sessions] WHERE SiteId = '" + siteid + "'";
-
-    const options = {
-        query: sqlQuery,
-        useLegacySql: true, // Use standard SQL syntax for queries.
-    };
-    return runQuery(options);
-}
 
 module.exports.getVistsCountByCountry = function(siteid) {
     var sqlQuery = "SELECT Country, COUNT(Country) as visits " +
@@ -165,8 +156,24 @@ module.exports.getVisitsByHours = function(siteid) {
     var nowTime = new Date().toLocaleString();
     var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer , COUNT(*) " +
                    "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
-                   "WHERE  SiteId = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24) " +
+                          "WHERE  SiteId = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24) " +
                    "GROUP BY timer ORDER BY timer" ;
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getBounceRate = function(siteid) {
+    var sqlQuery =
+        "SELECT COUNT(*)" +
+        "FROM (SELECT COUNT(*) as count" +
+               "FROM (SELECT StartSessionTime, EndSessionTime, DISTINCT PageID " +
+                     "FROM [simbla-analytics:test_dataset.sessions] JOIN [simbla-analytics:test_dataset.pages] ON SiteID " +
+                     "WHERE SiteID = '" + siteid + "' && StartSessionTime < Time && EndSessionTime > Time) " +
+               "GROUP BY StartSessionTime, EndSessionTime) " +
+        "WHERE count = 1";
     const options = {
         query: sqlQuery,
         useLegacySql: true, // Use standard SQL syntax for queries.
@@ -209,6 +216,64 @@ module.exports.getTotalFirstVisits = function(siteid) {
     return runQuery(options);
 }
 
+module.exports.getRecencyRate = function(siteid) {
+    var sqlQuery = "SELECT COUNT(Time) as visits " +
+        "FROM test_dataset.visits WHERE SiteId = '" + siteid +
+        "' AND firstVisit = false";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    var resultLength = runQuery(options).size;
+    return resultLength / (getTotalFirstVisits(siteid).size + resultLength);
+}
+Bounce
+
+module.exports.getEngagementRate = function(siteid) {
+    var sqlQuery = "SELECT AVG(TIMESTAMP_TO_SEC(StartSessionTime) - TIMESTAMP_TO_SEC(EndSessionTime) " +
+        "FROM [simbla-analytics:test_dataset.sessions] WHERE SiteId = '" + siteid + "'";
+
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getVisitsCountByOs = function(siteid) {
+    var sqlQuery = "SELECT Os, COUNT(Os) as visits " +
+        "FROM test_dataset.visits WHERE SiteId = '" + siteid +
+        "' GROUP BY Os ORDER BY visits DESC;";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getVisitsCountByReferr = function(siteid) {
+    var sqlQuery = "SELECT Referr, COUNT(Referr) as visits " +
+        "FROM test_dataset.visits WHERE SiteId = '" + siteid +
+        "' GROUP BY Referr ORDER BY visits DESC;";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+//Now same the original referr
+module.exports.getVisitsCountBySocialReferr = function(siteid) {
+    var sqlQuery = "SELECT Referr, COUNT(Referr) as visits " +
+        "FROM test_dataset.visits WHERE SiteId = '" + siteid +
+        "' GROUP BY Referr ORDER BY visits DESC;";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
 
 
 function runQuery(options)
