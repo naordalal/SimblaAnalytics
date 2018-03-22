@@ -3,7 +3,9 @@
 var es = new EventSource('/visitEvent');
 var countryMap = new Map();
 var myChart;
+var pieChart;
 var ctx;
+var pieCtx;
 var gdpData = {};
 var paintMap = function () {
     console.log("empty Function ... look at map.js")
@@ -60,6 +62,7 @@ function getCountryList()
 $(document).ready(function() {
     var siteId = getSiteId();
     ctx = document.getElementById("myChart").getContext('2d');
+    pieCtx = document.getElementById("pieChart").getContext('2d');
     es.addEventListener('NewVisit/' + siteId, function (event) {
         var data = event.data;
         var number = parseInt(document.getElementById("numVisits").innerText.split(": ")[1]);
@@ -93,8 +96,20 @@ $(document).ready(function() {
         }
 
     });
+
+    pieChart =  new Chart(pieCtx,{
+        type: 'pie',
+        data: {
+            labels: [0],
+            datasets: [{
+                label: "OS distribution",
+                data: [0]
+            }]
+        }
+    });
     getCountryList();
-    draw();
+    drawLineChart();
+    drawPieChart();
 });
 
 
@@ -116,40 +131,37 @@ function getSiteId()
 }
 
 
-function draw() {
+function drawLineChart() {
 
     ctx = document.getElementById("myChart").getContext('2d');
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',"/dashboard/graph",true);
+    xhr.open('POST', "/dashboard/graph", true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.responseType = "json";
-    var hours , visits;
+    var hours, visits;
     xhr.onload = function (e) {
         var data = xhr.response;
         hours = data.map(x => x.timer);
         visits = data.map(x => x.f0_);
         var map = new Map();
-        for(var i = 0 ; i < hours.length ; i++)
-            map.set(hours[i] , visits[i]);
+        for (var i = 0; i < hours.length; i++)
+            map.set(hours[i], visits[i]);
         var now = new Date().getHours();
         var labels = new Array(24);
         var data = new Array(24);
-        for(var i = 23 ; i >= 0 ; i--)
-        {
+        for (var i = 23; i >= 0; i--) {
             var str;
-            if(now < 10)
-                str = '0' +now +":00";
+            if (now < 10)
+                str = '0' + now + ":00";
             else
                 str = now + ":00";
             labels[i] = str;
 
-            if(!map.get(now))
-            {
+            if (!map.get(now)) {
                 data[i] = 0;
             }
-            else
-            {
+            else {
                 data[i] = map.get(now);
             }
 
@@ -161,9 +173,44 @@ function draw() {
         myChart.data.datasets[0].data = data;
         myChart.update();
     }
-
-
-    var params = "siteId="  + getSiteId();
+    var params = "siteId=" + getSiteId();
     xhr.send(params);
-
 }
+
+
+function drawPieChart() {
+
+    //ctx = document.getElementById("pieChart").getContext('2d');
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST', "/dashboard/pieChart", true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.responseType = "json";
+
+    xhr.onload = function (e) {
+        var data = xhr.response;
+        console.log(data)
+        if(data!=null) {
+            var labels = new Array(data.length);
+            var visits = new Array(data.length);
+            var colors = new Array(data.length);
+
+            for (var i = 0; i < data.length; i++) {
+                labels[i] = data[i].Os;
+                visits[i] = data[i].visits;
+            }
+            colors[0]='red';
+            colors[1]='yellow';
+            pieChart.data.labels = labels;
+            pieChart.data.datasets[0].data = visits;
+            pieChart.data.datasets[0].backgroundColor = colors;
+            pieChart.update();
+        }
+    }
+    var params = "siteId=" + getSiteId();
+    xhr.send(params);
+}
+
+
+
+
