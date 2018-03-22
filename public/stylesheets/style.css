@@ -1,16 +1,16 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background : #e6ffff;
-  color: #0000cc;
+  background : #300032;
+  color: #e6e6e8;
   font-family: "Arial Rounded MT Bold";
 }
 
 #MainHeader
 {
-  margin-top: -50px;
+  margin-top: -40px;
   font-family: Arbutus;
-  color: indigo;
+  color: #300032;
 }
 a {
   color: #00B7FF;
@@ -35,6 +35,7 @@ a {
 
   margin-top: 100px;
   align-self: center;
+
 }
 
 .left {
@@ -52,7 +53,8 @@ a {
 
 }
 
-.countryEntry {
-  display: flex;
-  justify-content: space-between;
+
+.myNav{
+  background: #c43235;
+
 }

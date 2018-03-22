@@ -54,11 +54,11 @@ function insertData(tableid, data) {
             }
         });
 }
-module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit) {
+module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit , Referrer) {
     bigquery
         .dataset(datasetId)
         .table("visits")
-        .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit}])
+        .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit , Referr: Referrer}])
         .then(() => {
             console.log(`Inserted`);
         })
