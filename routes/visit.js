@@ -2,7 +2,6 @@ var express = require('express');
 var geoip = require('geoip-lite');
 var countries  = require('country-list')();
 var bigquery = require('../queries');
-
 var router = express.Router();
 
 
@@ -20,10 +19,11 @@ Bounce rate(percentages of users that leaved from the first page))
 
 
 router.route('/').post(function(req, res, next) {
-    console.log("New entrance with postt");
+    console.log("New entrance with post");
     console.log(req.ip);
     var siteId = req.body.siteId;
     var referrer = req.body.referrer;
+    var os = req.body.os;
     //var siteURL = req.body.siteURL;
     var siteURL = "4";
     
@@ -46,15 +46,16 @@ router.route('/').post(function(req, res, next) {
     var country = 'Israel';//countries.getName(countryCode);
     //console.log(country);
 
-    console.log(req.session.first)
+    console.log(req.session.first);
     if(!req.session.first)
     {
         visits++;
-        bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer);
+        bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os);
     }
 
-    req.session.first = true;
 
+    req.session.first = true;
+    req.session.siteId = siteId;
 
     //update the dashboard in realTime.
     sse.send(visits, "NewVisit/" + siteId , null);
