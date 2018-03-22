@@ -15,7 +15,7 @@ var $ ;
 var visitSite = function() {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',"http://132.73.211.244:3000/visit",true); //TODO : Change URL.
+    xhr.open('POST',"http://localhost:3000/visit",true); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     var siteId = getSiteId();
