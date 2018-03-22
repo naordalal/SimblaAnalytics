@@ -9,7 +9,14 @@ var router = express.Router();
 var SSE = require('express-sse');
 var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
 
+/*
 
+click-stream
+top social traffic(you tube, facebook..)
+
+Bounce rate(percentages of users that leaved from the first page))
+
+ */
 
 
 router.route('/').post(function(req, res, next) {
