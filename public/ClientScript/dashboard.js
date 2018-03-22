@@ -32,18 +32,25 @@ function getCountryList()
                 gdpData[getCountryCode(countryList[i].Country).toLowerCase()] = countryList[i].visits;
 
 
-                var entry = document.createElement('li');
+                var entry = document.createElement('tr');
+                var countryTd = document.createElement('td');
+                var flagTd = document.createElement('td');
+                var visitorsTd = document.createElement('td');
+
                 var country = document.createTextNode(countryList[i].Country);
+                countryTd.appendChild(country);
+
                 var flag = document.createElement('img');
+                flagTd.appendChild(flag);
                 flag.setAttribute("src", "https://raw.githubusercontent.com/hjnilsson/country-flags/master/png100px/il.png")
                 var quantity = document.createTextNode(countryList[i].visits);
+                visitorsTd.appendChild(quantity)
 
-                entry.setAttribute("class", "countryEntry");
                 flag.setAttribute("class", "flag");
 
-                entry.appendChild(country);
-                entry.appendChild(flag);
-                entry.appendChild(quantity);
+                entry.appendChild(countryTd);
+                entry.appendChild(flagTd);
+                entry.appendChild(visitorsTd);
 
                 list.appendChild(entry);
             }
@@ -212,5 +219,17 @@ function drawPieChart() {
 }
 
 
+//Menu
 
+function w3_open() {
+    document.getElementById("main").style.marginLeft = "25%";
+    document.getElementById("mySidebar").style.width = "25%";
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("openNav").style.display = 'none';
+}
+function w3_close() {
+    document.getElementById("main").style.marginLeft = "0%";
+    document.getElementById("mySidebar").style.display = "none";
+    document.getElementById("openNav").style.display = "inline-block";
+}
 
