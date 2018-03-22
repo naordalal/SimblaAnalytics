@@ -23,6 +23,7 @@ router.route('/').post(function(req, res, next) {
     console.log("New entrance with postt");
     console.log(req.ip);
     var siteId = req.body.siteId;
+    var referrer = req.body.referrer;
     //var siteURL = req.body.siteURL;
     var siteURL = "4";
     
@@ -49,7 +50,7 @@ router.route('/').post(function(req, res, next) {
     if(!req.session.first)
     {
         visits++;
-        bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit);
+        bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer);
     }
 
     req.session.first = true;
