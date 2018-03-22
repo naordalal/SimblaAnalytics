@@ -224,7 +224,7 @@ module.exports.getRecencyRate = function(siteid) {
     };
 
     var resultLength = runQuery(options).size;
-    return resultLength / (getTotalFirstVisits(siteid).size + resultLength);
+    return resultLength / (module.exports.getTotalFirstVisits(siteid).size + resultLength);
 }
 
 module.exports.getEngagementRate = function(siteid) {
@@ -286,3 +286,10 @@ function runQuery(options)
             return rows;
         });
 }
+
+
+
+
+module.exports.getVisitsCountBySocialReferr(3).then(function (res) {
+    console.log(res)
+})
