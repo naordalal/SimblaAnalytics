@@ -1,5 +1,5 @@
 var $ ;
-(function() { //Load JQuery because SimblaSite do not include that.
+(function() { //Load JQuery because Simbla's sites do not load it.
     // Load the script
     var script = document.createElement("SCRIPT");
     script.src = 'jquery-3.2.1.min.js';

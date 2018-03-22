@@ -162,6 +162,8 @@ a
     padding: 50px;
     padding-top: 0px;
     list-style-type: none;
+    border-right-color: black;
+    border-bottom-color: black;
     border-right-style: solid;
     border-bottom-style: solid;
     -webkit-font-smoothing: antialiased;
@@ -180,7 +182,7 @@ a
     transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
 
     transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0), -webkit-transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
-    background: crimson;
+    background: #c43235;
 
 }
 
