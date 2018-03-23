@@ -57,7 +57,7 @@ function getPageId()
         var elem = elements[i];
         if(elem.tagName == 'META')
         {
-            pageId = elem.getAttribute("page-id");
+            pageId = elem.getAttribute("page");
             break;
         }
     }
