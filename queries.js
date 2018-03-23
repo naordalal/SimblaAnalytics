@@ -53,6 +53,26 @@ function insertData(tableid, data) {
             }
         });
 }
+
+module.exports.insertMouseLoc = function (siteId, X, Y) {
+    bigquery
+        .dataset(datasetId)
+        .table("click_heatmap")
+        .insert([{SiteID: siteId, X: X, Y: Y}])
+        .then(() => {
+            console.log(`Inserted`);
+        })
+        .catch(err => {
+            if (err && err.name === 'PartialFailureError') {
+                if (err.errors && err.errors.length > 0) {
+                    console.log('Insert errors:');
+                    err.errors.forEach(err => console.error(err));
+                }
+            } else {
+                console.error('ERROR:', err);
+            }
+        });
+}
 module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit, referr, os) {
     bigquery
         .dataset(datasetId)
@@ -280,6 +300,18 @@ module.exports.getVisitsCountBySocialReferr = function(siteid) {
     return runQuery(options);
 }
 
+module.exports.getAllPointsOfSite = function (siteid) {
+    var sqlQuery = "SELECT X,Y" +
+        " FROM test_dataset.click_heatmap WHERE SiteID= '"+siteid+
+        "' LIMIT 10000;";           //Limited to 10000 points.
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options);
+}
+
 
 function runQuery(options)
 {
@@ -290,3 +322,4 @@ function runQuery(options)
             return rows;
         });
 }
+

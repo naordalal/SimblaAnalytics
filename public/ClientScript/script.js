@@ -1,4 +1,5 @@
 var $ ;
+
 (function() { //Load JQuery because Simbla's sites do not load it.
     // Load the script
     var script = document.createElement("SCRIPT");
@@ -7,9 +8,13 @@ var $ ;
     script.onload = function() {
         $ = window.jQuery;
         $(document).ready(visitSite());
+
     };
     document.getElementsByTagName("head")[0].appendChild(script);
 })();
+
+
+
 
 
 var visitSite = function() {
@@ -29,6 +34,39 @@ var visitSite = function() {
     }
 };
 
+var locations = [];
+var sendMouseLoc = function (event) {
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST',"http://132.73.211.244:3000/heatmap",true); //TODO : Change URL.
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    console.log(event.clientX+","+event.clientY)
+    var siteId = getSiteId();
+    if(siteId != null)
+    {
+
+       // locations.push({X: event.clientX , Y: event.clientY});
+
+        var params = "siteId=" + siteId;
+        params += "&X="+event.clientX;
+        params += "&Y="+event.clientY;
+        console.log(params);
+        xhr.send(params);
+
+    }
+}
+document.onclick=sendMouseLoc;
+/*
+var sendMouseLoc = function()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST',"http://132.73.211.244:3000/heatmap",true); //TODO : Change URL.
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    xhr.send({siteId:getSiteId(),locations:locations});
+}*/
 function getSiteId()
 {
     var elements = document.getElementsByName("page-source");
