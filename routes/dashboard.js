@@ -62,5 +62,11 @@ router.post('/pieChart',function (req,res,next) {
     });
 });
 
+router.post('/pageViews',function (req,res,next) {
+    bigquery.getPagePopularity(req.body.siteId).then(function (results) {
+        res.send(JSON.stringify(results));
+    });
+});
+
 
 module.exports = router ;

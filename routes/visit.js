@@ -22,7 +22,7 @@ router.route('/').post(function(req, res, next) {
     console.log("New entrance with post");
     console.log(req.ip);
     var siteId = req.body.siteId;
-    var pageId = req.body.pageId;
+    var page= req.body.page;
     var referrer = req.body.referrer;
     var os = req.body.os;
     //var siteURL = req.body.siteURL;
@@ -51,7 +51,7 @@ router.route('/').post(function(req, res, next) {
         sse.send(1, "NewVisit/" + siteId , null);
     }
 
-    bigquery.insertPage(siteId,req.session.id ,pageId ,new Date());
+    bigquery.insertPage(siteId,req.session.id ,page ,new Date());
     req.session.first = true;
     req.session.siteId = siteId;
 
