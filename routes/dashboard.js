@@ -6,9 +6,15 @@ router.get('/:siteId', function(req, res, next) {
     //res.render('index', { title: 'Visits: '+require('./users').getVisits()});
     require('./visit').getVisits(req.params.siteId).then(res1 =>{
         require('./visit').getFirstVisits(req.params.siteId).then(res2 =>{
-            res.render('dashboard', {visits : res1[0].visits , firstVisits : res2[0].visits,
-                siteId : req.params.siteId})
-        })
+            require('./visit').getBounceRate(req.params.siteId).then(res3 =>{
+                require('./visit').getEngagementRate(req.params.siteId).then(res4 =>{
+                    require('./visit').getRecencyRate(req.params.siteId).then(res5 =>{
+                        res.render('dashboard', {visits : res1[0].visits , firstVisits : res2[0].visits, bounceRate : res3,
+                            engagementRate: res4[0].avg, recencyRate : res5/*[0].visits*/, siteId : req.params.siteId})
+                    });
+                });
+            });
+        });
     });
     //res.render('dashboard', {visits : require('./visit').getVisits(req.params.siteId) , firstVisits : require('./visit').getFirstVisits(req.params.siteId),
     //siteId : req.params.siteId})

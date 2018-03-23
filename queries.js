@@ -175,7 +175,7 @@ module.exports.getBounceRate = function(siteid) {
     };
 
     return runQuery(options).then(function (results) {
-        return module.exports.getSessionCount(siteid).then((results2) => {return results.length / results2.length});
+        return module.exports.getSessionCount(siteid).then((results2) => {return results.length / results2.length * 100});
     });
 }
 
@@ -226,7 +226,7 @@ module.exports.getRecencyRate = function(siteid) {
     };
 
     return runQuery(options).then(function (results) {
-        return module.exports.getTotalFirstVisits(siteid).then((results2) => {return results[0].visits / (results2[0].visits + results[0].visits)});
+        return module.exports.getTotalFirstVisits(siteid).then((results2) => {return (results[0].visits / (results2[0].visits + results[0].visits)) * 100});
     });
 
 }

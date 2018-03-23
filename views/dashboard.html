@@ -72,12 +72,15 @@
 
 		<div class="Wrapper">
 			<div class="left">
-				<h4 class="header">Visits</h4>
-				<h3 id="numVisits">Number of Visits: <%=visits%></h3>
-				<h3 id="numFirstVisits">First Visits:  <%=firstVisits%></h3>
+				<h3 class="header" style="font-weight: bold">Statistics:</h3>
+				<h4 id="numVisits">Number of Visits: <%=visits%></h4>
+				<h4 id="numFirstVisits">First Visits:  <%=firstVisits%></h4>
+				<h4 id="bounceRate">Bounce rate:  <%=bounceRate%>%</h4>
+				<h4 id="engagementRate">Engagement rate:  <%=engagementRate%> minutes</h4>
+				<h4 id="recencyRate">Recency rate:  <%=recencyRate%>%</h4>
 			</div>
 			<div class="right">
-				<h4 class="header">Countries</h4>
+				<h3 class="header" style="font-weight: bold">Countries:</h3>
      			<!-- <div id="countries"></div>-->
 				<table id="countries" class="w3-table w3-bordered">
 					<tr>
@@ -90,7 +93,12 @@
 		</div>
 
 		<center>
+			<br>
+			<br>
             <div id="vmap" style="width: 600px; height: 400px;"></div>
+
+
+
     <!--        <div class="Wrapper2">
                 <div class="chart-container" style="position: relative; height:40vh; width:80vw">
                     <canvas id="myChart"></canvas>

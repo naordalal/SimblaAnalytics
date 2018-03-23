@@ -75,4 +75,21 @@ module.exports.getFirstVisits = function (siteId) {
     })
 };
 
+module.exports.getBounceRate = function (siteId) {
+    return bigquery.getBounceRate(siteId).then(function (result) {
+        return result;
+    })
+};
+
+module.exports.getRecencyRate = function (siteId) {
+    return bigquery.getRecencyRate(siteId).then(function (result) {
+        return result;
+    })
+};
+
+module.exports.getEngagementRate = function (siteId) {
+    return bigquery.getEngagementRate(siteId).then(function (result) {
+        return result;
+    })
+};
 module.exports.sse = sse;
