@@ -2,15 +2,14 @@
 
 var es = new EventSource('/visitEvent');
 var countryMap = new Map();
-var myChart;
-var pieChart;
 var ctx;
-var pieCtx;
 var gdpData = {};
 var paintMap = function () {
     console.log("empty Function ... look at map.js")
 }
 
+//Get the visited countries
+//Used for the worldMap and the countries table.
 function getCountryList()
 {
 
@@ -21,10 +20,13 @@ function getCountryList()
     xhr.responseType = "json";
     xhr.onload =function(next) {
 
+        //response is ready
         if(xhr.readyState==4) {
             var countryList = xhr.response;
             var list = document.getElementById('countries');
             var i;
+
+            //Build the countries table.
             for (i = 0; i < countryList.length; i++) //Add the list to the view.
             {
 
@@ -40,6 +42,7 @@ function getCountryList()
                 var country = document.createTextNode(countryList[i].Country);
                 countryTd.appendChild(country);
 
+                //@TODO : flag for each country.
                 var flag = document.createElement('img');
                 flagTd.appendChild(flag);
                 flag.setAttribute("src", "https://raw.githubusercontent.com/hjnilsson/country-flags/master/png100px/il.png")
@@ -54,6 +57,8 @@ function getCountryList()
 
                 list.appendChild(entry);
             }
+
+            //Paint the map.
             paintMap();
 
 
@@ -65,7 +70,7 @@ function getCountryList()
     xhr.send(params);
 }
 
-
+//The side menu
 $(window).load(function(){
     var height = window.innerHeight,
         x= 0, y= height/2,

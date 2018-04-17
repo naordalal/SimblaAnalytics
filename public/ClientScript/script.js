@@ -16,7 +16,7 @@ var $ ;
 
 
 
-
+//Notify the server about visits
 var visitSite = function() {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
@@ -34,11 +34,13 @@ var visitSite = function() {
     }
 };
 
-var locations = [];
+var locations = []; //To use later for sending amount of points instead of one point at a time.
+
+//Send mouse location
 var sendMouseLoc = function (event) {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',"http://132.73.211.244:3000/heatmap",true); //TODO : Change URL.
+    xhr.open('POST',"http://192.168.0.102:3000/heatmap",true); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     console.log(event.clientX+","+event.clientY)
@@ -56,8 +58,12 @@ var sendMouseLoc = function (event) {
 
     }
 }
+
+//For now only for clicks
 document.onclick=sendMouseLoc;
-/*
+
+
+/* Sending collection of points instead of one at a time.
 var sendMouseLoc = function()
 {
     var xhr = new XMLHttpRequest();
@@ -67,6 +73,8 @@ var sendMouseLoc = function()
 
     xhr.send({siteId:getSiteId(),locations:locations});
 }*/
+
+//Scrapping the siteID from the site.
 function getSiteId()
 {
     var elements = document.getElementsByName("page-source");
@@ -84,7 +92,7 @@ function getSiteId()
     return siteId;
 }
 
-
+//Extracting the host name from a url to get the domain (facebook.com)
 function extractHostname(url) {
     var hostname;
     //find & remove protocol (http, ftp, etc.) and get hostname
@@ -122,6 +130,7 @@ function extractRootDomain(url) {
     return domain;
 }
 
+//get the operating system of the visitor.
 function getOs()
 {
     var OSName="Unknown OS";
