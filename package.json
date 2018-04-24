@@ -17,10 +17,15 @@
     "express-sse": "^0.4.1",
     "geoip-lite": "^1.2.1",
     "hashmap": "^2.3.0",
+    "heatmap.js": "^2.0.5",
     "jade": "~1.11.0",
+    "jsdom": "^11.9.0",
+    "less": "^3.0.1",
     "morgan": "~1.9.0",
     "request-ip": "^2.0.2",
+    "request-promise": "^4.2.2",
     "serve-favicon": "~2.4.5",
-    "sync": "^0.2.5"
+    "sync": "^0.2.5",
+    "uuid": "^3.2.1"
   }
 }

@@ -22,21 +22,19 @@ router.route('/').post(function(req, res, next) {
     console.log("New entrance with post");
     console.log(req.ip);
     var siteId = req.body.siteId;
+    var page= req.body.page;
     var referrer = req.body.referrer;
     var os = req.body.os;
     //var siteURL = req.body.siteURL;
     var siteURL = "4";
-    
-    
-    var visits = bigquery.getTotalVisits(siteId);
-    var firstVisits = bigquery.getTotalFirstVisits(siteId);
+
     var firstVisit = false;
     if(req.cookies.visited != 'true') //Check if visited before.
     {
         //TODO: save as first visit
-        firstVisits++;
         firstVisit = true;
         console.log('first visit');
+        sse.send(1, "FirstVisit/" + siteId , null);
     }
 
     //TODO save visits count per siteId
@@ -49,19 +47,17 @@ router.route('/').post(function(req, res, next) {
     console.log(req.session.first);
     if(!req.session.first)
     {
-        visits++;
         bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os);
+        sse.send(1, "NewVisit/" + siteId , null);
     }
 
-
+    bigquery.insertPage(siteId,req.session.id ,page ,new Date());
     req.session.first = true;
     req.session.siteId = siteId;
 
-    //update the dashboard in realTime.
-    sse.send(visits, "NewVisit/" + siteId , null);
-    sse.send(firstVisits, "FirstVisit/" + siteId , null);
-
-    res.cookie('visited', 'true').send("set cookie");
+    var nowDate = new Date();
+    nowDate.setFullYear(nowDate.getFullYear() + 1);
+    res.cookie('visited', 'true' , { expires: nowDate}).send("set cookie");
 });
 
 
@@ -69,7 +65,6 @@ module.exports = router;
 module.exports.getVisits = function (siteId) {
 
    return bigquery.getTotalVisits(siteId).then(function (result) {
-       console.log(result[0])
        return result;
    })
 };
@@ -79,4 +74,21 @@ module.exports.getFirstVisits = function (siteId) {
     })
 };
 
+module.exports.getBounceRate = function (siteId) {
+    return bigquery.getBounceRate(siteId).then(function (result) {
+        return result;
+    })
+};
+
+module.exports.getRecencyRate = function (siteId) {
+    return bigquery.getRecencyRate(siteId).then(function (result) {
+        return result;
+    })
+};
+
+module.exports.getEngagementRate = function (siteId) {
+    return bigquery.getEngagementRate(siteId).then(function (result) {
+        return result;
+    })
+};
 module.exports.sse = sse;

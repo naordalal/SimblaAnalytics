@@ -4,7 +4,6 @@ const datasetId = "test_dataset";
 // Creates a client
 const BigQuery = require('@google-cloud/bigquery');
 const projectId = "simbla-analytics";
-var sync = require('sync');
 const bigquery = new BigQuery({
     projectId: projectId,
 });
@@ -42,6 +41,26 @@ function insertData(tableid, data) {
         .then(() => {
             console.log(`Inserted ${data.length} rows`);
             console.log(data);
+        })
+        .catch(err => {
+            if (err && err.name === 'PartialFailureError') {
+                if (err.errors && err.errors.length > 0) {
+                    console.log('Insert errors:');
+                    err.errors.forEach(err => console.error(err));
+                }
+            } else {
+                console.error('ERROR:', err);
+            }
+        });
+}
+
+module.exports.insertMouseLoc = function (siteId, X, Y) {
+    bigquery
+        .dataset(datasetId)
+        .table("click_heatmap")
+        .insert([{SiteID: siteId, X: X, Y: Y}])
+        .then(() => {
+            console.log(`Inserted`);
         })
         .catch(err => {
             if (err && err.name === 'PartialFailureError') {
@@ -132,6 +151,22 @@ module.exports.getVistsFromSpecificCountry = function(siteid, country) {
     return runQuery(options)
 }
 
+module.exports.getSessionCount = function(siteid) {
+    var sqlQuery =
+        "SELECT SessionID, COUNT(*) as count " +
+        "FROM [simbla-analytics:test_dataset.pages] " +
+        "WHERE SiteID = '" + siteid + "' " +
+        "GROUP BY SessionID ";
+
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+
+
+    return runQuery(options);
+}
+
 module.exports.getVisitsByHours = function(siteid) {
     var nowTime = new Date().toLocaleString();
     var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer , COUNT(*) " +
@@ -159,25 +194,11 @@ module.exports.getBounceRate = function(siteid) {
         useLegacySql: true, // Use standard SQL syntax for queries.
     };
 
-
-    return runQuery(options).size / getSessionCount(siteid).size;
+    return runQuery(options).then(function (results) {
+        return module.exports.getSessionCount(siteid).then((results2) => {return results.length / results2.length * 100});
+    });
 }
 
-module.exports.getSessionCount = function(siteid) {
-    var sqlQuery =
-        "SELECT SessionID, COUNT(*) as count " +
-        "FROM [simbla-analytics:test_dataset.pages] " +
-        "WHERE SiteID = '" + siteid + "' " +
-        "GROUP BY SessionID ";
-
-    const options = {
-        query: sqlQuery,
-        useLegacySql: true, // Use standard SQL syntax for queries.
-    };
-
-
-    return runQuery(options);
-}
 
 module.exports.getFirstVisitsByHours = function(siteid) {
     var nowTime = new Date().toLocaleString();
@@ -214,6 +235,7 @@ module.exports.getTotalFirstVisits = function(siteid) {
     return runQuery(options);
 }
 
+
 module.exports.getRecencyRate = function(siteid) {
     var sqlQuery = "SELECT COUNT(Time) as visits " +
         "FROM test_dataset.visits WHERE SiteID = '" + siteid +
@@ -223,17 +245,19 @@ module.exports.getRecencyRate = function(siteid) {
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
 
-    var resultLength = runQuery(options).size;
-    return resultLength / (getTotalFirstVisits(siteid).size + resultLength);
+    return runQuery(options).then(function (results) {
+        return module.exports.getTotalFirstVisits(siteid).then((results2) => {return (results[0].visits / (results2[0].visits + results[0].visits)) * 100});
+    });
+
 }
 
 module.exports.getEngagementRate = function(siteid) {
     var sqlQuery =
-        "SELECT AVG(max - min) as avg " +
+        "SELECT AVG(max - min) / 60000000 as avg " +
         "FROM (SELECT SessionID, MAX(Time) as max, MIN(Time) as min " +
               "FROM [simbla-analytics:test_dataset.pages] " +
               "WHERE SiteID = '" + siteid + "' " +
-              "GROUP BY SessionID ";
+              "GROUP BY SessionID) ";
 
     const options = {
         query: sqlQuery,
@@ -276,6 +300,18 @@ module.exports.getVisitsCountBySocialReferr = function(siteid) {
     return runQuery(options);
 }
 
+module.exports.getAllPointsOfSite = function (siteid) {
+    var sqlQuery = "SELECT X as x,Y as y, COUNT(x) as value" +
+        " FROM test_dataset.click_heatmap WHERE SiteID= '"+siteid+
+        "' GROUP BY x,y LIMIT 10000;";           //Limited to 10000 points.
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options);
+}
+
 
 function runQuery(options)
 {
@@ -286,3 +322,4 @@ function runQuery(options)
             return rows;
         });
 }
+

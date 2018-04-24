@@ -1,18 +1,18 @@
 
-
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var cookieSession = require('cookie-session')
+var cookieSession = require('cookie-session');
 
 var index = require('./routes/index');
 var visit = require('./routes/visit');
 var dashboard = require('./routes/dashboard');
+var heatmapRoute = require('./routes/heatmap');
 var app = express();
-
+const uuidv1 = require('uuid/v1');
 
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
@@ -35,6 +35,11 @@ app.use(function (req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '132.73.211.205');
     res.setHeader('Access-Control-Allow-Credentials', true);
     // Pass to next layer of middleware
+
+    var sessionId = uuidv1();
+    if(!req.session.id)
+        req.session.id = sessionId;
+
     next();
 
 });
@@ -50,6 +55,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/visit', visit);
 app.use('/dashboard',dashboard);
+app.use('/heatmap',heatmapRoute);
 app.get('/visitEvent' , visit.sse.init);
 
 // catch 404 and forward to error handler

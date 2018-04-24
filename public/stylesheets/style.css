@@ -1,34 +1,61 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 12px "Lucida Grande", Helvetica, Arial, sans-serif;
   background : #300032;
-  color: #e6e6e8;
+  color: black;
   font-family: "Arial Rounded MT Bold";
 }
 
+@font-face {
+  font-family: abelFont;
+  src: url(abel-regular.ttf);
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+h2{
+  font: 25px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+h3{
+  font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+div .jqvmap-zoomin, div .jqvmap-zoomout{
+  padding: 0px;
+}
+.w3-bar-block .w3-bar-item
+{
+  color: black;
+}
 #MainHeader
 {
-  margin-top: -40px;
   font-family: Arbutus;
-  color: #300032;
+  color: black;
 }
 a {
   color: #00B7FF;
 }
 
-.header{
-}
+
 
 .countryEntry
 {
   list-style-type: none;
+
 }
 
+
+
 .flag {
-  padding-left: 30px;
-  padding-right: 100px;
   height: 10px;
   width: 20px;
+
 }
 
 #vmap{
@@ -42,24 +69,32 @@ a {
   float: left;
   width: 65%;
   overflow: hidden;
+  padding-left: 10%
 }
 
 .right {
   overflow: hidden;
+  padding-right: 10%
 }
 .Wrapper
 {
   margin-left: 70px;
-
 }
 
-
-.myNav{
-  background: #c43235;
-
-}
-
-.Wrapper3
+.google-visualization-table-table
 {
-  margin-top: 50px;
+  color: black;
 }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  padding-left: 10%;
+}
+.grid-item {
+  padding: 10px;
+  font-size: 15px;
+  text-align: center;
+}
+
+
