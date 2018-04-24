@@ -349,6 +349,12 @@ function getRefererList()
     xhr.send(params);
 }
 
+function getHeatmap()
+{
+    window.open('heatmap?siteId='+getSiteId());
+}
+
+
 
 function MenuItemClicked(but) {
     var graph = but.getAttribute("data-graph");
@@ -356,7 +362,6 @@ function MenuItemClicked(but) {
         but.style.textDecoration = "none";
         but.value = 1
         addGraph(graph);
-
     }
     else {
         but.style.textDecoration = "line-through";
@@ -378,6 +383,9 @@ function addGraph(item)
             break;
         case 'Referr_table_div':
             getRefererList();
+            break;
+        case 'Heatmap':
+            getHeatmap();
             break;
         default:
             break;

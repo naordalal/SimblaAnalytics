@@ -1,31 +1,16 @@
 $(document).ready(function () {
 
-    element = document.querySelector('.heatmap')
+    element = document.querySelector('.heatmapd922f01521180610c5e000ed93d40af2')
     var heatmapInstance = h337.create({
         // only container is required, the rest will be defaults
         container: element
     });
 
-// now generate some random data
-    var points = [];
-    var max = 0;
-    var width = element.offsetWidth;
-    var height = element.offsetHeight;
-    var len = 200;
-
-    while (len--) {
-        var val = Math.floor(Math.random() * 100);
-        max = Math.max(max, val);
-        var point = {
-            x: Math.floor(Math.random() * width),
-            y: Math.floor(Math.random() * height),
-            value: val
-        };
-        points.push(point);
-    }
 // heatmap data format
+    var points = window.points;
+    var max = Math.max(...points.map(p => p.value));
     var data = {
-        max: max,
+        max : max,
         data: points
     };
 // if you have a set of datapoints always use setData instead of addData

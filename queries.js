@@ -301,9 +301,9 @@ module.exports.getVisitsCountBySocialReferr = function(siteid) {
 }
 
 module.exports.getAllPointsOfSite = function (siteid) {
-    var sqlQuery = "SELECT X,Y" +
+    var sqlQuery = "SELECT X as x,Y as y, COUNT(x) as value" +
         " FROM test_dataset.click_heatmap WHERE SiteID= '"+siteid+
-        "' LIMIT 10000;";           //Limited to 10000 points.
+        "' GROUP BY x,y LIMIT 10000;";           //Limited to 10000 points.
     const options = {
         query: sqlQuery,
         useLegacySql: false, // Use standard SQL syntax for queries.

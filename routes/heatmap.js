@@ -3,8 +3,6 @@ var router = express.Router();
 var bigquery = require('../queries');
 
 
-
-
 router.route('/').post(function(req, res, next) {
     var siteId = req.body.siteId;
     var X = req.body.X;
@@ -16,4 +14,5 @@ router.route('/').post(function(req, res, next) {
 
 
 module.exports = router;
+
 
