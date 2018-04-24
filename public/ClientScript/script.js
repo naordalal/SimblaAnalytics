@@ -20,14 +20,16 @@ var $ ;
 var visitSite = function() {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',"http://132.73.211.244:3000/visit",true); //TODO : Change URL.
+    xhr.open('POST',"http://localhost:3000/visit",true); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     var siteId = getSiteId();
+    var pageId = getPageId();
     var referrer  = document.referrer;
     if(siteId != null)
     {
         var params = "siteId=" + siteId;
+        params += "&pageId=" + pageId;
         params += "&referrer="+extractRootDomain(referrer);
         params += "&os="+getOs();
         xhr.send(params);
@@ -92,7 +94,25 @@ function getSiteId()
     return siteId;
 }
 
-//Extracting the host name from a url to get the domain (facebook.com)
+
+
+function getPageId()
+{
+    var elements = document.getElementsByName("page-source");
+    var pageId = null;
+    for (var i = 0; i < elements.length; ++i)
+    {
+        var elem = elements[i];
+        if(elem.tagName == 'META')
+        {
+            pageId = elem.getAttribute("page");
+            break;
+        }
+    }
+
+    return pageId;
+}
+
 function extractHostname(url) {
     var hostname;
     //find & remove protocol (http, ftp, etc.) and get hostname

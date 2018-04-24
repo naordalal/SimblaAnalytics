@@ -22,11 +22,11 @@ router.route('/').post(function(req, res, next) {
     console.log("New entrance with post");
     console.log(req.ip);
     var siteId = req.body.siteId;
+    var page= req.body.page;
     var referrer = req.body.referrer;
     var os = req.body.os;
     //var siteURL = req.body.siteURL;
     var siteURL = "4";
-    
 
     var firstVisit = false;
     if(req.cookies.visited != 'true') //Check if visited before.
@@ -51,13 +51,13 @@ router.route('/').post(function(req, res, next) {
         sse.send(1, "NewVisit/" + siteId , null);
     }
 
-
+    bigquery.insertPage(siteId,req.session.id ,page ,new Date());
     req.session.first = true;
     req.session.siteId = siteId;
 
-    //update the dashboard in realTime.
-
-    res.cookie('visited', 'true').send("set cookie");
+    var nowDate = new Date();
+    nowDate.setFullYear(nowDate.getFullYear() + 1);
+    res.cookie('visited', 'true' , { expires: nowDate}).send("set cookie");
 });
 
 
@@ -74,4 +74,21 @@ module.exports.getFirstVisits = function (siteId) {
     })
 };
 
+module.exports.getBounceRate = function (siteId) {
+    return bigquery.getBounceRate(siteId).then(function (result) {
+        return result;
+    })
+};
+
+module.exports.getRecencyRate = function (siteId) {
+    return bigquery.getRecencyRate(siteId).then(function (result) {
+        return result;
+    })
+};
+
+module.exports.getEngagementRate = function (siteId) {
+    return bigquery.getEngagementRate(siteId).then(function (result) {
+        return result;
+    })
+};
 module.exports.sse = sse;

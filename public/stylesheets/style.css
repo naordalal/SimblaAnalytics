@@ -1,8 +1,22 @@
 body {
-  font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 50px;
+  font: 12px "Lucida Grande", Helvetica, Arial, sans-serif;
   background : #300032;
-  color: #e6e6e8;
+  color: black;
   font-family: "Arial Rounded MT Bold";
+}
+
+@font-face {
+  font-family: abelFont;
+  src: url(abel-regular.ttf);
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
 }
 
 h2{
@@ -21,9 +35,8 @@ div .jqvmap-zoomin, div .jqvmap-zoomout{
 }
 #MainHeader
 {
-  margin-left: 36%;
   font-family: Arbutus;
-  color: #300032;
+  color: black;
 }
 a {
   color: #00B7FF;
@@ -56,10 +69,12 @@ a {
   float: left;
   width: 65%;
   overflow: hidden;
+  padding-left: 10%
 }
 
 .right {
   overflow: hidden;
+  padding-right: 10%
 }
 .Wrapper
 {
@@ -78,7 +93,7 @@ a {
 }
 .grid-item {
   padding: 10px;
-  font-size: 30px;
+  font-size: 15px;
   text-align: center;
 }
 

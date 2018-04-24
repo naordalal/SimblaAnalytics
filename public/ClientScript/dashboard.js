@@ -274,9 +274,10 @@ function drawLineChart() {
         var options = {
             chart: {
                 title: 'Visits per hour',
+                titleTextStyle : {bold : true}
             },
             backgroundColor:'transparent',
-            titleTextStyle:{ fontSize : 15, color: "#e6e6e8"}
+            titleTextStyle:{ fontSize : 15, color: "black"}
 
         };
         addDiv('linechart_material');
@@ -293,8 +294,8 @@ function drawPieChart() {
         var options = {
             title: 'OS Distribution',
             backgroundColor:"transparent",
-            legend :{ alignment:'center', textStyle: {fontSize : 12, color: "#e6e6e8"}},
-            titleTextStyle:{ fontSize : 15, color: "#e6e6e8"},
+            legend :{ alignment:'center', textStyle: {fontSize : 12, color: "black"}},
+            titleTextStyle:{ fontSize : 15, color: "black"},
             chartArea:{width:'100%',height:'75%'}
         };
 
@@ -333,16 +334,97 @@ function getRefererList()
     xhr.open('POST',"/dashboard/ReferrList",true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.responseType = "json";
-    var data = new google.visualization.DataTable();
+    /*var data = new google.visualization.DataTable();
     data.addColumn('string','Referrer');
-    data.addColumn('number','Visits');
+    data.addColumn('number','Visits');*/
+    var container = document.getElementById('graphsGrid');
+    var table = document.createElement('table');
+    table.setAttribute("id","Referr_table_div");
+    table.setAttribute('class','grid-item');
+    table.setAttribute('style',"width: 95%; height: 100%;");
+    var entry = document.createElement('tr');
+    var referrerTh = document.createElement('th');
+    var visitsTh = document.createElement('th');
+
+    referrerTh.innerText = "Referrer";
+    visitsTh.innerText = "Visits";
+
+    entry.appendChild(referrerTh);
+    entry.appendChild(visitsTh);
+    table.appendChild(entry);
     xhr.onload = function (e)
     {
         var list = xhr.response;
-        data.addRows(list.map(x => [x.Referr, x.visits]));
+        console.log(list)
+        /*data.addRows(list.map(x => [x.Referr, x.visits]));
         addDiv('Referr_table_div');
         var table = new google.visualization.Table(document.getElementById('Referr_table_div'));
-        table.draw(data, {width: '100%', height: '100%'});
+        table.draw(data, {width: '100%', height: '100%'});*/
+        list.forEach(item =>
+        {
+            var entry = document.createElement('tr');
+            var referrerTd = document.createElement('td');
+            var visitsTd = document.createElement('td');
+            referrerTd.innerText = item.Referr;
+            visitsTd.innerText = item.visits;
+            entry.appendChild(referrerTd);
+            entry.appendChild(visitsTd);
+            table.appendChild(entry);
+        });
+
+        container.appendChild(table);
+    }
+
+    var params = "siteId=" + getSiteId();
+    xhr.send(params);
+}
+
+function getPageViews()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST',"/dashboard/pageViews",true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.responseType = "json";
+    /*var data = new google.visualization.DataTable();
+    data.addColumn('string','Referrer');
+    data.addColumn('number','Visits');*/
+    var container = document.getElementById('graphsGrid');
+    var table = document.createElement('table');
+    table.setAttribute("id","pageViews");
+    table.setAttribute('class','grid-item');
+    table.setAttribute('style',"width: 95% ; height: 100%;");
+    var entry = document.createElement('tr');
+    var pageTh = document.createElement('th');
+    var visitsTh = document.createElement('th');
+
+    pageTh.innerText = "Page";
+    visitsTh.innerText = "Visits";
+
+    entry.appendChild(pageTh);
+    entry.appendChild(visitsTh);
+    table.appendChild(entry);
+    xhr.onload = function (e)
+    {
+        var list = xhr.response;
+        console.log(list)
+        /*data.addRows(list.map(x => [x.Referr, x.visits]));
+        addDiv('Referr_table_div');
+        var table = new google.visualization.Table(document.getElementById('Referr_table_div'));
+        table.draw(data, {width: '100%', height: '100%'});*/
+        list.forEach(item =>
+        {
+            var entry = document.createElement('tr');
+            var pageTd = document.createElement('td');
+            var visitsTd = document.createElement('td');
+            pageTd.innerText = item.PageID;
+            visitsTd.innerText = item.popularity;
+            entry.appendChild(pageTd);
+            entry.appendChild(visitsTd);
+            table.appendChild(entry);
+        });
+
+        container.appendChild(table);
     }
 
     var params = "siteId=" + getSiteId();
@@ -386,6 +468,9 @@ function addGraph(item)
             break;
         case 'Heatmap':
             getHeatmap();
+            break;
+        case 'pageViews':
+            getPageViews();
             break;
         default:
             break;

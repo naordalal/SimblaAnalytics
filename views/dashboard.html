@@ -4,18 +4,19 @@
 <html>
 	<head>
 		<title>dashboard</title>
-
+		<script src="/jquery-3.2.1.min.js"></script>
 		<link rel="stylesheet" href="/stylesheets/style.css">
-		<link rel="stylesheet" href="/stylesheets/KorenMenu.css">
+
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 		<link href='https://fonts.googleapis.com/css?family=Arbutus' rel='stylesheet'>
-    	<script src="/jquery-3.2.1.min.js"></script>
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 
+		<link rel="stylesheet" href="/stylesheets/KorenMenu.css">
 		<!-- Graph script -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
 		<!-- map scripts -->
 		<link href="../dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css">
@@ -42,6 +43,7 @@
 				<li><button class="buttonMenu" value="0" data-graph="linechart_material" onclick="MenuItemClicked(this)"> Last day visits </button></li>
 				<li><button class="buttonMenu" value="0" data-graph="Referr_table_div" onclick="MenuItemClicked(this)"> Referrers </button></li>
 				<li><button class="buttonMenu" value="0" data-graph="Heatmap" onclick="MenuItemClicked(this)"> Heatmap </button></li>
+				<li><button class="buttonMenu" value="0" data-graph="pageViews" onclick="MenuItemClicked(this)"> Pages visits </button></li>
 				<li><button class="buttonMenu" value="0" data-graph="" onclick="MenuItemClicked(this)"> Menu Item </button></li>
 			</ul>
 		</div>
@@ -54,29 +56,32 @@
 	</div>
 
 
-        <div id="main">
+	<div id="main">
 
             <div class="w3-teal">
-
                 <div class="w3-container">
-                    <h1 id="MainHeader" class="header">Simbla Dashboard</h1>
                 </div>
             </div>
 
 
-
+		<center>
+		<h1 id="MainHeader" class="header" style="font-weight:bold; font-size:200px; font-family: abelFont;">DASHBOARD</h1>
+		</center>
 
 		<meta name="page-source" site-id= <%=siteId%>>
 
 
 		<div class="Wrapper">
 			<div class="left">
-				<h4 class="header">Visits</h4>
-				<h3 id="numVisits">Number of Visits: <%=visits%></h3>
-				<h3 id="numFirstVisits">First Visits:  <%=firstVisits%></h3>
+				<h3 class="header" style="font-weight: bold">Statistics:</h3>
+				<h4 id="numVisits">Number of Visits: <%=visits%></h4>
+				<h4 id="numFirstVisits">First Visits:  <%=firstVisits%></h4>
+				<h4 id="bounceRate">Bounce rate:  <%=bounceRate%>%</h4>
+				<h4 id="engagementRate">Engagement rate:  <%=engagementRate%> minutes</h4>
+				<h4 id="recencyRate">Recency rate:  <%=recencyRate%>%</h4>
 			</div>
 			<div class="right">
-				<h4 class="header">Countries</h4>
+				<h3 class="header" style="font-weight: bold">Countries:</h3>
      			<!-- <div id="countries"></div>-->
 				<table id="countries" class="w3-table w3-bordered">
 					<tr>
@@ -89,7 +94,12 @@
 		</div>
 
 		<center>
+			<br>
+			<br>
             <div id="vmap" style="width: 600px; height: 400px;"></div>
+
+
+
     <!--        <div class="Wrapper2">
                 <div class="chart-container" style="position: relative; height:40vh; width:80vw">
                     <canvas id="myChart"></canvas>
