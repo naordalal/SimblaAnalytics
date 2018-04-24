@@ -5,11 +5,12 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var cookieSession = require('cookie-session')
+var cookieSession = require('cookie-session');
 
 var index = require('./routes/index');
 var visit = require('./routes/visit');
 var dashboard = require('./routes/dashboard');
+var heatmapRoute = require('./routes/heatmap');
 var app = express();
 const uuidv1 = require('uuid/v1');
 
@@ -54,6 +55,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/visit', visit);
 app.use('/dashboard',dashboard);
+app.use('/heatmap',heatmapRoute);
 app.get('/visitEvent' , visit.sse.init);
 
 // catch 404 and forward to error handler

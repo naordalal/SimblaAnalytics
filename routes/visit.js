@@ -65,7 +65,6 @@ module.exports = router;
 module.exports.getVisits = function (siteId) {
 
    return bigquery.getTotalVisits(siteId).then(function (result) {
-       console.log(result[0])
        return result;
    })
 };

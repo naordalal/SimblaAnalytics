@@ -1,4 +1,5 @@
 var $ ;
+
 (function() { //Load JQuery because Simbla's sites do not load it.
     // Load the script
     var script = document.createElement("SCRIPT");
@@ -7,11 +8,15 @@ var $ ;
     script.onload = function() {
         $ = window.jQuery;
         $(document).ready(visitSite());
+
     };
     document.getElementsByTagName("head")[0].appendChild(script);
 })();
 
 
+
+
+//Notify the server about visits
 var visitSite = function() {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
@@ -31,6 +36,47 @@ var visitSite = function() {
     }
 };
 
+var locations = []; //To use later for sending amount of points instead of one point at a time.
+
+//Send mouse location
+var sendMouseLoc = function (event) {
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST',"http://192.168.0.102:3000/heatmap",true); //TODO : Change URL.
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    console.log(event.clientX+","+event.clientY)
+    var siteId = getSiteId();
+    if(siteId != null)
+    {
+
+       // locations.push({X: event.clientX , Y: event.clientY});
+
+        var params = "siteId=" + siteId;
+        params += "&X="+event.clientX;
+        params += "&Y="+event.clientY;
+        console.log(params);
+        xhr.send(params);
+
+    }
+}
+
+//For now only for clicks
+document.onclick=sendMouseLoc;
+
+
+/* Sending collection of points instead of one at a time.
+var sendMouseLoc = function()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST',"http://132.73.211.244:3000/heatmap",true); //TODO : Change URL.
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    xhr.send({siteId:getSiteId(),locations:locations});
+}*/
+
+//Scrapping the siteID from the site.
 function getSiteId()
 {
     var elements = document.getElementsByName("page-source");
@@ -48,6 +94,8 @@ function getSiteId()
     return siteId;
 }
 
+
+
 function getPageId()
 {
     var elements = document.getElementsByName("page-source");
@@ -64,7 +112,6 @@ function getPageId()
 
     return pageId;
 }
-
 
 function extractHostname(url) {
     var hostname;
@@ -103,6 +150,7 @@ function extractRootDomain(url) {
     return domain;
 }
 
+//get the operating system of the visitor.
 function getOs()
 {
     var OSName="Unknown OS";
