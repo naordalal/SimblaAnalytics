@@ -25,8 +25,7 @@ router.route('/').post(function(req, res, next) {
     var page= req.body.page;
     var referrer = req.body.referrer;
     var os = req.body.os;
-    //var siteURL = req.body.siteURL;
-    var siteURL = "4";
+    var siteURL = req.body.siteURL;
 
     var firstVisit = false;
     if(req.cookies.visited != 'true') //Check if visited before.

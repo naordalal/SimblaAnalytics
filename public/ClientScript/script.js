@@ -32,6 +32,7 @@ var visitSite = function() {
         params += "&pageId=" + pageId;
         params += "&referrer="+extractRootDomain(referrer);
         params += "&os="+getOs();
+        params += "&siteURL="+document.URL;
         xhr.send(params);
     }
 };
@@ -49,7 +50,6 @@ var sendMouseLoc = function (event) {
     var siteId = getSiteId();
     if(siteId != null)
     {
-
        // locations.push({X: event.clientX , Y: event.clientY});
 
         var params = "siteId=" + siteId;
