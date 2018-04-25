@@ -62,12 +62,11 @@ function appendTheURL(dom,url)
     images = dom.getElementsByTagName('image')
 
 
-    console.log(scripts.length)
+    
     for(let i = scripts.length-1 ; i >= 0; i--)
     {
         var script = scripts[i];
-        console.log(script.outerHTML)
-
+        
         var q = undefined;
         if(script.getAttribute('src') != null) {
             q = URL.parse(script.getAttribute('src'));
