@@ -346,6 +346,23 @@ module.exports.getSiteScrollingPercentage = function(siteid) {
 }
 
 
+
+//The url are returned with their amount of visits.
+module.exports.getURLsBySiteId = function (siteid) {
+    var sqlQuery = "SELECT SiteURL AS url , COUNT(SiteURL) AS quantity"+
+        " FROM test_dataset.visits"+
+        " WHERE SiteId = '"+siteid+"'"+
+        " GROUP BY url" +
+        " LIMIT 1500";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options);
+}
+
+
 var test =function () {
     var sqlQuery = "SELECT *" +
         " FROM test_dataset.click_heatmap "//Limited to 10000 points.

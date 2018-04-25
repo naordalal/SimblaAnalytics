@@ -12,7 +12,12 @@ router.get('/heatmap',async function (req,res,next) {
 
     var siteId = req.query.siteId;
     //Get points from bigquery
-    var url = 'http://sites.simbla.com/ab7b6963-84fa-0f41-a77f-3c8062dfd1d2/';
+
+    var url = await getURLFromSiteId(siteId);
+    if(!url) {
+        res.send('URL not found!')
+        return;
+    }
     var promise = getHtml(url);
     var points = await bigquery.getAllPointsOfSite(siteId);
     promise.then((dom)=>
@@ -66,7 +71,7 @@ function appendTheURL(dom,url)
     for(let i = scripts.length-1 ; i >= 0; i--)
     {
         var script = scripts[i];
-        
+
         var q = undefined;
         if(script.getAttribute('src') != null) {
             q = URL.parse(script.getAttribute('src'));
@@ -208,6 +213,19 @@ function getHtml(url)
 {
     return rp(url);
 }
+
+
+//I want to be sure that the url is valid and it is the most common url
+async function getURLFromSiteId(siteId)
+{
+    var json = await bigquery.getURLsBySiteId(siteId);
+    var json = json.filter(obj => extractURL(obj.url).includes('http'));
+    if (json.length == 0)
+        return false;
+    if(json.length == 1)
+        return json[0].url;
+    return json.sort((a,b) => {return  a.quantity - b.quantity;})[0].url;
+}
 /*
 getHtml('https://www.escaperoomin.com').then((html)=>
 {
@@ -216,6 +234,5 @@ getHtml('https://www.escaperoomin.com').then((html)=>
     console.log(dom.window.document.documentElement.outerHTML);
 })
 */
-
 
 
