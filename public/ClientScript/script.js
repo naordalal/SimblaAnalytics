@@ -1,5 +1,8 @@
 var findMe = '87f2f749d683945ddcf25ec6a473b9bc';
 const serverURL = "http://localhost:3000";
+
+var maxScrollPercentage = 0;
+
 /*
 if(0)
 {//Load JQuery because Simbla's sites do not load it.
@@ -43,6 +46,33 @@ window.onload = function() {
         xhr.send(params);
     }
 };
+
+window.onscroll = function() {
+    var scrollPercentage = window.scrollY / (document.documentElement.scrollHeight - document.body.clientHeight) * 100;
+
+    if(maxScrollPercentage < scrollPercentage)
+        maxScrollPercentage = scrollPercentage;
+}
+
+window.beforeunload = function() {
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST',serverURL+"/scrolling",true); //TODO : Change URL.
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    var siteId = getSiteId();
+    var pageId = getPageId();
+
+    if(siteId != null && pageId != null)
+    {
+        var params = "siteId=" + siteId;
+        params += "&pageId=" + pageId;
+        params += "&scroll=" + maxScrollPercentage;
+        xhr.send(params);
+    }
+}
+
+
 
 var locations = []; //To use later for sending amount of points instead of one point at a time.
 

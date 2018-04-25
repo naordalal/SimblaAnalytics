@@ -313,6 +313,39 @@ module.exports.getAllPointsOfSite = function (siteid) {
     return runQuery(options);
 }
 
+
+module.exports.insertScrollPercentage = function (siteid ,pageid ,scroll ,time) {
+    bigquery
+        .dataset(datasetId)
+        .table("scrolls")
+        .insert([{SiteID: siteid, PageID: pageid, Scroll: scroll, Time: time}])
+        .then(() => {
+            console.log(`new scroll inserted`);
+        })
+        .catch(err => {
+            if (err && err.name === 'PartialFailureError') {
+                if (err.errors && err.errors.length > 0) {
+                    console.log('scroll insert errors:');
+                    err.errors.forEach(err => console.error(err));
+                }
+            } else {
+                console.error('ERROR:', err);
+            }
+        });
+}
+
+module.exports.getSiteScrollingPercentage = function(siteid) {
+    var sqlQuery = "SELECT PageID, AVG(scroll) as scroll " +
+        "FROM test_dataset.scrolls WHERE SiteID = '" + siteid +
+        "' GROUP BY PageID;";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+
 var test =function () {
     var sqlQuery = "SELECT *" +
         " FROM test_dataset.click_heatmap "//Limited to 10000 points.
