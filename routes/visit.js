@@ -19,10 +19,8 @@ Bounce rate(percentages of users that leaved from the first page))
 
 
 router.route('/').post(function(req, res, next) {
-    console.log("New entrance with post");
-    console.log(req.ip);
     var siteId = req.body.siteId;
-    var page= req.body.page;
+    var page= req.body.pageId;
     var referrer = req.body.referrer;
     var os = req.body.os;
     var siteURL = req.body.siteURL;
@@ -43,7 +41,7 @@ router.route('/').post(function(req, res, next) {
     var country = 'Israel';//countries.getName(countryCode);
     //console.log(country);
 
-    console.log(req.session.first);
+
     if(!req.session.first)
     {
         bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os);

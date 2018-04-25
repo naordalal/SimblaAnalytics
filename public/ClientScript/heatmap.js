@@ -1,4 +1,4 @@
-$(document).ready(function () {
+window.onload =  function () {
 
     element = document.querySelector('.heatmapd922f01521180610c5e000ed93d40af2')
     var heatmapInstance = h337.create({
@@ -17,6 +17,6 @@ $(document).ready(function () {
 // for data initialization
     heatmapInstance.setData(data);
 
-});
+};
 
 

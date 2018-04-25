@@ -306,11 +306,24 @@ module.exports.getAllPointsOfSite = function (siteid) {
         "' GROUP BY x,y LIMIT 10000;";           //Limited to 10000 points.
     const options = {
         query: sqlQuery,
+        useQueryCache : false,
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
 
     return runQuery(options);
 }
+
+var test =function () {
+    var sqlQuery = "SELECT *" +
+        " FROM test_dataset.click_heatmap "//Limited to 10000 points.
+    const options = {
+        query: sqlQuery,
+        useQueryCache : false,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options);
+};
 
 
 function runQuery(options)

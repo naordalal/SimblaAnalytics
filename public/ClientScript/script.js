@@ -1,26 +1,33 @@
-var $ ;
-
-(function() { //Load JQuery because Simbla's sites do not load it.
+var findMe = '87f2f749d683945ddcf25ec6a473b9bc';
+const serverURL = "http://localhost:3000";
+/*
+if(0)
+{//Load JQuery because Simbla's sites do not load it.
     // Load the script
+    var $ ;
     var script = document.createElement("SCRIPT");
     script.src = 'jquery-3.2.1.min.js';
     script.type = 'text/javascript';
+    console.log('no Jquery');
     script.onload = function() {
         $ = window.jQuery;
-        $(document).ready(visitSite());
+        $(document).ready(visitSite);
 
     };
     document.getElementsByTagName("head")[0].appendChild(script);
-})();
+}
+else{
+    console.log('yes jquery');
+    $(document).ready(visitSite);
+}
 
-
-
-
-//Notify the server about visits
-var visitSite = function() {
+*/
+//Notify server about visit
+window.onload = function() {
+    console.log('visit!')
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',"http://localhost:3000/visit",true); //TODO : Change URL.
+    xhr.open('POST',serverURL+"/visit",true); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     var siteId = getSiteId();
@@ -43,18 +50,18 @@ var locations = []; //To use later for sending amount of points instead of one p
 var sendMouseLoc = function (event) {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',"http://192.168.0.102:3000/heatmap",true); //TODO : Change URL.
+    xhr.open('POST',serverURL+"/heatmap",true); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-    console.log(event.clientX+","+event.clientY)
+    console.log(event.pageX+","+event.pageY)
     var siteId = getSiteId();
     if(siteId != null)
     {
-       // locations.push({X: event.clientX , Y: event.clientY});
+        // locations.push({X: event.clientX , Y: event.clientY});
 
         var params = "siteId=" + siteId;
-        params += "&X="+event.clientX;
-        params += "&Y="+event.clientY;
+        params += "&X="+event.pageX;
+        params += "&Y="+event.pageY;
         console.log(params);
         xhr.send(params);
 
