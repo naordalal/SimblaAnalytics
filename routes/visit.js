@@ -26,7 +26,7 @@ router.route('/').post(function(req, res, next) {
     var siteURL = req.body.siteURL;
 
     var firstVisit = false;
-    if(req.cookies.visited != 'true') //Check if visited before.
+    if(req.cookies.visited == undefined || !req.cookies.visited.split("-").includes(siteId)) //Check if visited before.
     {
         //TODO: save as first visit
         firstVisit = true;
@@ -42,19 +42,36 @@ router.route('/').post(function(req, res, next) {
     //console.log(country);
 
 
-    if(!req.session.first)
+    if(req.session.first == undefined)
     {
+
         bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os);
         sse.send(1, "NewVisit/" + siteId , null);
+        req.session.first = siteId +'';
+    }
+    else
+    {
+        var includeSiteId = req.session.first.split("-").includes(siteId);
+        if(!includeSiteId)
+        {
+            bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os);
+            sse.send(1, "NewVisit/" + siteId , null);
+            req.session.first += '-' + siteId;
+        }
     }
 
     bigquery.insertPage(siteId,req.session.id ,page ,new Date());
-    req.session.first = true;
     req.session.siteId = siteId;
 
     var nowDate = new Date();
     nowDate.setFullYear(nowDate.getFullYear() + 1);
-    res.cookie('visited', 'true' , { expires: nowDate}).send("set cookie");
+    var visited = req.cookies.visited;
+    if(visited == undefined)
+        visited = '';
+    if(firstVisit)
+        visited += "-" + siteId;
+
+    res.cookie('visited', visited , { expires: nowDate}).send("set cookie");
 });
 
 
