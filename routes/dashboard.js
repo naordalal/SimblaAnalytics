@@ -1,24 +1,25 @@
 var express = require('express');
 const rp = require('request-promise')
-const http = require('http')
+
+var URL = require('url')
 const  jsdom = require('jsdom')
 const {JSDOM} = jsdom;
 var router = express.Router();
 var bigquery = require('../queries');
 
+//Heatmap route
 router.get('/heatmap',async function (req,res,next) {
 
     var siteId = req.query.siteId;
     //Get points from bigquery
-    var url = 'https://www.escaperoomin.com/'
+    var url = 'http://sites.simbla.com/ab7b6963-84fa-0f41-a77f-3c8062dfd1d2/';
     var promise = getHtml(url);
     var points = await bigquery.getAllPointsOfSite(siteId);
     promise.then((dom)=>
     {
         dom = new JSDOM(dom).window.document
-        //appendTheURL(dom,url);
+        appendTheURL(dom,url);
 
-        dom.body.classList.add('heatmapd922f01521180610c5e000ed93d40af2');
 
         var pointsScript = dom.createElement('script');
         pointsScript.innerHTML='var points = '+ JSON.stringify(points)+';';
@@ -32,46 +33,88 @@ router.get('/heatmap',async function (req,res,next) {
         dom.head.appendChild(pointsScript);
         dom.head.appendChild(script1);
         dom.head.appendChild(script2);
+
+        var div = dom.createElement('div')
+        div.classList.add('heatmapd922f01521180610c5e000ed93d40af2');
+
+// Move the body's children into this wrapper
+        while (dom.body.firstChild)
+        {
+            div.appendChild(dom.body.firstChild);
+        }
+
+// Append the wrapper to the body
+        dom.body.appendChild(div);
         res.send(dom.documentElement.outerHTML);
     });
 
 });
-
+function extractURL(url)
+{
+    var q =URL.parse(url);
+    return q.protocol+'//'+q.host+'/';
+}
 function appendTheURL(dom,url)
 {
+    url = extractURL(url);
     scripts = dom.getElementsByTagName('script');
     styles = dom.getElementsByTagName('link')
     images = dom.getElementsByTagName('image')
 
 
-    for(let i = 0 ; i < scripts.length; i++)
+    console.log(scripts.length)
+    for(let i = scripts.length-1 ; i >= 0; i--)
     {
         var script = scripts[i];
+        console.log(script.outerHTML)
 
-        if(script.getAttribute('src') != null &&script.getAttribute('src').startsWith('/'))
-            if (script.getAttribute('src').startsWith('//'))
-                script.setAttribute('src', url + script.getAttribute('src').substring(2));
-            else
-                script.setAttribute('src', url + script.getAttribute('src').substring(1));
+        var q = undefined;
+        if(script.getAttribute('src') != null) {
+            q = URL.parse(script.getAttribute('src'));
+
+            if (!q.host)
+                if (script.getAttribute('src').startsWith('//'))
+                    script.setAttribute('src', 'http://' + script.getAttribute('src').substring(2));
+                else
+                    script.setAttribute('src', url + script.getAttribute('src').substring(1));
+
+        }
+
+
+        if (script.innerHTML.includes('87f2f749d683945ddcf25ec6a473b9bc')) {
+            var father = script.parentElement;
+            father.removeChild(script);
+        }
 
     }
     for(let i = 0 ; i < styles.length; i++)
     {
         var style = styles[i];
-
-        if(style.getAttribute('href')!=null && style.getAttribute('href').startsWith('/'))
+        var q = undefined;
+        if(style.getAttribute('href') != null)
+            q = URL.parse(style.getAttribute('href'));
+        else
+            continue;
+        if(!q.host) {
             if (style.getAttribute('href').startsWith('//'))
-                style.setAttribute('href', url + style.getAttribute('href').substring(2));
+                style.setAttribute('href', 'http://' + style.getAttribute('href').substring(2));
             else
                 style.setAttribute('href', url + style.getAttribute('href').substring(1));
+        }
+
     }
 
     for(let i = 0 ; i < images.length; i++)
     {
         var img = images[i];
-        if(img.getAttribute('src') != null && img.getAttribute('src').startsWith('/'))
+        var q = undefined;
+        if(img.getAttribute('src') != null)
+            q = URL.parse(img.getAttribute('src'));
+        else
+            continue;
+        if(!q.host)
             if (img.getAttribute('src').startsWith('//'))
-                img.setAttribute('src', url + img.getAttribute('src').substring(2));
+                img.setAttribute('src', 'http://' + img.getAttribute('src').substring(2));
             else
                 img.setAttribute('src', url + img.getAttribute('src').substring(1));
     }
