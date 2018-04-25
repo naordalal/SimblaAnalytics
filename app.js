@@ -11,6 +11,7 @@ var index = require('./routes/index');
 var visit = require('./routes/visit');
 var dashboard = require('./routes/dashboard');
 var heatmapRoute = require('./routes/heatmap');
+var scroll = require('./routes/scrolling');
 var app = express();
 const uuidv1 = require('uuid/v1');
 
@@ -56,6 +57,7 @@ app.use('/', index);
 app.use('/visit', visit);
 app.use('/dashboard',dashboard);
 app.use('/heatmap',heatmapRoute);
+app.use('/scrolling', scroll);
 app.get('/visitEvent' , visit.sse.init);
 
 // catch 404 and forward to error handler
