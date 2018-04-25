@@ -223,12 +223,18 @@ function getHtml(url)
 async function getURLFromSiteId(siteId)
 {
     var json = await bigquery.getURLsBySiteId(siteId);
-    var json = json.filter(obj => extractURL(obj.url).includes('http'));
+
+    return getBestURL(json)
+}
+
+function getBestURL(json)
+{
+    json = json.filter(obj => extractURL(obj.url).includes('http'));
     if (json.length == 0)
         return false;
     if(json.length == 1)
         return json[0].url;
-    return json.sort((a,b) => {return  a.quantity - b.quantity;})[0].url;
+    return json.sort((a,b) => {return  b.quantity - a.quantity;})[0].url;
 }
 /*
 getHtml('https://www.escaperoomin.com').then((html)=>
@@ -240,3 +246,6 @@ getHtml('https://www.escaperoomin.com').then((html)=>
 */
 
 
+//module.exports = {
+   // getBestURL : getBestURL,
+//};
