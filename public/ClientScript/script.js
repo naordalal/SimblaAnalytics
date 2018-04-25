@@ -1,4 +1,5 @@
 var findMe = '87f2f749d683945ddcf25ec6a473b9bc';
+var timerStart = Date.now();
 const serverURL = "http://localhost:3000";
 
 var maxScrollPercentage = 0;
@@ -27,6 +28,7 @@ else{
 */
 //Notify server about visit
 window.onload = function() {
+    var loadTime = Date.now() - timerStart;
     console.log('visit!')
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
@@ -43,6 +45,7 @@ window.onload = function() {
         params += "&referrer="+extractRootDomain(referrer);
         params += "&os="+getOs();
         params += "&siteURL="+document.URL;
+        params += "&loadTime="+loadTime;
         xhr.send(params);
     }
 

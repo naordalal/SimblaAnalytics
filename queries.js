@@ -73,12 +73,12 @@ module.exports.insertMouseLoc = function (siteId, X, Y) {
             }
         });
 }
-module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit, referr, os) {
+module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit, referr, os,loadTime) {
     bigquery
         .dataset(datasetId)
         .table("visits")
         .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit,
-                    Referr: referr, Os:os}])
+                    Referr: referr, Os:os ,LoadTime: loadTime}])
         .then(() => {
             console.log(`Inserted`);
         })
@@ -251,6 +251,18 @@ module.exports.getRecencyRate = function(siteid) {
 
 }
 
+module.exports.getAverageLoadTime = function(siteid)
+{
+    var sqlQuery = "SELECT AVG(LoadTime) as avg " +
+        "FROM test_dataset.visits WHERE SiteID = '" + siteid+"'";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options)
+}
+
 module.exports.getEngagementRate = function(siteid) {
     var sqlQuery =
         "SELECT AVG(max - min) / 60000000 as avg " +
@@ -356,6 +368,7 @@ module.exports.getURLsBySiteId = function (siteid) {
         " LIMIT 1500";
     const options = {
         query: sqlQuery,
+        useQueryCache : false, //Default is True.
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
 

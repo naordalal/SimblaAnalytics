@@ -24,6 +24,7 @@ router.route('/').post(function(req, res, next) {
     var referrer = req.body.referrer;
     var os = req.body.os;
     var siteURL = req.body.siteURL;
+    var loadTime = req.body.loadTime;
 
     var firstVisit = false;
     if(req.cookies.visited == undefined || !req.cookies.visited.split("-").includes(siteId)) //Check if visited before.
@@ -44,17 +45,17 @@ router.route('/').post(function(req, res, next) {
 
     if(req.session.first == undefined)
     {
-
-        bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os);
+        bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os,loadTime);
         sse.send(1, "NewVisit/" + siteId , null);
         req.session.first = siteId +'';
+
     }
     else
     {
         var includeSiteId = req.session.first.split("-").includes(siteId);
         if(!includeSiteId)
         {
-            bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os);
+            bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os,loadTime);
             sse.send(1, "NewVisit/" + siteId , null);
             req.session.first += '-' + siteId;
         }
@@ -121,6 +122,12 @@ module.exports.getRecencyRate = function (siteId) {
 
 module.exports.getEngagementRate = function (siteId) {
     return bigquery.getEngagementRate(siteId).then(function (result) {
+        return result;
+    })
+};
+
+module.exports.getAverageLoadTime = function (siteId) {
+    return bigquery.getAverageLoadTime(siteId).then(function (result) {
         return result;
     })
 };
