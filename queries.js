@@ -253,10 +253,11 @@ module.exports.getRecencyRate = function(siteid) {
 
 module.exports.getAverageLoadTime = function(siteid)
 {
-    var sqlQuery = "SELECT AVG(LoadTime) as avg " +
+    var sqlQuery = "SELECT AVG(LoadTime) AS avg " +
         "FROM test_dataset.visits WHERE SiteID = '" + siteid+"'";
     const options = {
         query: sqlQuery,
+        useQueryCache : false,
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
 
