@@ -79,8 +79,10 @@ function appendTheURL(dom,url)
             if (!q.host)
                 if (script.getAttribute('src').startsWith('//'))
                     script.setAttribute('src', 'http://' + script.getAttribute('src').substring(2));
-                else
+                else if(script.getAttribute('src').startsWith('/'))
                     script.setAttribute('src', url + script.getAttribute('src').substring(1));
+                else
+                    script.setAttribute('src', url + script.getAttribute('src'));
 
         }
 
@@ -102,8 +104,10 @@ function appendTheURL(dom,url)
         if(!q.host) {
             if (style.getAttribute('href').startsWith('//'))
                 style.setAttribute('href', 'http://' + style.getAttribute('href').substring(2));
-            else
+            else if(style.getAttribute('href').startsWith('/'))
                 style.setAttribute('href', url + style.getAttribute('href').substring(1));
+            else
+                style.setAttribute('href', url + style.getAttribute('href'));
         }
 
     }
@@ -119,30 +123,33 @@ function appendTheURL(dom,url)
         if(!q.host)
             if (img.getAttribute('src').startsWith('//'))
                 img.setAttribute('src', 'http://' + img.getAttribute('src').substring(2));
-            else
+            else if(img.getAttribute('src').startsWith('/'))
                 img.setAttribute('src', url + img.getAttribute('src').substring(1));
+            else
+                img.setAttribute('src', url + img.getAttribute('src'));
     }
 }
 
 /* GET dashboard page. */
-router.get('/:siteId', function(req, res, next) {
+router.get('/:siteId', async function(req, res, next) {
+    var visits,firstVisits,bounceRate,engaRate,recencyRate,loadTime;
     //res.render('index', { title: 'Visits: '+require('./users').getVisits()});
-    require('./visit').getVisits(req.params.siteId).then(res1 =>{
-        require('./visit').getFirstVisits(req.params.siteId).then(res2 =>{
-            require('./visit').getBounceRate(req.params.siteId).then(res3 =>{
-                require('./visit').getEngagementRate(req.params.siteId).then(res4 =>{
-                    require('./visit').getRecencyRate(req.params.siteId).then(res5 =>{
-                        require('./visit').getAverageLoadTime(req.params.siteId).then(res6=>{
-                            console.log(res6[0])
-                            res.render('dashboard', {visits : res1[0].visits , firstVisits : res2[0].visits, bounceRate : res3,
-                                engagementRate: res4[0].avg, recencyRate : res5/*[0].visits*/,
-                                loadTime : res6[0].avg , siteId : req.params.siteId});
-                        });
-                    });
-                });
-            });
-        });
-    });
+    var visits = require('./visit').getVisits(req.params.siteId);
+    var firstVisits = require('./visit').getFirstVisits(req.params.siteId);
+    var bounceRate = require('./visit').getBounceRate(req.params.siteId);
+    var engaRate = require('./visit').getEngagementRate(req.params.siteId);
+    var recencyRate = require('./visit').getRecencyRate(req.params.siteId);
+    var loadTime = require('./visit').getAverageLoadTime(req.params.siteId);
+
+    visits = await visits;
+    firstVisits = await firstVisits;
+    bounceRate = await bounceRate;
+    engaRate = await engaRate;
+    recencyRate = await recencyRate;
+    loadTime = await loadTime;
+    res.render('dashboard', {visits : visits[0].visits , firstVisits : firstVisits[0].visits, bounceRate : bounceRate,
+        engagementRate: engaRate[0].avg, recencyRate : recencyRate/*[0].visits*/,
+        loadTime : loadTime[0].avg , siteId : req.params.siteId});
     //res.render('dashboard', {visits : require('./visit').getVisits(req.params.siteId) , firstVisits : require('./visit').getFirstVisits(req.params.siteId),
     //siteId : req.params.siteId})
 

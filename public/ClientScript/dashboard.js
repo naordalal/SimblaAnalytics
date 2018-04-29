@@ -166,38 +166,6 @@ $(window).load(function(){
         document.getElementById("numFirstVisits").innerText = "First Visits: "+ (number+1);
     });
 
-    /*myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [0],
-            datasets: [{
-                label: '# of Visitors',
-                data: [0],
-                borderColor : "#e6e6e8",
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
-        }
-
-    });
-
-    pieChart =  new Chart(pieCtx,{
-        type: 'pie',
-        data: {
-            labels: [0],
-            datasets: [{
-                label: "OS distribution",
-                data: [0]
-            }]
-        }
-    });*/
     getCountryList();
 
     google.charts.load('current', {'packages':['corechart']});
