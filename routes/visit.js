@@ -3,7 +3,7 @@ var geoip = require('geoip-lite');
 var countries  = require('country-list')();
 var bigquery = require('../queries');
 var router = express.Router();
-
+const uuidv1 = require('uuid/v1');
 
 var SSE = require('express-sse');
 var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
@@ -60,7 +60,26 @@ router.route('/').post(function(req, res, next) {
         }
     }
 
-    bigquery.insertPage(siteId,req.session.id ,page ,new Date());
+    if(req.session.id == undefined)
+    {
+        var sessionId = uuidv1();
+        var json = {}
+        json[siteId] = sessionId;
+        req.session.id = JSON.stringify(json)
+    }
+    else
+    {
+        var sessionId = uuidv1();
+        var sessionJson = JSON.parse(req.session.id);
+        if(!sessionJson.hasOwnProperty(siteId))
+        {
+            sessionJson[siteId] = sessionId;
+        }
+        req.session.id = JSON.stringify(sessionJson);
+    }
+
+    var sessionJson = JSON.parse(req.session.id);
+    bigquery.insertPage(siteId,sessionJson[siteId] ,page ,new Date());
     req.session.siteId = siteId;
 
     var nowDate = new Date();

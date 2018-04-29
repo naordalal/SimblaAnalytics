@@ -12,7 +12,6 @@ var visit = require('./routes/visit');
 var dashboard = require('./routes/dashboard');
 var heatmapRoute = require('./routes/heatmap');
 var app = express();
-const uuidv1 = require('uuid/v1');
 
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
@@ -35,10 +34,6 @@ app.use(function (req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '132.73.211.205');
     res.setHeader('Access-Control-Allow-Credentials', true);
     // Pass to next layer of middleware
-
-    var sessionId = uuidv1();
-    if(!req.session.id)
-        req.session.id = sessionId;
 
     next();
 
