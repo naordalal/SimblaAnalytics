@@ -37,7 +37,28 @@
 		</div>
 		<div class="menu-inner">
 
-			<ul>
+			<ul><!--
+				<li><a class="OptionMenu"> Options:</a></li>
+				<li><label class="container">OS Distribution
+					<input type="checkbox" checked="checked">
+					<span class="checkmark"></span>
+				</label></li>
+				<li><label class="container">Last day visits
+					<input type="checkbox">
+					<span class="checkmark"></span>
+				</label></li>
+				<li><label class="container">Referrers
+					<input type="checkbox">
+					<span class="checkmark"></span>
+				</label></li>
+				<li><label class="container">Heatmap
+					<input type="checkbox">
+					<span class="checkmark"></span>
+				</label></li>
+				<li><label class="container">Pages visits
+					<input type="checkbox">
+					<span class="checkmark"></span>
+				</label></li>-->
 				<li><a class="OptionMenu"> Options:</a></li>
 				<li><button class="buttonMenu" value="0" data-graph="piechart" onclick="MenuItemClicked(this)"> OS Distribution </button></li>
 				<li><button class="buttonMenu" value="0" data-graph="linechart_material" onclick="MenuItemClicked(this)"> Last day visits </button></li>
@@ -73,6 +94,7 @@
 
 		<div class="Wrapper">
 			<div class="left">
+
 				<h3 class="header" style="font-weight: bold">Statistics:</h3>
 				<h4 id="numVisits">Number of Visits: <%=visits%></h4>
 				<h4 id="numFirstVisits">First Visits:  <%=firstVisits%></h4>
