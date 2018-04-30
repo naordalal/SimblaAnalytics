@@ -17,6 +17,7 @@ body{
     padding: 10px;
     position: relative;
     width: 25%;
+    background-color: #5A738E;
 }
 .glyphicon {
     color: white;
@@ -42,16 +43,4 @@ body{
 .value {
     font-size: 28px;
     padding: 0 10px;
-}
-.blue {
-    background-color: #5A738E;
-}
-.green {
-    background-color: #5A738E;
-}
-.orange {
-    background-color: #5A738E;
-}
-.red {
-    background-color: #5A738E;
 }
