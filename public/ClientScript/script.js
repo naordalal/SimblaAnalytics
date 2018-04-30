@@ -33,8 +33,8 @@ window.onload = function() {
     xhr.open('POST',serverURL+"/visit",true); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-    var siteId = getSiteId();
-    var pageId = getPageId();
+    SiteId = getSiteId();
+    PageId = getPageId();
     var referrer  = document.referrer;
     if(siteId != null)
     {
@@ -45,6 +45,7 @@ window.onload = function() {
         params += "&siteURL="+document.URL;
         xhr.send(params);
     }
+
 };
 
 window.onscroll = function() {
@@ -54,24 +55,19 @@ window.onscroll = function() {
         maxScrollPercentage = scrollPercentage;
 }
 
-window.beforeunload = function() {
+window.onbeforeunload = function()
+{
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',serverURL+"/scrolling",true); //TODO : Change URL.
+    xhr.open('POST',serverURL+"/scrolling",false); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-    var siteId = getSiteId();
-    var pageId = getPageId();
+    var params = "siteId=" + SiteId;
+    params += "&pageId=" + PageId;
+    params += "&scroll=" + maxScrollPercentage;
+    xhr.send(params);
 
-    if(siteId != null && pageId != null)
-    {
-        var params = "siteId=" + siteId;
-        params += "&pageId=" + pageId;
-        params += "&scroll=" + maxScrollPercentage;
-        xhr.send(params);
-    }
 }
-
 
 
 var locations = []; //To use later for sending amount of points instead of one point at a time.
