@@ -191,6 +191,11 @@ router.post('/pageViews',function (req,res,next) {
     });
 });
 
+router.post('/scrolling',async function (req,res,next) {
+    var results = await bigquery.getSiteScrollingPercentage(req.body.siteId);
+    res.send(JSON.stringify(results));
+});
+
 
 
 //+++++++++++HEATMAP+++++
