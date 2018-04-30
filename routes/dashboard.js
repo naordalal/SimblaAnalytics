@@ -128,8 +128,10 @@ router.get('/:siteId', function(req, res, next) {
             require('./visit').getBounceRate(req.params.siteId).then(res3 =>{
                 require('./visit').getEngagementRate(req.params.siteId).then(res4 =>{
                     require('./visit').getRecencyRate(req.params.siteId).then(res5 =>{
-                        res.render('dashboard', {visits : res1[0].visits , firstVisits : res2[0].visits, bounceRate : res3,
-                            engagementRate: res4[0].avg, recencyRate : res5/*[0].visits*/, siteId : req.params.siteId})
+                        //res.render('dashboard', {visits : res1[0].visits , firstVisits : res2[0].visits, bounceRate : res3,
+                        //    engagementRate: res4[0].avg, recencyRate : res5/*[0].visits*/, siteId : req.params.siteId})
+                        res.render('KorenDashboard')
+
                     });
                 });
             });

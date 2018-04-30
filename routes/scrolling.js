@@ -1,4 +1,6 @@
 var bigquery = require('../queries');
+var express = require('express');
+var router = express.Router();
 
 router.route('/').post(function(req, res, next) {
     bigquery.insertScrollPercentage(req.body.siteId ,req.body.pageId ,req.body.scroll ,new Date());

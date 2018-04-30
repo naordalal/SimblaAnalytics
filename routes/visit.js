@@ -48,7 +48,7 @@ router.route('/').post(function(req, res, next) {
         sse.send(1, "NewVisit/" + siteId , null);
     }
 
-    bigquery.insertPage(siteId,req.session.id ,page ,new Date());
+    bigquery.insertPage(siteId, req.session.id ,page ,new Date());
     req.session.first = true;
     req.session.siteId = siteId;
 
