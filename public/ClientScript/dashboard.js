@@ -8,6 +8,16 @@ var paintMap = function () {
     console.log("empty Function ... look at map.js")
 }
 
+google.charts.load('current', {'packages':['line']});
+google.charts.setOnLoadCallback(drawLineChart);
+
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawPieChart);
+
+google.charts.load('current', {'packages':['table']});
+google.charts.setOnLoadCallback(getRefererList);
+
+
 //Get the visited countries
 //Used for the worldMap and the countries table.
 function getCountryList()
@@ -72,110 +82,27 @@ function getCountryList()
 
 //The side menu
 $(window).load(function(){
-    var height = window.innerHeight,
-        x= 0, y= height/2,
-        curveX = 40,
-        curveY = window.screen.height/2,
-        targetX = 0,
-        xitteration = 0,
-        yitteration = 0,
-        menuExpanded = false;
-
-    blob = $('#blob'),
-        blobPath = $('#blob-path'),
-
-        hamburger = $('.hamburger');
-
-    $(this).on('mousemove', function(e){
-        x = e.pageX;
-
-        y = e.pageY;
-    });
-
-    $('.hamburger, .menu-inner').on('mouseenter', function(){
-        $(this).parent().addClass('expanded');
-        menuExpanded = true;
-    });
-
-    $('.menu-inner').on('mouseleave', function(){
-        menuExpanded = false;
-        $(this).parent().removeClass('expanded');
-    });
-
-    function easeOutExpo(currentIteration, startValue, changeInValue, totalIterations) {
-        return changeInValue * (-Math.pow(2, -10 * currentIteration / totalIterations) + 1) + startValue;
-    }
-
-    var hoverZone = 150;
-    var expandAmount = 20;
-
-    function svgCurve() {
-        if ((curveX > x-1) && (curveX < x+1)) {
-            xitteration = 0;
-        } else {
-            if (menuExpanded) {
-                targetX = 0;
-            } else {
-                xitteration = 0;
-                if (x > hoverZone) {
-                    targetX = 0;
-                } else {
-                    targetX = -(((60+expandAmount)/100)*(x-hoverZone));
-                }
-            }
-            xitteration++;
-        }
-
-        if ((curveY > y-1) && (curveY < y+1)) {
-            yitteration = 0;
-        } else {
-            yitteration = 0;
-            yitteration++;
-        }
-
-        var anchorDistance = 200;
-        var curviness = anchorDistance - 40;
-
-        var newCurve2 = "M60,"+height+"H0V0h60v"+(curveY-anchorDistance)+"c0,"+curviness+","+curveX+","+curviness+","+curveX+","+anchorDistance+"S60,"+(curveY)+",60,"+(curveY+(anchorDistance*2))+"V"+height+"z";
-
-        blobPath.attr('d', newCurve2);
-
-        blob.width(curveX+60);
-
-        hamburger.css('transform', 'translate('+curveX+'px, '+curveY+'px)');
-
-        $('h2').css('transform', 'translateY('+curveY+'px)');
-        window.requestAnimationFrame(svgCurve);
-    }
-
-    window.requestAnimationFrame(svgCurve);
-
 
     var siteId = getSiteId();
     //ctx = document.getElementById("myChart").getContext('2d');
     //pieCtx = document.getElementById("pieChart").getContext('2d');
     es.addEventListener('NewVisit/' + siteId, function (event) {
 
-        var number = parseInt(document.getElementById("numVisits").innerText.split(": ")[1]);
-        document.getElementById("numVisits").innerText = "Number of Visits: "+ (number+1);
+        var number = parseInt(document.querySelectorAll('.totalVisits .title')[0].innerText);
+        document.querySelectorAll('.totalVisits .title')[0].innerText = (number+1);
     });
 
     es.addEventListener('FirstVisit/' + siteId, function (event) {
 
-        var number = parseInt(document.getElementById("numFirstVisits").innerText.split(": ")[1]);
-        document.getElementById("numFirstVisits").innerText = "First Visits: "+ (number+1);
+        var number = parseInt(document.querySelectorAll('.totalFirstVisits .title')[0].innerText);
+        document.querySelectorAll('.totalFirstVisits .title')[0].innerText = (number+1);
     });
 
-    getCountryList();
+    //getCountryList(); When map is added.
 
-    google.charts.load('current', {'packages':['corechart']});
-    //google.charts.setOnLoadCallback(drawPieChart);
 
-    google.charts.load('current', {'packages':['table']});
-    //google.charts.setOnLoadCallback(getRefererList );
 
-    google.charts.load('current', {'packages':['line']});
-    //google.charts.setOnLoadCallback(drawLineChart);
+
 });
 
 
@@ -248,8 +175,8 @@ function drawLineChart() {
             titleTextStyle:{ fontSize : 15, color: "black"}
 
         };
-        addDiv('linechart_material');
-        var chart = new google.charts.Line(document.getElementById('linechart_material'));
+       // addDiv('linechart_material');
+        var chart = new google.charts.Line(document.getElementById('chart_div'));
 
         chart.draw(dataTable, google.charts.Line.convertOptions(options));
     }
@@ -264,7 +191,8 @@ function drawPieChart() {
             backgroundColor:"transparent",
             legend :{ alignment:'center', textStyle: {fontSize : 12, color: "black"}},
             titleTextStyle:{ fontSize : 15, color: "black"},
-            chartArea:{width:'100%',height:'75%'}
+            chartArea:{width:'100%',height:'75%'},
+            pieHole: 0.4
         };
 
 
@@ -285,8 +213,8 @@ function drawPieChart() {
             data.unshift(['OS','Visits']);
              var readyData = google.visualization.arrayToDataTable(data);
 
-            addDiv('piechart');
-            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            //addDiv('piechart');
+            var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
             chart.draw(readyData, options);
         }
 
@@ -323,12 +251,25 @@ function getRefererList()
     xhr.onload = function (e)
     {
         var list = xhr.response;
-        console.log(list)
-        /*data.addRows(list.map(x => [x.Referr, x.visits]));
-        addDiv('Referr_table_div');
+
+        var data = []
+        data.push(['Referr','Visits'])
+        data = data.concat(list.map(x => [x.Referr, x.visits]));
+        //addDiv('Referr_table_div');
+        data = google.visualization.arrayToDataTable(data);
+
+        var view = new google.visualization.DataView(data);
+
+        var options = {
+            title: "Referrers",
+            legend : {position: 'none'}
+        };
+        var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+        chart.draw(view, options);
+        /*
         var table = new google.visualization.Table(document.getElementById('Referr_table_div'));
-        table.draw(data, {width: '100%', height: '100%'});*/
-        list.forEach(item =>
+        table.draw(data, {width: '100%', height: '100%'});
+      /*  list.forEach(item =>
         {
             var entry = document.createElement('tr');
             var referrerTd = document.createElement('td');
@@ -340,7 +281,7 @@ function getRefererList()
             table.appendChild(entry);
         });
 
-        container.appendChild(table);
+        container.appendChild(table);*/
     }
 
     var params = "siteId=" + getSiteId();
@@ -454,15 +395,5 @@ function addDiv(item)
     element.setAttribute('style',"width: 100%; height: 100%;");
     container.appendChild(element);
 }
-function w3_open() {
-    document.getElementById("main").style.marginLeft = "25%";
-    document.getElementById("mySidebar").style.width = "25%";
-    document.getElementById("mySidebar").style.display = "block";
-    document.getElementById("openNav").style.display = 'none';
-}
-function w3_close() {
-    document.getElementById("main").style.marginLeft = "0%";
-    document.getElementById("mySidebar").style.display = "none";
-    document.getElementById("openNav").style.display = "inline-block";
-}
+
 

@@ -175,6 +175,7 @@ module.exports.getVisitsByHours = function(siteid) {
                    "GROUP BY timer ORDER BY timer" ;
     const options = {
         query: sqlQuery,
+        useQueryCache : false,
         useLegacySql: true, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
@@ -208,6 +209,7 @@ module.exports.getFirstVisitsByHours = function(siteid) {
                    "GROUP BY timer ORDER BY timer";
     const options = {
         query: sqlQuery,
+        useQueryCache : false, //Default is True.
         useLegacySql: true, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
@@ -219,6 +221,7 @@ module.exports.getTotalVisits = function(siteid) {
         "'";
     const options = {
         query: sqlQuery,
+        useQueryCache : false, //Default is True.
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
