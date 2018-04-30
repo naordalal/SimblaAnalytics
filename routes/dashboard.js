@@ -147,7 +147,7 @@ router.get('/:siteId', async function(req, res, next) {
     engaRate = await engaRate;
     recencyRate = await recencyRate;
     loadTime = await loadTime;
-    res.render('dashboard', {visits : visits[0].visits , firstVisits : firstVisits[0].visits, bounceRate : bounceRate,
+    res.render('KorenDashboard', {visits : visits[0].visits , firstVisits : firstVisits[0].visits, bounceRate : bounceRate,
         engagementRate: engaRate[0].avg, recencyRate : recencyRate/*[0].visits*/,
         loadTime : loadTime[0].avg , siteId : req.params.siteId});
     //res.render('dashboard', {visits : require('./visit').getVisits(req.params.siteId) , firstVisits : require('./visit').getFirstVisits(req.params.siteId),
