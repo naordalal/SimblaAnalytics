@@ -17,6 +17,8 @@ google.charts.setOnLoadCallback(drawPieChart);
 google.charts.load('current', {'packages':['table']});
 google.charts.setOnLoadCallback(getRefererList);
 
+google.charts.setOnLoadCallback(getCountryList)
+
 
 //Get the visited countries
 //Used for the worldMap and the countries table.
@@ -33,16 +35,30 @@ function getCountryList()
         //response is ready
         if(xhr.readyState==4) {
             var countryList = xhr.response;
-            var list = document.getElementById('countries');
+           // var list = document.getElementById('countries');
             var i;
 
+            var data = []
+            data.push(['Country','Visits'])
+            data = data.concat(countryList.map(x => [x.Country, x.visits]));
+
+            data = google.visualization.arrayToDataTable(data);
+
+            var view = new google.visualization.DataView(data);
+
+            var options = {
+                title: "Country List",
+                legend : {position: 'none'}
+            };
+            var chart = new google.visualization.BarChart(document.getElementById("countryList"));
+            chart.draw(view, options);
             //Build the countries table.
             for (i = 0; i < countryList.length; i++) //Add the list to the view.
             {
 
                 countryMap.set(countryList[i].Country.toUpperCase(), countryList[i].visits);
                 gdpData[getCountryCode(countryList[i].Country).toLowerCase()] = countryList[i].visits;
-
+            /*
 
                 var entry = document.createElement('tr');
                 var countryTd = document.createElement('td');
@@ -65,7 +81,8 @@ function getCountryList()
                 entry.appendChild(flagTd);
                 entry.appendChild(visitorsTd);
 
-                list.appendChild(entry);
+
+                //list.appendChild(entry);*/
             }
 
             //Paint the map.
@@ -98,7 +115,7 @@ $(window).load(function(){
         document.querySelectorAll('.totalFirstVisits .title')[0].innerText = (number+1);
     });
 
-    //getCountryList(); When map is added.
+   // getCountryList(); //When map is added.
 
 
 
@@ -264,7 +281,7 @@ function getRefererList()
             title: "Referrers",
             legend : {position: 'none'}
         };
-        var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+        var chart = new google.visualization.BarChart(document.getElementById("referres_barchart"));
         chart.draw(view, options);
         /*
         var table = new google.visualization.Table(document.getElementById('Referr_table_div'));
