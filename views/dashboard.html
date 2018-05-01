@@ -1,145 +1,120 @@
 <!DOCTYPE html>
-
-
 <html>
-	<head>
-		<title>dashboard</title>
-		<script src="/jquery-3.2.1.min.js"></script>
-		<link rel="stylesheet" href="/stylesheets/style.css">
+<head>
 
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/CardList.css">
+    <link rel="stylesheet" href="/stylesheets/wrapChart.css">
+    <link rel="stylesheet" href="/stylesheets/DonutChart.css">
 
-		<link href='https://fonts.googleapis.com/css?family=Arbutus' rel='stylesheet'>
-
-		<link rel="stylesheet" href="/stylesheets/KorenMenu.css">
-		<!-- Graph script -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-
-		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-
-		<!-- map scripts -->
-		<link href="../dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css">
-		<script type="text/javascript" src="../dist/jquery.vmap.js"></script>
-		<script type="text/javascript" src="../dist/maps/jquery.vmap.world.js" charset="utf-8"></script>
-		<script type="text/javascript" src="/ClientScript/ISO_CountryCode.js"></script>
-		<script type="text/javascript" src="/ClientScript/dashboard.js"></script>
-		<script type="text/javascript" src="/ClientScript/map.js"></script>
-
-	</head>
-
-	<body>
-	<div id="menu">
-		<div class="hamburger">
-			<div class="line"></div>
-			<div class="line"></div>
-			<div class="line"></div>
-		</div>
-		<div class="menu-inner">
-
-			<ul><!--
-				<li><a class="OptionMenu"> Options:</a></li>
-				<li><label class="container">OS Distribution
-					<input type="checkbox" checked="checked">
-					<span class="checkmark"></span>
-				</label></li>
-				<li><label class="container">Last day visits
-					<input type="checkbox">
-					<span class="checkmark"></span>
-				</label></li>
-				<li><label class="container">Referrers
-					<input type="checkbox">
-					<span class="checkmark"></span>
-				</label></li>
-				<li><label class="container">Heatmap
-					<input type="checkbox">
-					<span class="checkmark"></span>
-				</label></li>
-				<li><label class="container">Pages visits
-					<input type="checkbox">
-					<span class="checkmark"></span>
-				</label></li>-->
-				<li><a class="OptionMenu"> Options:</a></li>
-				<li><button class="buttonMenu" value="0" data-graph="piechart" onclick="MenuItemClicked(this)"> OS Distribution </button></li>
-				<li><button class="buttonMenu" value="0" data-graph="linechart_material" onclick="MenuItemClicked(this)"> Last day visits </button></li>
-				<li><button class="buttonMenu" value="0" data-graph="Referr_table_div" onclick="MenuItemClicked(this)"> Referrers </button></li>
-				<li><button class="buttonMenu" value="0" data-graph="Heatmap" onclick="MenuItemClicked(this)"> Heatmap </button></li>
-				<li><button class="buttonMenu" value="0" data-graph="pageViews" onclick="MenuItemClicked(this)"> Pages visits </button></li>
-				<li><button class="buttonMenu" value="0" data-graph="" onclick="MenuItemClicked(this)"> Menu Item </button></li>
-			</ul>
-		</div>
+    <script type="text/javascript" src="/ClientScript/wrapChart.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
 
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 
-		<svg version="1.1" id="blob"xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-			<path id="blob-path" d="M60,500H0V0h60c0,0,20,172,20,250S60,900,60,500z"/>
-		</svg>
-	</div>
-
-
-	<div id="main">
-
-            <div class="w3-teal">
-                <div class="w3-container">
-                </div>
-            </div>
+    <!-- map scripts -->
+    <link href="../dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../dist/jquery.vmap.js"></script>
+    <script type="text/javascript" src="../dist/maps/jquery.vmap.world.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/ClientScript/ISO_CountryCode.js"></script>
+    <script type="text/javascript" src="/ClientScript/dashboard.js"></script>
+    <script type="text/javascript" src="/ClientScript/map.js"></script>
 
 
-		<center>
-		<h1 id="MainHeader" class="header" style="font-weight:bold; font-size:200px; font-family: abelFont;">DASHBOARD</h1>
-		</center>
+    <meta name="page-source" site-id= <%=siteId%>>
 
-		<meta name="page-source" site-id= <%=siteId%>>
+</head>
+<body>
 
+<center>
+    <h1 class="titleHeader">DASHBOARD</h1>
+</center>
 
-		<div class="Wrapper">
-			<div class="left">
+<div class="container card-list">
+    <div class="card totalVisits tooltip">
+        <div class="title">Visits</div><span class="glyphicon glyphicon-upload"></span>
+        <div class="value"><%=visits%></div>
+        <div class="stat"><b>13</b>% increase</div>
+        <div class="tooltiptext">Total Visits</div>
+    </div>
+    <div class="card totalFirstVisits tooltip">
+        <div class="title">First Visits</div><span class="glyphicon glyphicon-upload"></span>
+        <div class="value"><%=firstVisits%></div>
+        <div class="stat"><b>4</b>% increase</div>
+        <div class="tooltiptext">Total First Visits</div>
+    </div>
+    <div class="card bounceRate tooltip">
+        <div class="title">Bounce Rate</div><span class="glyphicon glyphicon-download"></span>
+        <div class="value"><%=bounceRate%>%</div>
+        <div class="stat"><b>13</b>% decrease</div>
+        <div class="tooltiptext">Single-page sessions divided by all sessions.</div>
+    </div>
+    <div class="card loadTime tooltip">
+        <div class="title">Load Time</div><span class="glyphicon glyphicon-download"></span>
+        <div class="value"><%=loadTime%>ms</div>
+        <div class="stat"><b>13</b>% decrease</div>
+        <div class="tooltiptext">Average loading time</div>
+    </div>
+</div>
+<div class="container card-list">
+    <div class="card blue">
+        <div class="title">Blah</div><span class="glyphicon glyphicon-upload"></span>
+        <div class="value">42</div>
+        <div class="stat"><b>13</b>% increase</div>
+    </div>
+    <div class="card engagementRate tooltip">
+        <div class="title">Engagement rate</div><span class="glyphicon glyphicon-upload"></span>
+        <div class="value"><%=engagementRate%> minutes</div>
+        <div class="stat"><b>4</b>% increase</div>
+        <div class="tooltiptext">The time visitors spent on the site</div>
+    </div>
+    <div class="card recencyRate tooltip">
+        <div class="title">Recency rate</div><span class="glyphicon glyphicon-download"></span>
+        <div class="value"><%=recencyRate%>%</div>
+        <div class="stat"><b>13</b>% decrease</div>
+        <div class="tooltiptext">The percentage of visitors who returned to the site</div>
+    </div>
+    <div onclick="getHeatmap()" style="cursor: pointer;" class="card heatmap tooltip">
+        <div class="title"></div><span class="glyphicon glyphicon-download"></span>
+        <div class="value">HEATMAP</div>
+        <div class="stat"><b>13</b>% decrease</div>
+        <div class="tooltiptext">Click to show Heatmap</div>
+    </div>
+</div>
+<!--
+<div class="row-div">
+    <div id="countryList" class="chart-wrap"></div>
+    <div id="vmap" class="chart-wrap"></div>
+    <div  class="chart-wrap"></div>
+</div> -->
 
-				<h3 class="header" style="font-weight: bold">Statistics:</h3>
-				<h4 id="numVisits">Number of Visits: <%=visits%></h4>
-				<h4 id="numFirstVisits">First Visits:  <%=firstVisits%></h4>
-				<h4 id="bounceRate">Bounce rate:  <%=bounceRate%>%</h4>
-				<h4 id="engagementRate">Engagement rate:  <%=engagementRate%> minutes</h4>
-				<h4 id="recencyRate">Recency rate:  <%=recencyRate%>%</h4>
-				<h4 id="loadTime">Load Time:  <%=loadTime%>ms</h4>
-			</div>
-			<div class="right">
-				<h3 class="header" style="font-weight: bold">Countries:</h3>
-     			<!-- <div id="countries"></div>-->
-				<table id="countries" class="w3-table w3-bordered">
-					<tr>
-						<th>Country</th>
-						<th>Flag</th>
-						<th>Visitors</th>
-					</tr>
-				</table>
-			</div>
-		</div>
+<div class=" doubleRow-div">
+    <div class="col-div">
+        <div id="countryList" class="chart-wrap vertical-chart"></div>
+        <div id="referres_barchart" class="chart-wrap vertical-chart"></div>
+    </div>
+    <div id="vmap" class="chart-wrap"></div>
+</div>
 
-		<center>
-			<br>
-			<br>
-            <div id="vmap" style="width: 600px; height: 400px;"></div>
+<div class="row-div">
+    <div id="donutchart" class="donut-chart"></div>
+    <div id="chart_div" class="line-chart"></div>
+</div>
+
+<div class="row-div">
+
+    <div id ='columnchart_values' class="chart-wrap"></div>
+    <div class="chart-wrap"></div>
+    <div class="chart-wrap"></div>
+</div>
 
 
 
-    <!--        <div class="Wrapper2">
-                <div class="chart-container" style="position: relative; height:40vh; width:80vw">
-                    <canvas id="myChart"></canvas>
-                </div>
-                <div class="chart-container2" style="position: relative; height:20vh; width:40vw">
-                    <canvas id="pieChart"></canvas>
-                </div>
-            </div>-->
-		</center>
-	<center>
-			<div id="graphsGrid" class="grid-container">
-<!--				<div id="piechart" class="grid-item" style="width: 100%; height: 100%;"></div>
-				<div id="Referr_table_div" class="grid-item" style="width: 100%; height: 100%;"></div>
-				<div id="linechart_material" class="grid-item" style="width: 100%; height: 100%"></div>-->
-			</div>
-	</center>
 
-		</div>
-	</body>
+
+
+</body>
 </html>

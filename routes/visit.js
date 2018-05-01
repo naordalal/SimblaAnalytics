@@ -35,12 +35,30 @@ router.route('/').post(function(req, res, next) {
         sse.send(1, "FirstVisit/" + siteId , null);
     }
 
-    //TODO save visits count per siteId
-    //TODO: Take care of it before deployment to cloud.
-    var countryCode = 'il';//geoip.lookup(req.ip.substr(7)).country;
-    //console.log(countryCode); //Will not work with LAN ip (return null);
-    var country = 'Israel';//countries.getName(countryCode);
-    //console.log(country);
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    var ipAddr;
+    if(ip) {
+        ipAddr = ip.split(',');
+        console.log(ipAddr[0]);
+        ipAddr = ipAddr[0]
+        if(ipAddr) {
+            countryCode = geoip.lookup(ipAddr).country;
+            //Will not work with LAN ip (return null);
+            var country = 'Israel';//countries.getName(countryCode);
+            country = countries.getName(countryCode);
+            console.log(country);
+        }
+    }
+
+    if(!ipAddr)
+    {
+        ipAddr = req.connection.remoteAddress;
+        countryCode = geoip.lookup(ipAddr).country;
+        //Will not work with LAN ip (return null);
+        var country = 'Israel';//countries.getName(countryCode);
+        country = countries.getName(countryCode);
+        console.log(country);
+    }
 
 
     if(req.session.first == undefined)
@@ -98,9 +116,9 @@ router.route('/').post(function(req, res, next) {
 module.exports = router;
 module.exports.getVisits = function (siteId) {
 
-   return bigquery.getTotalVisits(siteId).then(function (result) {
-       return result;
-   })
+    return bigquery.getTotalVisits(siteId).then(function (result) {
+        return result;
+    })
 };
 module.exports.getFirstVisits = function (siteId) {
     return bigquery.getTotalFirstVisits(siteId).then(function (result) {

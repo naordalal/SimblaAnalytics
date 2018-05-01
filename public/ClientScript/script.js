@@ -1,6 +1,6 @@
 var findMe = '87f2f749d683945ddcf25ec6a473b9bc';
 var timerStart = Date.now();
-const serverURL = "http://localhost:3000";
+const serverURL = "http://192.168.0.103:3000"////"http://simbla-analytics.appspot.com" //http://localhost:3000'
 
 var maxScrollPercentage = 0;
 
@@ -38,10 +38,10 @@ window.onload = function() {
     SiteId = getSiteId();
     PageId = getPageId();
     var referrer  = document.referrer;
-    if(siteId != null)
+    if(SiteId != null)
     {
-        var params = "siteId=" + siteId;
-        params += "&pageId=" + pageId;
+        var params = "siteId=" + SiteId;
+        params += "&pageId=" + PageId;
         params += "&referrer="+extractRootDomain(referrer);
         params += "&os="+getOs();
         params += "&siteURL="+document.URL;
