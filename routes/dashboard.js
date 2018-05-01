@@ -12,7 +12,12 @@ router.get('/heatmap',async function (req,res,next) {
 
     var siteId = req.query.siteId;
     //Get points from bigquery
-    var url = 'http://sites.simbla.com/ab7b6963-84fa-0f41-a77f-3c8062dfd1d2/';
+
+    var url = await getURLFromSiteId(siteId);
+    if(!url) {
+        res.send('URL not found!')
+        return;
+    }
     var promise = getHtml(url);
     var points = await bigquery.getAllPointsOfSite(siteId);
     promise.then((dom)=>
@@ -62,11 +67,10 @@ function appendTheURL(dom,url)
     images = dom.getElementsByTagName('image')
 
 
-    console.log(scripts.length)
+    
     for(let i = scripts.length-1 ; i >= 0; i--)
     {
         var script = scripts[i];
-        console.log(script.outerHTML)
 
         var q = undefined;
         if(script.getAttribute('src') != null) {
@@ -75,8 +79,10 @@ function appendTheURL(dom,url)
             if (!q.host)
                 if (script.getAttribute('src').startsWith('//'))
                     script.setAttribute('src', 'http://' + script.getAttribute('src').substring(2));
-                else
+                else if(script.getAttribute('src').startsWith('/'))
                     script.setAttribute('src', url + script.getAttribute('src').substring(1));
+                else
+                    script.setAttribute('src', url + script.getAttribute('src'));
 
         }
 
@@ -98,8 +104,10 @@ function appendTheURL(dom,url)
         if(!q.host) {
             if (style.getAttribute('href').startsWith('//'))
                 style.setAttribute('href', 'http://' + style.getAttribute('href').substring(2));
-            else
+            else if(style.getAttribute('href').startsWith('/'))
                 style.setAttribute('href', url + style.getAttribute('href').substring(1));
+            else
+                style.setAttribute('href', url + style.getAttribute('href'));
         }
 
     }
@@ -115,26 +123,39 @@ function appendTheURL(dom,url)
         if(!q.host)
             if (img.getAttribute('src').startsWith('//'))
                 img.setAttribute('src', 'http://' + img.getAttribute('src').substring(2));
-            else
+            else if(img.getAttribute('src').startsWith('/'))
                 img.setAttribute('src', url + img.getAttribute('src').substring(1));
+            else
+                img.setAttribute('src', url + img.getAttribute('src'));
     }
 }
 
 /* GET dashboard page. */
-router.get('/:siteId', function(req, res, next) {
+router.get('/:siteId', async function(req, res, next) {
+    var visits,firstVisits,bounceRate,engaRate,recencyRate,loadTime;
     //res.render('index', { title: 'Visits: '+require('./users').getVisits()});
-    require('./visit').getVisits(req.params.siteId).then(res1 =>{
-        require('./visit').getFirstVisits(req.params.siteId).then(res2 =>{
-            require('./visit').getBounceRate(req.params.siteId).then(res3 =>{
-                require('./visit').getEngagementRate(req.params.siteId).then(res4 =>{
-                    require('./visit').getRecencyRate(req.params.siteId).then(res5 =>{
-                        res.render('dashboard', {visits : res1[0].visits , firstVisits : res2[0].visits, bounceRate : res3,
-                            engagementRate: res4[0].avg, recencyRate : res5/*[0].visits*/, siteId : req.params.siteId})
-                    });
-                });
-            });
-        });
-    });
+    var visits = require('./visit').getVisits(req.params.siteId);
+    var firstVisits = require('./visit').getFirstVisits(req.params.siteId);
+    var bounceRate = require('./visit').getBounceRate(req.params.siteId);
+    var engaRate = require('./visit').getEngagementRate(req.params.siteId);
+    var recencyRate = require('./visit').getRecencyRate(req.params.siteId);
+    var loadTime = require('./visit').getAverageLoadTime(req.params.siteId);
+
+    visits = await visits;
+    firstVisits = await firstVisits;
+    bounceRate = await bounceRate;
+    engaRate = await engaRate;
+    recencyRate = await recencyRate;
+    loadTime = await loadTime;
+
+    bounceRate = Math.round(bounceRate*100)/100;
+    loadTime = Math.round(loadTime[0].avg*100)/100;
+    engaRate = Math.round(engaRate[0].avg*100)/100;
+    recencyRate = Math.round(recencyRate*100)/100;
+
+    res.render('dashboard', {visits : visits[0].visits , firstVisits : firstVisits[0].visits, bounceRate : bounceRate,
+        engagementRate: engaRate, recencyRate : recencyRate/*[0].visits*/,
+        loadTime : loadTime , siteId : req.params.siteId});
     //res.render('dashboard', {visits : require('./visit').getVisits(req.params.siteId) , firstVisits : require('./visit').getFirstVisits(req.params.siteId),
     //siteId : req.params.siteId})
 
@@ -191,6 +212,11 @@ router.post('/pageViews',function (req,res,next) {
     });
 });
 
+router.post('/scrolling',async function (req,res,next) {
+    var results = await bigquery.getSiteScrollingPercentage(req.body.siteId);
+    res.send(JSON.stringify(results));
+});
+
 
 
 //+++++++++++HEATMAP+++++
@@ -204,6 +230,25 @@ function getHtml(url)
 {
     return rp(url);
 }
+
+
+//I want to be sure that the url is valid and it is the most common url
+async function getURLFromSiteId(siteId)
+{
+    var json = await bigquery.getURLsBySiteId(siteId);
+
+    return getBestURL(json)
+}
+
+function getBestURL(json)
+{
+    json = json.filter(obj => extractURL(obj.url).includes('http'));
+    if (json.length == 0)
+        return false;
+    if(json.length == 1)
+        return json[0].url;
+    return json.sort((a,b) => {return  b.quantity - a.quantity;})[0].url;
+}
 /*
 getHtml('https://www.escaperoomin.com').then((html)=>
 {
@@ -214,4 +259,6 @@ getHtml('https://www.escaperoomin.com').then((html)=>
 */
 
 
-
+//module.exports = {
+   // getBestURL : getBestURL,
+//};

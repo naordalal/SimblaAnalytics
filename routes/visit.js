@@ -3,7 +3,7 @@ var geoip = require('geoip-lite');
 var countries  = require('country-list')();
 var bigquery = require('../queries');
 var router = express.Router();
-
+const uuidv1 = require('uuid/v1');
 
 var SSE = require('express-sse');
 var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
@@ -24,9 +24,10 @@ router.route('/').post(function(req, res, next) {
     var referrer = req.body.referrer;
     var os = req.body.os;
     var siteURL = req.body.siteURL;
+    var loadTime = req.body.loadTime;
 
     var firstVisit = false;
-    if(req.cookies.visited != 'true') //Check if visited before.
+    if(req.cookies.visited == undefined || !req.cookies.visited.split("-").includes(siteId)) //Check if visited before.
     {
         //TODO: save as first visit
         firstVisit = true;
@@ -34,36 +35,90 @@ router.route('/').post(function(req, res, next) {
         sse.send(1, "FirstVisit/" + siteId , null);
     }
 
-    //TODO save visits count per siteId
-    //TODO: Take care of it before deployment to cloud.
-    var countryCode = 'il';//geoip.lookup(req.ip.substr(7)).country;
-    //console.log(countryCode); //Will not work with LAN ip (return null);
-    var country = 'Israel';//countries.getName(countryCode);
-    //console.log(country);
-
-
-    if(!req.session.first)
-    {
-        bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os);
-        sse.send(1, "NewVisit/" + siteId , null);
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    var ipAddr;
+    if(ip) {
+        ipAddr = ip.split(',');
+        console.log(ipAddr[0]);
+        ipAddr = ipAddr[0]
+        if(ipAddr) {
+            countryCode = geoip.lookup(ipAddr).country;
+            //Will not work with LAN ip (return null);
+            var country = 'Israel';//countries.getName(countryCode);
+            country = countries.getName(countryCode);
+            console.log(country);
+        }
     }
 
-    bigquery.insertPage(siteId,req.session.id ,page ,new Date());
-    req.session.first = true;
+    if(!ipAddr)
+    {
+        ipAddr = req.connection.remoteAddress;
+        countryCode = geoip.lookup(ipAddr).country;
+        //Will not work with LAN ip (return null);
+        var country = 'Israel';//countries.getName(countryCode);
+        country = countries.getName(countryCode);
+        console.log(country);
+    }
+
+
+    if(req.session.first == undefined)
+    {
+        bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os,loadTime);
+        sse.send(1, "NewVisit/" + siteId , null);
+        req.session.first = siteId +'';
+
+    }
+    else
+    {
+        var includeSiteId = req.session.first.split("-").includes(siteId);
+        if(!includeSiteId)
+        {
+            bigquery.insertVisit(siteId, siteURL, new Date().toLocaleString() , country, firstVisit , referrer , os,loadTime);
+            sse.send(1, "NewVisit/" + siteId , null);
+            req.session.first += '-' + siteId;
+        }
+    }
+
+    if(req.session.id == undefined)
+    {
+        var sessionId = uuidv1();
+        var json = {}
+        json[siteId] = sessionId;
+        req.session.id = JSON.stringify(json)
+    }
+    else
+    {
+        var sessionId = uuidv1();
+        var sessionJson = JSON.parse(req.session.id);
+        if(!sessionJson.hasOwnProperty(siteId))
+        {
+            sessionJson[siteId] = sessionId;
+        }
+        req.session.id = JSON.stringify(sessionJson);
+    }
+
+    var sessionJson = JSON.parse(req.session.id);
+    bigquery.insertPage(siteId,sessionJson[siteId] ,page ,new Date());
     req.session.siteId = siteId;
 
     var nowDate = new Date();
     nowDate.setFullYear(nowDate.getFullYear() + 1);
-    res.cookie('visited', 'true' , { expires: nowDate}).send("set cookie");
+    var visited = req.cookies.visited;
+    if(visited == undefined)
+        visited = '';
+    if(firstVisit)
+        visited += "-" + siteId;
+
+    res.cookie('visited', visited , { expires: nowDate}).send("set cookie");
 });
 
 
 module.exports = router;
 module.exports.getVisits = function (siteId) {
 
-   return bigquery.getTotalVisits(siteId).then(function (result) {
-       return result;
-   })
+    return bigquery.getTotalVisits(siteId).then(function (result) {
+        return result;
+    })
 };
 module.exports.getFirstVisits = function (siteId) {
     return bigquery.getTotalFirstVisits(siteId).then(function (result) {
@@ -85,6 +140,12 @@ module.exports.getRecencyRate = function (siteId) {
 
 module.exports.getEngagementRate = function (siteId) {
     return bigquery.getEngagementRate(siteId).then(function (result) {
+        return result;
+    })
+};
+
+module.exports.getAverageLoadTime = function (siteId) {
+    return bigquery.getAverageLoadTime(siteId).then(function (result) {
         return result;
     })
 };

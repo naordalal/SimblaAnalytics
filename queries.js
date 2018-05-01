@@ -73,12 +73,12 @@ module.exports.insertMouseLoc = function (siteId, X, Y) {
             }
         });
 }
-module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit, referr, os) {
+module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit, referr, os,loadTime) {
     bigquery
         .dataset(datasetId)
         .table("visits")
         .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit,
-                    Referr: referr, Os:os}])
+                    Referr: referr, Os:os ,LoadTime: loadTime}])
         .then(() => {
             console.log(`Inserted`);
         })
@@ -175,6 +175,7 @@ module.exports.getVisitsByHours = function(siteid) {
                    "GROUP BY timer ORDER BY timer" ;
     const options = {
         query: sqlQuery,
+        useQueryCache : false,
         useLegacySql: true, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
@@ -208,6 +209,7 @@ module.exports.getFirstVisitsByHours = function(siteid) {
                    "GROUP BY timer ORDER BY timer";
     const options = {
         query: sqlQuery,
+        useQueryCache : false, //Default is True.
         useLegacySql: true, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
@@ -219,6 +221,7 @@ module.exports.getTotalVisits = function(siteid) {
         "'";
     const options = {
         query: sqlQuery,
+        useQueryCache : false, //Default is True.
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
@@ -249,6 +252,19 @@ module.exports.getRecencyRate = function(siteid) {
         return module.exports.getTotalFirstVisits(siteid).then((results2) => {return (results[0].visits / (results2[0].visits + results[0].visits)) * 100});
     });
 
+}
+
+module.exports.getAverageLoadTime = function(siteid)
+{
+    var sqlQuery = "SELECT AVG(LoadTime) AS avg " +
+        "FROM test_dataset.visits WHERE SiteID = '" + siteid+"'";
+    const options = {
+        query: sqlQuery,
+        useQueryCache : false,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options)
 }
 
 module.exports.getEngagementRate = function(siteid) {
@@ -342,6 +358,24 @@ module.exports.getSiteScrollingPercentage = function(siteid) {
         query: sqlQuery,
         useLegacySql: false, // Use standard SQL syntax for queries.
     };
+    return runQuery(options);
+}
+
+
+
+//The url are returned with their amount of visits.
+module.exports.getURLsBySiteId = function (siteid) {
+    var sqlQuery = "SELECT SiteURL AS url , COUNT(SiteURL) AS quantity"+
+        " FROM test_dataset.visits"+
+        " WHERE SiteId = '"+siteid+"'"+
+        " GROUP BY url" +
+        " LIMIT 1500";
+    const options = {
+        query: sqlQuery,
+        useQueryCache : false, //Default is True.
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
     return runQuery(options);
 }
 

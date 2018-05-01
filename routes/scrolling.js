@@ -1,3 +1,5 @@
+var express = require('express');
+var router = express.Router();
 var bigquery = require('../queries');
 
 router.route('/').post(function(req, res, next) {
