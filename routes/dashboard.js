@@ -7,6 +7,8 @@ const {JSDOM} = jsdom;
 var router = express.Router();
 var bigquery = require('../queries');
 
+var unique = require('array-unique');
+
 //Heatmap route
 router.get('/heatmap',async function (req,res,next) {
 
@@ -222,7 +224,7 @@ router.post('/Campaigns',async function (req,res,next) {
     var results = [['Global',null,0]];
     var results1 = await bigquery.getSourcesCampaigns(req.body.siteId);
     results = results.concat(results1.map(res => [res.utm_source , 'Global' , 0]));
-    results = Array.from(new Set(results));
+    results = unique(results);
     results1 = results1.map(res => [res.utm_source + "_" + res.utm_campaign , res.utm_source , res.count]);
 
 
