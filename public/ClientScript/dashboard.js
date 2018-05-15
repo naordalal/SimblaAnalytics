@@ -317,10 +317,27 @@ function getCampiagns()
     xhr.open('POST', "/dashboard/graph", true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.responseType = "json";
-    xhr.onload = function (e) {
+    xhr.onload = function (e)
+    {
+
+        var data = [['Label1','Label2','Visits']];
+        data.concat(xhr.response);
+        data = google.visualization.arrayToDataTable(data);
+        var view = new google.visualization.DataView(data);
+        var tree = new google.visualization.TreeMap(document.getElementById('campaigns'));
+        tree.draw(data, {
+            minColor: '#f00',
+            midColor: '#ddd',
+            maxColor: '#0d0',
+            headerHeight: 15,
+            fontColor: 'black',
+            showScale: true
+        });
 
     }
-
+    var params = "siteId=" + getSiteId();
+    xhr.send(params);
+/*
     var data = google.visualization.arrayToDataTable([
         ['Location', 'Parent', 'Market trade volume (size)', 'Market increase/decrease (color)'],
         ['Global',    null,                 0,                               0],
@@ -363,7 +380,8 @@ function getCampiagns()
         headerHeight: 15,
         fontColor: 'black',
         showScale: true
-    });
+    });*/
+
 
 }
 
