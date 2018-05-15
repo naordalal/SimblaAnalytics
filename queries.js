@@ -73,14 +73,16 @@ module.exports.insertMouseLoc = function (siteId, X, Y) {
             }
         });
 }
-module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit, referr, os,loadTime) {
+
+
+module.exports.insertCampaignData = function (siteId, utm_source, utm_campaign , utm_medium, utm_content, utm_term,date) {
     bigquery
         .dataset(datasetId)
-        .table("visits")
-        .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit,
-                    Referr: referr, Os:os ,LoadTime: loadTime}])
+        .table("Campaigns")
+        .insert([{SiteID: siteId, utm_source: utm_source, utm_campaign: utm_campaign, utm_medium: utm_medium, utm_content: utm_content,
+            utm_term: utm_term, Time:date}])
         .then(() => {
-            console.log(`Inserted`);
+            console.log(`Inserted Campaign`);
         })
         .catch(err => {
             if (err && err.name === 'PartialFailureError') {
@@ -354,6 +356,20 @@ module.exports.getSiteScrollingPercentage = function(siteid) {
     var sqlQuery = "SELECT PageID, AVG(scroll) as scroll " +
         "FROM test_dataset.scrolls WHERE SiteID = '" + siteid +
         "' GROUP BY PageID;";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getCampaignsData = function(siteid) {
+    var sqlQuery = "SELECT SiteID, utm_source , utm_campaign,\n" +
+        "  COUNT(utm_campaign) AS visits " +
+        "FROM test_dataset.Campaigns WHERE SiteID = '" + siteid +
+        "' GROUP BY SiteID,\n" +
+        "  utm_source,\n" +
+        "  utm_campaign;";
     const options = {
         query: sqlQuery,
         useLegacySql: false, // Use standard SQL syntax for queries.

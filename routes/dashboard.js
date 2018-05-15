@@ -216,6 +216,10 @@ router.post('/scrolling',async function (req,res,next) {
     var results = await bigquery.getSiteScrollingPercentage(req.body.siteId);
     res.send(JSON.stringify(results));
 });
+router.post('/Campaigns',async function (req,res,next) {
+    var results = await bigquery.getCampaignsData(req.body.siteId);
+    res.send(JSON.stringify(results));
+});
 
 
 

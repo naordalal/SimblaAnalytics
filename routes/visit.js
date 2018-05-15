@@ -99,6 +99,7 @@ router.route('/').post(function(req, res, next) {
 
     var sessionJson = JSON.parse(req.session.id);
     bigquery.insertPage(siteId,sessionJson[siteId] ,page ,new Date());
+    insertCampaign(siteURL,siteId);
     req.session.siteId = siteId;
 
     var nowDate = new Date();
@@ -112,7 +113,7 @@ router.route('/').post(function(req, res, next) {
     res.cookie('visited', visited , { expires: nowDate}).send("set cookie");
 });
 
-function insertCampaign(siteUrl)
+function insertCampaign(siteUrl,siteId)
 {
     var urlObject = URL.parse(siteUrl);
     var params = urlObject.query; //Return empty jsom if there is no parameters.
@@ -125,6 +126,7 @@ function insertCampaign(siteUrl)
     var utm_term = params.utm_term;
     var utm_campaign = params.utm_campaign; //the name of the marketing campaign.
 
+    bigquery.insertCampaignData(siteId,utm_source,utm_campaign,utm_medium,utm_content,utm_term,new Date());
 }
 
 
