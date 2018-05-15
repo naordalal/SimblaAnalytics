@@ -15,6 +15,7 @@ google.charts.setOnLoadCallback(drawPieChart);
 
 google.charts.load('current', {'packages':['table']});
 google.charts.setOnLoadCallback(getRefererList);
+google.charts.setOnLoadCallback(getPageViews);
 
 google.charts.setOnLoadCallback(getCountryList);
 google.charts.setOnLoadCallback(getScrolling);
@@ -280,21 +281,22 @@ function getPageViews()
     xhr.onload = function (e)
     {
         var list = xhr.response;
-        console.log(list)
 
-        list.forEach(item =>
-        {
-            var entry = document.createElement('tr');
-            var pageTd = document.createElement('td');
-            var visitsTd = document.createElement('td');
-            pageTd.innerText = item.PageID;
-            visitsTd.innerText = item.popularity;
-            entry.appendChild(pageTd);
-            entry.appendChild(visitsTd);
-            table.appendChild(entry);
-        });
+        var list = xhr.response;
 
-        container.appendChild(table);
+        var data = []
+        data.push(['Page','Visits'])
+        data = data.concat(list.map(x => [x.PageID, x.popularity]));
+        data = google.visualization.arrayToDataTable(data);
+
+        var view = new google.visualization.DataView(data);
+
+        var options = {
+            title: "Page visits",
+            legend : {position: 'none'}
+        };
+        var chart = new google.visualization.BarChart(document.getElementById("pageViewsChart"));
+        chart.draw(view, options);
     }
 
     var params = "siteId=" + getSiteId();

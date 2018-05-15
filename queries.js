@@ -378,10 +378,11 @@ module.exports.getSourcesCampaigns = function(siteid) {
 }
 
 module.exports.getCampaignsData = function(siteid) {
-    var sqlQuery = "SELECT utm_campaign , utm_medium,\n" +
+    var sqlQuery = "SELECT utm_source , utm_campaign , utm_medium,\n" +
         "  COUNT(utm_medium) AS count " +
         "FROM test_dataset.Campaigns WHERE SiteID = '" + siteid +
         "' GROUP BY SiteID,\n" +
+        "  utm_source," +
         "  utm_campaign,\n" +
         "  utm_medium;";
     const options = {

@@ -220,11 +220,11 @@ router.post('/scrolling',async function (req,res,next) {
 
 router.post('/Campaigns',async function (req,res,next) {
     var results = await bigquery.getSourcesCampaigns(req.body.siteId);
-    results = results.map(res => [res.utm_source , res.utm_campaign , res.count]);
+    results = results.map(res => [res.utm_source + "_" + res.utm_campaign , res.utm_source , res.count]);
 
 
     var results2 = await bigquery.getCampaignsData(req.body.siteId);
-    results2 = results2.map(res => [res.utm_campaign , res.utm_medium , res.count]);
+    results2 = results2.map(res => [res.utm_source + "_" + res.utm_campaign + "_" + res.utm_medium , res.utm_source + "_" + res.utm_campaign , res.count]);
 
     results = results.concat(results2);
 
