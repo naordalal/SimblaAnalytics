@@ -309,6 +309,16 @@ function getHeatmap()
 
 function getCampiagns()
 {
+
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST', "/dashboard/graph", true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.responseType = "json";
+    xhr.onload = function (e) {
+
+    }
+
     var data = google.visualization.arrayToDataTable([
         ['Location', 'Parent', 'Market trade volume (size)', 'Market increase/decrease (color)'],
         ['Global',    null,                 0,                               0],

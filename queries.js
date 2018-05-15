@@ -364,7 +364,7 @@ module.exports.getSiteScrollingPercentage = function(siteid) {
 }
 
 module.exports.getCampaignsData = function(siteid) {
-    var sqlQuery = "SELECT SiteID, utm_source , utm_campaign,\n" +
+    var sqlQuery = "SELECT utm_source , utm_campaign,\n" +
         "  COUNT(utm_campaign) AS visits " +
         "FROM test_dataset.Campaigns WHERE SiteID = '" + siteid +
         "' GROUP BY SiteID,\n" +
