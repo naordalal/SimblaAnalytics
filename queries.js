@@ -363,13 +363,27 @@ module.exports.getSiteScrollingPercentage = function(siteid) {
     return runQuery(options);
 }
 
-module.exports.getCampaignsData = function(siteid) {
+module.exports.getSourcesCampaigns = function(siteid) {
     var sqlQuery = "SELECT utm_source , utm_campaign,\n" +
-        "  COUNT(utm_campaign) AS visits " +
+        "  COUNT(utm_campaign) AS count " +
         "FROM test_dataset.Campaigns WHERE SiteID = '" + siteid +
         "' GROUP BY SiteID,\n" +
         "  utm_source,\n" +
         "  utm_campaign;";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getCampaignsData = function(siteid) {
+    var sqlQuery = "SELECT utm_campaign , utm_medium,\n" +
+        "  COUNT(utm_medium) AS count " +
+        "FROM test_dataset.Campaigns WHERE SiteID = '" + siteid +
+        "' GROUP BY SiteID,\n" +
+        "  utm_campaign,\n" +
+        "  utm_medium;";
     const options = {
         query: sqlQuery,
         useLegacySql: false, // Use standard SQL syntax for queries.

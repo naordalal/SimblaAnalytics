@@ -219,8 +219,15 @@ router.post('/scrolling',async function (req,res,next) {
 
 
 router.post('/Campaigns',async function (req,res,next) {
-    var results = await bigquery.getCampaignsData(req.body.siteId);
-    
+    var results = await bigquery.getSourcesCampaigns(req.body.siteId);
+    results = results.map(res => [res.utm_source , res.utm_campaign , res.count]);
+
+
+    var results2 = await bigquery.getCampaignsData(req.body.siteId);
+    results2 = results2.map(res => [res.utm_campaign , res.utm_medium , res.count]);
+
+    results = results.concat(results2);
+
     res.send(JSON.stringify(results));
 });
 
