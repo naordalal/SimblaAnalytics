@@ -4,7 +4,7 @@ var countries  = require('country-list')();
 var bigquery = require('../queries');
 var router = express.Router();
 const uuidv1 = require('uuid/v1');
-
+var URL = require('url')
 var SSE = require('express-sse');
 var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
 
@@ -111,6 +111,21 @@ router.route('/').post(function(req, res, next) {
 
     res.cookie('visited', visited , { expires: nowDate}).send("set cookie");
 });
+
+function insertCampaign(siteUrl)
+{
+    var urlObject = URL.parse(siteUrl);
+    var params = urlObject.query; //Return empty jsom if there is no parameters.
+    var utm_source = params.utm_source; //The site that send the traffic. required.
+    if(utm_source == undefined)
+        return;
+    
+    var utm_medium = params.utm_medium;
+    var utm_content = params.utm_content;
+    var utm_term = params.utm_term;
+    var utm_campaign = params.utm_campaign; //the name of the marketing campaign.
+
+}
 
 
 module.exports = router;

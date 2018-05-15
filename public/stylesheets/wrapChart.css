@@ -44,6 +44,12 @@ body {
     position: relative;
 }
 
+.triple-row-div
+{
+    width: 90%;
+    margin: 0 auto;
+    height: 660px;
+}
 .doubleRow-div{
 
     width: 90%;
@@ -138,4 +144,12 @@ body {
         text-align: left;
         padding-right: 0;
     }
+}
+
+/*Campaigns*/
+
+#campaigns
+{
+    width: 100%;
+    height: 100%;
 }
