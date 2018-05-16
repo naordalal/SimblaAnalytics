@@ -169,7 +169,7 @@ module.exports.getSessionCount = function(siteid) {
     return runQuery(options);
 }
 
-module.exports.getVisitsByHours = function(siteid) {
+module.exports.getVisitsInTheLast24Hours = function(siteid) {
     var nowTime = new Date().toLocaleString();
     var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer , COUNT(*) " +
                    "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
@@ -182,6 +182,35 @@ module.exports.getVisitsByHours = function(siteid) {
     };
     return runQuery(options);
 }
+
+module.exports.getVisitsByDays = function (siteid) {
+    var sqlQuery = "SELECT DAYOFWEEK(TIMESTAMP(Time)) as day , COUNT(*) as visits " +
+        "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
+        "WHERE  SiteID = '" + siteid + "') " + //TODO: Add the option to select time.
+        "GROUP BY day ORDER BY day" ;
+    const options = {
+        query: sqlQuery,
+        useQueryCache : false,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getVisitsByHourOfTheDay = function (siteid) {
+    var sqlQuery = "SELECT DAYOFWEEK(TIMESTAMP(Time)) AS day,\n" +
+        "  HOUR(TIMESTAMP(Time)) AS hour,\n" +
+        "  COUNT(*) as visits " +
+        "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
+        "WHERE  SiteID = '" + siteid + "') " + //TODO: Add the option to select time.
+        "GROUP BY day,hour ORDER BY day,hour" ;
+    const options = {
+        query: sqlQuery,
+        useQueryCache : false,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
 
 module.exports.getBounceRate = function(siteid) {
     var sqlQuery =

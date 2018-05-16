@@ -7,20 +7,15 @@ var paintMap = function () {
     console.log("empty Function ... look at map.js")
 }
 
-google.charts.load('current', {'packages':['line']});
+google.charts.load('current', {'packages':['line','corechart','table','treemap','controls']});
 google.charts.setOnLoadCallback(drawLineChart);
-
-google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawPieChart);
-
-google.charts.load('current', {'packages':['table']});
 google.charts.setOnLoadCallback(getRefererList);
 google.charts.setOnLoadCallback(getPageViews);
-
 google.charts.setOnLoadCallback(getCountryList);
 google.charts.setOnLoadCallback(getScrolling);
-google.charts.load('current', {'packages':['treemap']});
 google.charts.setOnLoadCallback(getCampaigns);
+google.charts.setOnLoadCallback(getHourOfTheDay);
 
 
 
@@ -119,7 +114,6 @@ function getScrolling() {
         var data = []
         data.push(['Page','Percentage']);
         data = data.concat(resp.map(x=> [x.PageID, x.scroll]));
-        console.log(resp);
         data= google.visualization.arrayToDataTable(data);
 
 
@@ -219,7 +213,7 @@ function drawPieChart() {
 
         xhr.onload = function (e) {
             var data = xhr.response;
-            console.log(data)
+
             data = data.filter(x => x.Os);
             if(data!=null)
              {
@@ -311,9 +305,6 @@ function getHeatmap()
 var tree_table;
 function getCampaigns()
 {
-
-    console.log('dddddddddd')
-
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
     xhr.open('POST', "/dashboard/Campaigns", true);
@@ -325,7 +316,6 @@ function getCampaigns()
         var data = [['Label1','Label2','Visits']];
         data = data.concat(xhr.response);
 
-        console.log(data)
         data = google.visualization.arrayToDataTable(data);
 
 
@@ -353,52 +343,89 @@ function getCampaigns()
     }
     var params = "siteId=" + getSiteId();
     xhr.send(params);
-/*
-    var data = google.visualization.arrayToDataTable([
-        ['Location', 'Parent', 'Market trade volume (size)', 'Market increase/decrease (color)'],
-        ['Global',    null,                 0,                               0],
-        ['America',   'Global',             0,                               0],
-        ['Europe',    'Global',             0,                               0],
-        ['Asia',      'Global',             0,                               0],
-        ['Australia', 'Global',             0,                               0],
-        ['Africa',    'Global',             0,                               0],
-        ['Brazil',    'America',            11,                              10],
-        ['USA',       'America',            52,                              31],
-        ['Mexico',    'America',            24,                              12],
-        ['Canada',    'America',            16,                              -23],
-        ['France',    'Europe',             42,                              -11],
-        ['Germany',   'Europe',             31,                              -2],
-        ['Berlin', 'Germany' , 20 , -5],
-        ['Sweden',    'Europe',             22,                              -13],
-        ['Italy',     'Europe',             17,                              4],
-        ['UK',        'Europe',             21,                              -5],
-        ['China',     'Asia',               36,                              4],
-        ['Japan',     'Asia',               20,                              -12],
-        ['India',     'Asia',               40,                              63],
-        ['Laos',      'Asia',               4,                               34],
-        ['Mongolia',  'Asia',               1,                               -5],
-        ['Israel',    'Asia',               12,                              24],
-        ['Iran',      'Asia',               18,                              13],
-        ['Pakistan',  'Asia',               11,                              -52],
-        ['Egypt',     'Africa',             21,                              0],
-        ['S. Africa', 'Africa',             30,                              43],
-        ['Sudan',     'Africa',             12,                              2],
-        ['Congo',     'Africa',             10,                              12],
-        ['Zaire',     'Africa',             8,                               10]
-    ]);
+}
 
-    tree = new google.visualization.TreeMap(document.getElementById('campaigns'));
+var hourOfTheDayData;
+function getHourOfTheDay()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.open('POST', "/dashboard/houroftheday", true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.responseType = "json";
+    xhr.onload = function (e)
+    {
+        hourOfTheDayData = xhr.response;
 
-    tree.draw(data, {
-        minColor: '#f00',
-        midColor: '#ddd',
-        maxColor: '#0d0',
-        headerHeight: 15,
-        fontColor: 'black',
-        showScale: true
-    });*/
+        var today = new Date().getDay()+1;
+        drawHourOfTheDayChartByDay(today);
+
+    }
+
+    var params = "siteId=" + getSiteId();
+    xhr.send(params);
+}
 
 
+function drawHourOfTheDayChartByDay(day)
+{
+    var data = hoursByDay(hourOfTheDayData , day);
+    console.log(data);
+    data = google.visualization.arrayToDataTable(data);
+    var view = new google.visualization.DataView(data);
+
+    day = getDayName(day);
+    var colChart = new google.visualization.ColumnChart(document.getElementById("hourOfTheDayChart"));
+    console.log(day)
+    colChart.draw(view,{
+        title: day,
+        legend : {position: 'none'},
+        hAxis: {ticks : [0,3,6,9,12,15,18,21,24]}
+
+    });
+}
+
+function hoursByDay(data,day)
+{
+    var resData = [['Hour','Visits']];
+    resData = resData.concat(hourOfTheDayData.map(x =>  {if (x.day == day) return [x.hour,x.visits]}));
+    resData = resData.filter(x => x!=undefined);
+
+    return resData;
+}
+
+
+function getDayName(day)
+{
+    var name;
+    switch(day)
+    {
+
+        case 1:
+            name = "Sunday";
+            break;
+        case 2:
+            name = "Monday";
+            break;
+        case 3:
+            name = "Tuesday";
+            break;
+        case 4:
+            name = "Wednesday";
+            break;
+        case 5:
+            name = "Thursday";
+            break;
+        case 6:
+            name = "Friday";
+            break;
+        case 7:
+            name = "Saturday";
+            break;
+        default:
+            name = "";
+    }
+    return name;
 }
 
 
