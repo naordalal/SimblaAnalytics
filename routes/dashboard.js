@@ -1,8 +1,8 @@
 var express = require('express');
-const rp = require('request-promise')
+const rp = require('request-promise');
 
-var URL = require('url')
-const  jsdom = require('jsdom')
+var URL = require('url');
+const  jsdom = require('jsdom');
 const {JSDOM} = jsdom;
 var router = express.Router();
 var bigquery = require('../queries');
@@ -24,7 +24,7 @@ router.get('/heatmap',async function (req,res,next) {
     var points = await bigquery.getAllPointsOfSite(siteId);
     promise.then((dom)=>
     {
-        dom = new JSDOM(dom).window.document
+        dom = new JSDOM(dom).window.document;
         appendTheURL(dom,url);
 
 
@@ -134,7 +134,7 @@ function appendTheURL(dom,url)
 
 /* GET dashboard page. */
 router.get('/:siteId', async function(req, res, next) {
-    var visits,firstVisits,bounceRate,engaRate,recencyRate,loadTime;
+
     //res.render('index', { title: 'Visits: '+require('./users').getVisits()});
     var visits = require('./visit').getVisits(req.params.siteId);
     var firstVisits = require('./visit').getFirstVisits(req.params.siteId);
@@ -195,7 +195,7 @@ router.post('/ReferrList',function (req,res,next) {
 
 //Send visits by hour
 router.post('/graph',function (req,res,next) {
-    bigquery.getVisitsByHours(req.body.siteId).then(function (results) {
+    bigquery.getVisitsInTheLast24Hours(req.body.siteId).then(function (results) {
         res.send(JSON.stringify(results));
     });
 
@@ -243,6 +243,11 @@ router.post('/Campaigns',async function (req,res,next) {
     res.send(JSON.stringify(results));
 });
 
+
+router.post('/houroftheday',async function (req,res,next) {
+    var results = await bigquery.getVisitsByHourOfTheDay(req.body.siteId);
+    res.send(JSON.stringify(results));
+});
 
 
 //+++++++++++HEATMAP+++++
