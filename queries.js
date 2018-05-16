@@ -387,7 +387,8 @@ module.exports.getCampaignsData = function(siteid) {
         "  utm_medium;";
     const options = {
         query: sqlQuery,
-        useLegacySql: false, // Use standard SQL syntax for queries.
+        useLegacySql: false,
+        // Use standard SQL syntax for queries.
     };
     return runQuery(options);
 }

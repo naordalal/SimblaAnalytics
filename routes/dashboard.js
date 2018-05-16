@@ -222,16 +222,21 @@ router.post('/scrolling',async function (req,res,next) {
 
 router.post('/Campaigns',async function (req,res,next) {
     var results = [['Global',null,0]];
-    var results1 = await bigquery.getSourcesCampaigns(req.body.siteId);
+    var results1 = bigquery.getSourcesCampaigns(req.body.siteId);
+    var results2 = bigquery.getCampaignsData(req.body.siteId);
+
+    results1 = await results1;
     var sources = results1.map(res => res.utm_source);
-    sources = unique(sources);
-    results = results.concat(sources.map(res => [res , 'Global' , 0]));
+    unique(sources);
+    sources = sources.map(source => {return {source:source , count:results1.filter(res => res.utm_source == source).reduce((res1,res2) => res1+res2.count , 0)}});
+
+    results = results.concat(sources.map(res => [res.source , 'Global' , res.count]));
     
-    results1 = results1.map(res => [res.utm_source + "_" + res.utm_campaign , res.utm_source , res.count]);
+    results1 = results1.map(res => [{v:res.utm_source + "_" + res.utm_campaign,f : res.utm_campaign} , res.utm_source , res.count]);
 
 
-    var results2 = await bigquery.getCampaignsData(req.body.siteId);
-    results2 = results2.map(res => [res.utm_source + "_" + res.utm_campaign + "_" + res.utm_medium , res.utm_source + "_" + res.utm_campaign , res.count]);
+    results2 = await results2;
+    results2 = results2.map(res => [{v:res.utm_source + "_" + res.utm_campaign + "_" + res.utm_medium, f: res.utm_medium} , res.utm_source + "_" + res.utm_campaign , res.count]);
 
     results = results.concat(results1.concat(results2));
 

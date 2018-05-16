@@ -20,7 +20,7 @@ google.charts.setOnLoadCallback(getPageViews);
 google.charts.setOnLoadCallback(getCountryList);
 google.charts.setOnLoadCallback(getScrolling);
 google.charts.load('current', {'packages':['treemap']});
-google.charts.setOnLoadCallback(getCampiagns);
+google.charts.setOnLoadCallback(getCampaigns);
 
 
 
@@ -308,31 +308,47 @@ function getHeatmap()
     window.open('heatmap?siteId='+getSiteId());
 }
 
-
-function getCampiagns()
+var tree_table;
+function getCampaigns()
 {
+
+    console.log('dddddddddd')
 
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST', "/dashboard/graph", true);
+    xhr.open('POST', "/dashboard/Campaigns", true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.responseType = "json";
     xhr.onload = function (e)
     {
 
         var data = [['Label1','Label2','Visits']];
-        data.concat(xhr.response);
+        data = data.concat(xhr.response);
+
+        console.log(data)
         data = google.visualization.arrayToDataTable(data);
-        var view = new google.visualization.DataView(data);
-        var tree = new google.visualization.TreeMap(document.getElementById('campaigns'));
+
+
+        var tree = new google.visualization.TreeMap(document.getElementById('inner_campaigns'));
         tree.draw(data, {
-            minColor: '#f00',
-            midColor: '#ddd',
-            maxColor: '#0d0',
+            minColor: '#8da7be',
+            midColor: '#fcfffa',
+            maxColor: '#494842',
             headerHeight: 15,
             fontColor: 'black',
-            showScale: true
+            title : 'Campaigns',
+            generateTooltip: showFullTooltip,
+            highlightOnMouseOver: true,
         });
+        
+        
+        function showFullTooltip (row, size,value) {
+            return '<div style="background:#fcfffa; padding:10px;">' +
+            'Visits : '+data.getValue(row,2)+'</div>';
+        }
+
+
+        tree_table = tree;
 
     }
     var params = "siteId=" + getSiteId();
