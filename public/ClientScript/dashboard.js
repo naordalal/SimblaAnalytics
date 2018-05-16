@@ -15,11 +15,12 @@ google.charts.setOnLoadCallback(drawPieChart);
 
 google.charts.load('current', {'packages':['table']});
 google.charts.setOnLoadCallback(getRefererList);
+google.charts.setOnLoadCallback(getPageViews);
 
 google.charts.setOnLoadCallback(getCountryList);
 google.charts.setOnLoadCallback(getScrolling);
 google.charts.load('current', {'packages':['treemap']});
-google.charts.setOnLoadCallback(getCampiagns);
+google.charts.setOnLoadCallback(getCampaigns);
 
 
 
@@ -280,21 +281,22 @@ function getPageViews()
     xhr.onload = function (e)
     {
         var list = xhr.response;
-        console.log(list)
 
-        list.forEach(item =>
-        {
-            var entry = document.createElement('tr');
-            var pageTd = document.createElement('td');
-            var visitsTd = document.createElement('td');
-            pageTd.innerText = item.PageID;
-            visitsTd.innerText = item.popularity;
-            entry.appendChild(pageTd);
-            entry.appendChild(visitsTd);
-            table.appendChild(entry);
-        });
+        var list = xhr.response;
 
-        container.appendChild(table);
+        var data = []
+        data.push(['Page','Visits'])
+        data = data.concat(list.map(x => [x.PageID, x.popularity]));
+        data = google.visualization.arrayToDataTable(data);
+
+        var view = new google.visualization.DataView(data);
+
+        var options = {
+            title: "Page visits",
+            legend : {position: 'none'}
+        };
+        var chart = new google.visualization.BarChart(document.getElementById("pageViewsChart"));
+        chart.draw(view, options);
     }
 
     var params = "siteId=" + getSiteId();
@@ -306,19 +308,52 @@ function getHeatmap()
     window.open('heatmap?siteId='+getSiteId());
 }
 
-
-function getCampiagns()
+var tree_table;
+function getCampaigns()
 {
+
+    console.log('dddddddddd')
 
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST', "/dashboard/graph", true);
+    xhr.open('POST', "/dashboard/Campaigns", true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.responseType = "json";
-    xhr.onload = function (e) {
+    xhr.onload = function (e)
+    {
+
+        var data = [['Label1','Label2','Visits']];
+        data = data.concat(xhr.response);
+
+        console.log(data)
+        data = google.visualization.arrayToDataTable(data);
+
+
+        var tree = new google.visualization.TreeMap(document.getElementById('inner_campaigns'));
+        tree.draw(data, {
+            minColor: '#8da7be',
+            midColor: '#fcfffa',
+            maxColor: '#494842',
+            headerHeight: 15,
+            fontColor: 'black',
+            title : 'Campaigns',
+            generateTooltip: showFullTooltip,
+            highlightOnMouseOver: true,
+        });
+        
+        
+        function showFullTooltip (row, size,value) {
+            return '<div style="background:#fcfffa; padding:10px;">' +
+            'Visits : '+data.getValue(row,2)+'</div>';
+        }
+
+
+        tree_table = tree;
 
     }
-
+    var params = "siteId=" + getSiteId();
+    xhr.send(params);
+/*
     var data = google.visualization.arrayToDataTable([
         ['Location', 'Parent', 'Market trade volume (size)', 'Market increase/decrease (color)'],
         ['Global',    null,                 0,                               0],
@@ -361,7 +396,8 @@ function getCampiagns()
         headerHeight: 15,
         fontColor: 'black',
         showScale: true
-    });
+    });*/
+
 
 }
 
