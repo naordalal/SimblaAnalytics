@@ -94,7 +94,19 @@
 
 <div class=" doubleRow-div">
     <div class="col-div">
-        <div id="countryList" class="chart-wrap vertical-chart"></div>
+        <div class="chart-wrap vertical-chart">
+            <div class="dropdown">
+                <button class="dropbtn"><img style="height: 16px; width: 16px" src="http://localhost:3000/stylesheets/settingsImage.jpg"/></button>
+                <div class="dropdown-content">
+                    <span onclick=getCountryList(0)>Last day</span>
+                    <span onclick=getCountryList(1)>Last week</span>
+                    <span onclick=getCountryList(2)>Last month</span>
+                    <span onclick=getCountryList(3)>Last year</span>
+                </div>
+            </div>
+            <div id="countryList" class="chartt"></div>
+        </div>
+
 
         <div class="chart-wrap  vertical-chart">
             <div class="dropdown">
@@ -117,12 +129,37 @@
 </div>
 
 <div class="row-div">
-    <div id="donutchart" class="donut-chart"></div>
+    <div class="chart-wrap">
+        <div class="dropdown">
+            <button class="dropbtn"><img style="height: 16px; width: 16px" src="http://localhost:3000/stylesheets/settingsImage.jpg"/></button>
+            <div class="dropdown-content">
+                <span onclick=drawPieChart(0)>Last day</span>
+                <span onclick=drawPieChart(1)>Last week</span>
+                <span onclick=drawPieChart(2)>Last month</span>
+                <span onclick=drawPieChart(3)>Last year</span>
+            </div>
+        </div>
+        <div id="donutchart" class="donut-chart"></div>
+    </div>
+
+
     <div id="chart_div" class="line-chart"></div>
 </div>
 
 <div class="row-div">
-    <div id ='columnchart_values' class="chart-wrap"></div>
+    <div class="chart-wrap">
+        <div class="dropdown">
+            <button class="dropbtn"><img style="height: 16px; width: 16px" src="http://localhost:3000/stylesheets/settingsImage.jpg"/></button>
+            <div class="dropdown-content">
+                <span onclick=getScrolling(0)>Last day</span>
+                <span onclick=getScrolling(1)>Last week</span>
+                <span onclick=getScrolling(2)>Last month</span>
+                <span onclick=getScrolling(3)>Last year</span>
+            </div>
+        </div>
+        <div id ='scrolling_chart'></div>
+    </div>
+
     <div class="chart-wrap">
         <div class="dropdown">
             <button class="dropbtn"><img style="height: 16px; width: 16px" src="http://localhost:3000/stylesheets/settingsImage.jpg"/></button>

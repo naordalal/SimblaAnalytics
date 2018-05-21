@@ -130,13 +130,15 @@ module.exports.getPagePopularity = function(siteid, time) {
 }
 
 
-module.exports.getVistsCountByCountry = function(siteid) {
+module.exports.getVistsCountByCountry = function(siteid,time) {
     var sqlQuery = "SELECT Country, COUNT(Country) as visits " +
-        "FROM test_dataset.visits WHERE SiteID = '" + siteid +
-        "' GROUP BY Country ORDER BY visits DESC;";
+        "FROM [simbla-analytics:test_dataset.visits] "+
+        "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > (TIMESTAMP_TO_SEC(current_timestamp()) - 60*60*24*" + time + ") " +
+        " GROUP BY Country ORDER BY visits DESC;";
+
     const options = {
         query: sqlQuery,
-        useLegacySql: false, // Use standard SQL syntax for queries.
+        useLegacySql: true, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
 }
@@ -313,13 +315,15 @@ module.exports.getEngagementRate = function(siteid) {
     return runQuery(options);
 }
 
-module.exports.getVisitsCountByOs = function(siteid) {
+module.exports.getVisitsCountByOs = function(siteid,time) {
     var sqlQuery = "SELECT Os, COUNT(Os) as visits " +
-        "FROM test_dataset.visits WHERE SiteID = '" + siteid +
-        "' GROUP BY Os ORDER BY visits DESC;";
+        "FROM [simbla-analytics:test_dataset.visits] "+
+        "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > (TIMESTAMP_TO_SEC(current_timestamp()) - 60*60*24*" + time + ") " +
+        " GROUP BY Os ORDER BY visits DESC;";
+
     const options = {
         query: sqlQuery,
-        useLegacySql: false, // Use standard SQL syntax for queries.
+        useLegacySql: true, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
 }
@@ -371,13 +375,15 @@ module.exports.insertScrollPercentage = function (siteid ,pageid ,scroll ,time) 
         });
 }
 
-module.exports.getSiteScrollingPercentage = function(siteid) {
+module.exports.getSiteScrollingPercentage = function(siteid,time) {
     var sqlQuery = "SELECT PageID, AVG(scroll) as scroll " +
-        "FROM test_dataset.scrolls WHERE SiteID = '" + siteid +
-        "' GROUP BY PageID;";
+        "FROM [simbla-analytics:test_dataset.scrolls] "+
+        "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(Time) > (TIMESTAMP_TO_SEC(current_timestamp()) - 60*60*24*" + time + ") " +
+        " GROUP BY PageID;";
+
     const options = {
         query: sqlQuery,
-        useLegacySql: false, // Use standard SQL syntax for queries.
+        useLegacySql: true, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
 }

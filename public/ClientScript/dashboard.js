@@ -76,7 +76,7 @@ function sendHttpRequest(path,onloadCallback_wraper,params,method='POST')
 
 //Get the visited countries
 //Used for the worldMap and the countries table.
-function getCountryList()
+function getCountryList(choice = 0)
 {
     var path = "/dashboard/countryList";
     var callbackWraper = function (xhr)
@@ -85,13 +85,15 @@ function getCountryList()
             //response is ready
             if(xhr.readyState==4) {
                 var countryList = xhr.response;
+                console.log(countryList);
                 // var list = document.getElementById('countries');
                 var i;
 
                 var data = []
                 data.push(['Country','Visits'])
                 data = data.concat(countryList.map(x => [x.Country, x.visits]));
-
+                if(data.length == 1)
+                    data.push(['',0]);
                 data = google.visualization.arrayToDataTable(data);
 
                 var view = new google.visualization.DataView(data);
@@ -103,6 +105,9 @@ function getCountryList()
                 var chart = new google.visualization.BarChart(document.getElementById("countryList"));
                 chart.draw(view, options);
                 //Build the countries table.
+
+                countryMap = new Map();
+                gdpData = {};
                 for (i = 0; i < countryList.length; i++) //Add the list to the view.
                 {
                     countryMap.set(countryList[i].Country.toUpperCase(), countryList[i].visits);
@@ -113,13 +118,14 @@ function getCountryList()
             }
         };
     };
-    var params = "siteId="  + getSiteId();
+
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
     sendHttpRequest(path,callbackWraper,params);
 }
 
 
 
-function getScrolling()
+function getScrolling(choice = 0)
 {
     var path =  "/dashboard/scrolling";
 
@@ -129,6 +135,8 @@ function getScrolling()
             var data = []
             data.push(['Page', 'Percentage']);
             data = data.concat(resp.map(x => [x.PageID, x.scroll]));
+            if(data.length == 1)
+                data.push(['',0]);
             data = google.visualization.arrayToDataTable(data);
 
 
@@ -136,16 +144,15 @@ function getScrolling()
 
             var options = {
                 title: "Scrolling Percentage",
-                legend: {position: "none"},
-                vAxis: {direction: -1}
-
+                legend: {position: "none"}
             }
 
-            var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+            var chart = new google.visualization.ColumnChart(document.getElementById("scrolling_chart"));
             chart.draw(view, options);
         };
     };
-    var params = "siteId=" + getSiteId();
+
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
     sendHttpRequest(path,wraper,params);
 }
 
@@ -207,7 +214,7 @@ function drawLineChart() {
 }
 
 
-function drawPieChart() {
+function drawPieChart(choice = 0) {
 
         var path = "/dashboard/pieChart";
         var wraper = function (xhr) {
@@ -236,7 +243,7 @@ function drawPieChart() {
             };
         };
 
-        var params = "siteId=" + getSiteId();
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
         sendHttpRequest(path,wraper,params);
 }
 
@@ -253,6 +260,8 @@ function getRefererList(choice = 0)
             var data = []
             data.push(['Referr','Visits'])
             data = data.concat(list.map(x => [x.Referr, x.visits]));
+            if(data.length == 1)
+                data.push(['',0]);
             data = google.visualization.arrayToDataTable(data);
 
             var view = new google.visualization.DataView(data);
@@ -272,7 +281,7 @@ function getRefererList(choice = 0)
 }
 
 function getDaysFromChoice(choice) {
-    var days = [1,7,30,365];
+    var days = [1,7,30,356];
     return days[choice];
 }
 
@@ -287,6 +296,8 @@ function getPageViews(choice = 0)
             var data = []
             data.push(['Page','Visits'])
             data = data.concat(list.map(x => [x.PageID, x.popularity]));
+            if(data.length == 1)
+                data.push(['',0]);
             data = google.visualization.arrayToDataTable(data);
 
             var view = new google.visualization.DataView(data);

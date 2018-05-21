@@ -174,8 +174,7 @@ router.get('/', function(req, res, next) {
 
 //Send countryList to the client.
 router.post('/countryList',function (req,res,next) {
-    bigquery.getVistsCountByCountry(req.body.siteId).then(function (results) {
-
+    bigquery.getVistsCountByCountry(req.body.siteId,req.body.time).then(function (results) {
         res.send(JSON.stringify(results));
     });
 });
@@ -203,7 +202,7 @@ router.post('/graph',function (req,res,next) {
 
 //Send visits by OS
 router.post('/pieChart',function (req,res,next) {
-    bigquery.getVisitsCountByOs(req.body.siteId).then(function (results) {
+    bigquery.getVisitsCountByOs(req.body.siteId,req.body.time).then(function (results) {
         res.send(JSON.stringify(results));
     });
 });
@@ -215,7 +214,7 @@ router.post('/pageViews',function (req,res,next) {
 });
 
 router.post('/scrolling',async function (req,res,next) {
-    var results = await bigquery.getSiteScrollingPercentage(req.body.siteId);
+    var results = await bigquery.getSiteScrollingPercentage(req.body.siteId,req.body.time);
     res.send(JSON.stringify(results));
 });
 
