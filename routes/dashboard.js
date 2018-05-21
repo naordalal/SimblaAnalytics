@@ -188,7 +188,7 @@ router.post('/PageList',function (req,res,next) {
 
 //Send Referr data
 router.post('/ReferrList',function (req,res,next) {
-    bigquery.getVisitsCountByReferr(req.body.siteId).then(function (results) {
+    bigquery.getVisitsCountByReferr(req.body.siteId,req.body.time).then(function (results) {
         res.send(JSON.stringify(results));
     });
 });
@@ -209,7 +209,7 @@ router.post('/pieChart',function (req,res,next) {
 });
 
 router.post('/pageViews',function (req,res,next) {
-    bigquery.getPagePopularity(req.body.siteId).then(function (results) {
+    bigquery.getPagePopularity(req.body.siteId,req.body.time).then(function (results) {
         res.send(JSON.stringify(results));
     });
 });

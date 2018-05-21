@@ -116,10 +116,10 @@ module.exports.insertPage = function (siteid, sessionid ,pageid , time) {
         });
 }
 
-module.exports.getPagePopularity = function(siteid) {
+module.exports.getPagePopularity = function(siteid, time) {
     var sqlQuery = "SELECT PageID , COUNT(pageID) as popularity FROM " +
         "(SELECT PageID FROM [simbla-analytics:test_dataset.pages] " +
-        "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(Time) > (TIMESTAMP_TO_SEC(current_timestamp()) - 60*60*24*30)) " +
+        "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(Time) > (TIMESTAMP_TO_SEC(current_timestamp()) - 60*60*24*" + time + ")) " +
         "GROUP BY PageID ORDER BY PageID";
 
     const options = {
@@ -324,25 +324,15 @@ module.exports.getVisitsCountByOs = function(siteid) {
     return runQuery(options);
 }
 
-module.exports.getVisitsCountByReferr = function(siteid) {
+module.exports.getVisitsCountByReferr = function(siteid, time) {
     var sqlQuery = "SELECT Referr, COUNT(Referr) as visits " +
-        "FROM test_dataset.visits WHERE SiteID = '" + siteid +
-        "' GROUP BY Referr ORDER BY visits DESC;";
-    const options = {
-        query: sqlQuery,
-        useLegacySql: false, // Use standard SQL syntax for queries.
-    };
-    return runQuery(options);
-}
+        "FROM [simbla-analytics:test_dataset.visits] "+
+        "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > (TIMESTAMP_TO_SEC(current_timestamp()) - 60*60*24*" + time + ") " +
+        " GROUP BY Referr ORDER BY visits DESC;";
 
-//Now same the original referr
-module.exports.getVisitsCountBySocialReferr = function(siteid) {
-    var sqlQuery = "SELECT Referr, COUNT(Referr) as visits " +
-        "FROM test_dataset.visits WHERE SiteID = '" + siteid +
-        "' GROUP BY Referr ORDER BY visits DESC;";
     const options = {
         query: sqlQuery,
-        useLegacySql: false, // Use standard SQL syntax for queries.
+        useLegacySql: true, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
 }

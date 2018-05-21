@@ -241,7 +241,7 @@ function drawPieChart() {
 }
 
 
-function getRefererList()
+function getRefererList(choice = 0)
 {
     var path = "/dashboard/ReferrList";
     var wraper  = function (xhr)
@@ -267,12 +267,16 @@ function getRefererList()
         };
     };
 
-
-    var params = "siteId=" + getSiteId();
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
     sendHttpRequest(path,wraper,params);
 }
 
-function getPageViews()
+function getDaysFromChoice(choice) {
+    var days = [1,7,30,365];
+    return days[choice];
+}
+
+function getPageViews(choice = 0)
 {
     var path = "/dashboard/pageViews";
     var wraper = function (xhr)
@@ -280,7 +284,6 @@ function getPageViews()
         return function (e)
         {
             var list = xhr.response;
-
             var data = []
             data.push(['Page','Visits'])
             data = data.concat(list.map(x => [x.PageID, x.popularity]));
@@ -297,7 +300,7 @@ function getPageViews()
         }
     };
 
-    var params = "siteId=" + getSiteId();
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
     sendHttpRequest(path,wraper,params);
 }
 
@@ -378,8 +381,9 @@ function drawHourOfTheDayChartByDay(day)
     day = getDayName(day);
     var colChart = new google.visualization.ColumnChart(document.getElementById("hourOfTheDayChart"));
     colChart.draw(view,{
-        title: day,
+
         legend : {position: 'none'},
+        bar: {groupWidth: "95%"},
         hAxis: {ticks : [0,3,6,9,12,15,18,21,24]},
 
     });
@@ -390,6 +394,15 @@ function hoursByDay(data,day)
     var resData = [['Hour','Visits']];
     resData = resData.concat(hourOfTheDayData.map(x =>  {if (x.day == day) return [x.hour,x.visits]}));
     resData = resData.filter(x => x!=undefined);
+    var i = 0;
+    loop1:
+        for(;i < 24; i++) {
+            for(var el in resData) {
+                if (el[0] == i)
+                    continue loop1;
+            }
+            resData.push([i,0]);
+    }
     return resData;
 }
 
