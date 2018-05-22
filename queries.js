@@ -205,6 +205,48 @@ module.exports.getVisitsByHourOfTheDay = function (siteid) {
         "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
         "WHERE  SiteID = '" + siteid + "') " + //TODO: Add the option to select time.
         "GROUP BY day,hour ORDER BY day,hour" ;
+
+    var sqlQuery ="SELECT\n" +
+        "  day1 AS day,\n" +
+        "  hour1 AS hour,\n" +
+        "  visits1*visits2 AS visits\n" +
+        "FROM (\n" +
+        "  SELECT\n" +
+        "    DAYOFWEEK(TIMESTAMP(Time)) AS day1,\n" +
+        "    HOUR(TIMESTAMP(Time)) AS hour1,\n" +
+        "    COUNT(*) AS visits1\n" +
+        "  FROM\n" +
+        "    [simbla-analytics:test_dataset.visits]\n" +
+        "  WHERE\n" +
+        "    SiteID ='"+siteid+"'\n" +
+        "  GROUP BY\n" +
+        "    day1,\n" +
+        "    hour1) AS T1\n" +
+        "JOIN (\n" +
+        "  SELECT\n" +
+        "    DAYOFWEEK(date) AS day2,\n" +
+        "    hourDate,\n" +
+        "    COUNT(date) AS visits2\n" +
+        "  FROM (\n" +
+        "    SELECT\n" +
+        "      HOUR(TIMESTAMP(TIME)) AS hourDate,\n" +
+        "      DATE(Time) AS date\n" +
+        "    FROM\n" +
+        "      [simbla-analytics:test_dataset.visits]\n" +
+        "    WHERE\n" +
+        "      SiteID ='"+siteid+"'\n" +
+        "    GROUP BY\n" +
+        "      hourDate,\n" +
+        "      date)\n" +
+        "  GROUP BY\n" +
+        "    day2,\n" +
+        "    hourDate) AS T2\n" +
+        "ON\n" +
+        "  day1=day2\n" +
+        "  AND hour1=hourDate\n" +
+        "ORDER BY\n" +
+        "  day1,\n" +
+        "  hour1"
     const options = {
         query: sqlQuery,
         useQueryCache : false,

@@ -76,7 +76,7 @@ function sendHttpRequest(path,onloadCallback_wraper,params,method='POST')
 
 //Get the visited countries
 //Used for the worldMap and the countries table.
-function getCountryList(choice = 0)
+function getCountryList(choice = 3)
 {
     var path = "/dashboard/countryList";
     var callbackWraper = function (xhr)
@@ -85,7 +85,7 @@ function getCountryList(choice = 0)
             //response is ready
             if(xhr.readyState==4) {
                 var countryList = xhr.response;
-                console.log(countryList);
+
                 // var list = document.getElementById('countries');
                 var i;
 
@@ -125,7 +125,7 @@ function getCountryList(choice = 0)
 
 
 
-function getScrolling(choice = 0)
+function getScrolling(choice = 3)
 {
     var path =  "/dashboard/scrolling";
 
@@ -144,7 +144,9 @@ function getScrolling(choice = 0)
 
             var options = {
                 title: "Scrolling Percentage",
-                legend: {position: "none"}
+                legend: {position: "none"},
+                vAxis: {direction: -1}
+
             }
 
             var chart = new google.visualization.ColumnChart(document.getElementById("scrolling_chart"));
@@ -214,7 +216,7 @@ function drawLineChart() {
 }
 
 
-function drawPieChart(choice = 0) {
+function drawPieChart(choice = 3) {
 
         var path = "/dashboard/pieChart";
         var wraper = function (xhr) {
@@ -248,7 +250,7 @@ function drawPieChart(choice = 0) {
 }
 
 
-function getRefererList(choice = 0)
+function getRefererList(choice = 3)
 {
     var path = "/dashboard/ReferrList";
     var wraper  = function (xhr)
@@ -285,7 +287,7 @@ function getDaysFromChoice(choice) {
     return days[choice];
 }
 
-function getPageViews(choice = 0)
+function getPageViews(choice = 3)
 {
     var path = "/dashboard/pageViews";
     var wraper = function (xhr)
@@ -403,7 +405,9 @@ function drawHourOfTheDayChartByDay(day)
 function hoursByDay(data,day)
 {
     var resData = [['Hour','Visits']];
-    resData = resData.concat(hourOfTheDayData.map(x =>  {if (x.day == day) return [x.hour,x.visits]}));
+    var sum = hourOfTheDayData.filter(x =>x.day == day ).reduce((x,y)=> x+y.visits ,0);
+
+    resData = resData.concat(hourOfTheDayData.map(x =>  {if (x.day == day) return [x.hour,x.visits/sum]}));
     resData = resData.filter(x => x!=undefined);
     var i = 0;
     loop1:
