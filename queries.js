@@ -198,15 +198,19 @@ module.exports.getVisitsByDays = function (siteid) {
     return runQuery(options);
 }
 
-module.exports.getVisitsByHourOfTheDay = function (siteid) {
-    var sqlQuery = "SELECT DAYOFWEEK(TIMESTAMP(Time)) AS day,\n" +
-        "  HOUR(TIMESTAMP(Time)) AS hour,\n" +
-        "  COUNT(*) as visits " +
-        "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
-        "WHERE  SiteID = '" + siteid + "') " + //TODO: Add the option to select time.
-        "GROUP BY day,hour ORDER BY day,hour" ;
+module.exports.getVisitsByHourOfTheDay = function (siteid , option) {
 
-    var sqlQuery ="SELECT\n" +
+    var sqlQuery;
+    if (option == 1 )
+    {
+        sqlQuery = "SELECT DAYOFWEEK(TIMESTAMP(Time)) AS day,\n" +
+            "  HOUR(TIMESTAMP(Time)) AS hour,\n" +
+            "  COUNT(*) as visits " +
+            "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
+            "WHERE  SiteID = '" + siteid + "') " + //TODO: Add the option to select time.
+            "GROUP BY day,hour ORDER BY day,hour";
+    }else
+        sqlQuery ="SELECT\n" +
         "  day1 AS day,\n" +
         "  hour1 AS hour,\n" +
         "  visits1*visits2 AS visits\n" +

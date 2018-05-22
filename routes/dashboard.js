@@ -142,13 +142,23 @@ router.get('/:siteId', async function(req, res, next) {
     var engaRate = require('./visit').getEngagementRate(req.params.siteId);
     var recencyRate = require('./visit').getRecencyRate(req.params.siteId);
     var loadTime = require('./visit').getAverageLoadTime(req.params.siteId);
-
+    var bestDay  = bigquery.getVisitsByHourOfTheDay(req.params.siteId);
+    
     visits = await visits;
     firstVisits = await firstVisits;
     bounceRate = await bounceRate;
     engaRate = await engaRate;
     recencyRate = await recencyRate;
     loadTime = await loadTime;
+    bestDay = await bestDay;
+
+    array = [];
+    for(var i = 0 ; i < 7 ; i++)
+    {
+        var sum = bestDay.filter(el => el.day == i).reduce((x,y) => x + y.visits , 0);
+        array.push(sum);
+    }
+    bestDay = array.indexOf(Math.max(...array));
 
     bounceRate = Math.round(bounceRate*100)/100;
     loadTime = Math.round(loadTime[0].avg*100)/100;
@@ -157,11 +167,18 @@ router.get('/:siteId', async function(req, res, next) {
 
     res.render('dashboard', {visits : visits[0].visits , firstVisits : firstVisits[0].visits, bounceRate : bounceRate,
         engagementRate: engaRate, recencyRate : recencyRate/*[0].visits*/,
-        loadTime : loadTime , siteId : req.params.siteId});
+        loadTime : loadTime , siteId : req.params.siteId, bestDay: getDayName(bestDay+1)});
     //res.render('dashboard', {visits : require('./visit').getVisits(req.params.siteId) , firstVisits : require('./visit').getFirstVisits(req.params.siteId),
     //siteId : req.params.siteId})
 
 });
+function getDayName(day)
+{
+    if(day>7)
+        return "";
+    var days = ["","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    return days[day];
+}
 
 
 router.get('/', function(req, res, next) {

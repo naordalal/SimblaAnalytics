@@ -61,10 +61,11 @@
     </div>
 </div>
 <div class="container card-list">
-    <div class="card blue">
-        <div class="title">Blah</div><span class="glyphicon glyphicon-upload"></span>
-        <div class="value">42</div>
+    <div class="card tooltip">
+        <div class="title">Best Day</div><span class="glyphicon glyphicon-upload"></span>
+        <div class="value"><%=bestDay%></div>
         <div class="stat"><b>13</b>% increase</div>
+        <div class="tooltiptext">The day with the most traffic</div>
     </div>
     <div class="card engagementRate tooltip">
         <div class="title">Engagement rate</div><span class="glyphicon glyphicon-upload"></span>
@@ -79,7 +80,7 @@
         <div class="tooltiptext">The percentage of visitors who returned to the site</div>
     </div>
     <div onclick="getHeatmap()" style="cursor: pointer;" class="card heatmap tooltip">
-        <div class="title"></div><span class="glyphicon glyphicon-download"></span>
+        <div class="title"></br></div><span class="glyphicon glyphicon-download"></span>
         <div class="value">HEATMAP</div>
         <div class="stat"><b>13</b>% decrease</div>
         <div class="tooltiptext">Click to show Heatmap</div>
@@ -94,28 +95,28 @@
 
 <div class=" doubleRow-div">
     <div class="col-div">
-        <div class="chart-wrap vertical-chart">
+        <div class="countryList-div chart-wrap vertical-chart">
             <div class="dropdown">
-                <button class="dropbtn"><img style="height: 16px; width: 16px" src="http://localhost:3000/stylesheets/settingsImage.jpg"/></button>
+                <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
                 <div class="dropdown-content">
-                    <span onclick=getCountryList(0)>Last day</span>
-                    <span onclick=getCountryList(1)>Last week</span>
-                    <span onclick=getCountryList(2)>Last month</span>
-                    <span onclick=getCountryList(3)>Last year</span>
+                    <span class="day" onclick=getCountryList(0)>Last day</span>
+                    <span class="week" onclick=getCountryList(1)>Last week</span>
+                    <span class="month"onclick=getCountryList(2)>Last month</span>
+                    <span class="year" onclick=getCountryList(3) selected>Last year</span>
                 </div>
             </div>
             <div id="countryList" class="chartt"></div>
         </div>
 
 
-        <div class="chart-wrap  vertical-chart">
+        <div class="referres-div chart-wrap  vertical-chart">
             <div class="dropdown">
-                <button class="dropbtn"><img style="height: 16px; width: 16px" src="http://localhost:3000/stylesheets/settingsImage.jpg"/></button>
+                <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
                 <div class="dropdown-content">
-                    <span onclick=getRefererList(0)>Last day</span>
-                    <span onclick=getRefererList(1)>Last week</span>
-                    <span onclick=getRefererList(2)>Last month</span>
-                    <span onclick=getRefererList(3)>Last year</span>
+                    <span class="day" onclick=getRefererList(0)>Last day</span>
+                    <span class="week" onclick=getRefererList(1)>Last week</span>
+                    <span class="month" onclick=getRefererList(2)>Last month</span>
+                    <span class="year" onclick=getRefererList(3)>Last year</span>
                 </div>
             </div>
             <div id="referres_barchart" class="chartt"></div>
@@ -129,14 +130,14 @@
 </div>
 
 <div class="row-div">
-    <div class="chart-wrap">
+    <div class="donutchart-div chart-wrap">
         <div class="dropdown">
-            <button class="dropbtn"><img style="height: 16px; width: 16px" src="http://localhost:3000/stylesheets/settingsImage.jpg"/></button>
+            <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
             <div class="dropdown-content">
-                <span onclick=drawPieChart(0)>Last day</span>
-                <span onclick=drawPieChart(1)>Last week</span>
-                <span onclick=drawPieChart(2)>Last month</span>
-                <span onclick=drawPieChart(3)>Last year</span>
+                <span class="day" onclick=drawPieChart(0)>Last day</span>
+                <span class="week" onclick=drawPieChart(1)>Last week</span>
+                <span class="month" onclick=drawPieChart(2)>Last month</span>
+                <span class="year" onclick=drawPieChart(3)>Last year</span>
             </div>
         </div>
         <div id="donutchart" class="donut-chart"></div>
@@ -147,38 +148,39 @@
 </div>
 
 <div class="row-div">
-    <div class="chart-wrap">
+    <div class="scrolling_chart-div chart-wrap">
         <div class="dropdown">
-            <button class="dropbtn"><img style="height: 16px; width: 16px" src="http://localhost:3000/stylesheets/settingsImage.jpg"/></button>
+            <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
             <div class="dropdown-content">
-                <span onclick=getScrolling(0)>Last day</span>
-                <span onclick=getScrolling(1)>Last week</span>
-                <span onclick=getScrolling(2)>Last month</span>
-                <span onclick=getScrolling(3)>Last year</span>
+                <span class="day" onclick=getScrolling(0)>Last day</span>
+                <span class="week" onclick=getScrolling(1)>Last week</span>
+                <span class="month" onclick=getScrolling(2)>Last month</span>
+                <span class="year" onclick=getScrolling(3)>Last year</span>
             </div>
         </div>
         <div id ='scrolling_chart' class="chartt"></div>
     </div>
 
-    <div class="chart-wrap">
+    <div class="pageViewsChart-div chart-wrap">
         <div class="dropdown">
-            <button class="dropbtn"><img style="height: 16px; width: 16px" src="http://localhost:3000/stylesheets/settingsImage.jpg"/></button>
+            <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
             <div class="dropdown-content">
-                <span onclick=getPageViews(0)>Last day</span>
-                <span onclick=getPageViews(1)>Last week</span>
-                <span onclick=getPageViews(2)>Last month</span>
-                <span onclick=getPageViews(3)>Last year</span>
+                <span class="day" onclick=getPageViews(0)>Last day</span>
+                <span class="week" onclick=getPageViews(1)>Last week</span>
+                <span class="month" onclick=getPageViews(2)>Last month</span>
+                <span class="year" onclick=getPageViews(3)>Last year</span>
             </div>
         </div>
         <div id = 'pageViewsChart' class="chartt"></div>
     </div>
+
     <div id = 'hourOfTheDayChart' class="chart-wrap">
     </div>
 </div>
 
 <div class="doubleRow-div">
     <div id = 'campaigns' class="chart-wrap">
-        <button onclick="tree_table.goUpAndDraw();">back</button>
+        <button class ="dropbtn" onclick="tree_table.goUpAndDraw();"><img style="height: 32px; width: 32px" src="/stylesheets/black-arrow.png"/></button>
         <div id ='inner_campaigns'></div>
     </div>
 
