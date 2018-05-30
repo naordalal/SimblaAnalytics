@@ -74,10 +74,27 @@ function sendHttpRequest(path,onloadCallback_wraper,params,method='POST')
 
 }
 
+function getClassByChoice(choice)
+{
+    return ["day","week","month","year"][choice];
+}
+
+function markOptionAsSelected(chart , ele_class)
+{
+    ["day","week","month","year"].forEach((c ,index) =>{
+        //var element = document.querySelector("."+chart+" ."+c);
+        $("."+chart+" ."+c).removeClass("selected")
+       // element.classList.remove("selected");
+    });
+    $("."+chart+" ."+ele_class).addClass("selected");
+}
+
 //Get the visited countries
 //Used for the worldMap and the countries table.
-function getCountryList()
+function getCountryList(choice = 3)
 {
+    var chart_div = "countryList-div";
+
     var path = "/dashboard/countryList";
     var callbackWraper = function (xhr)
     {
@@ -85,13 +102,15 @@ function getCountryList()
             //response is ready
             if(xhr.readyState==4) {
                 var countryList = xhr.response;
+
                 // var list = document.getElementById('countries');
                 var i;
 
                 var data = []
                 data.push(['Country','Visits'])
                 data = data.concat(countryList.map(x => [x.Country, x.visits]));
-
+                if(data.length == 1)
+                    data.push(['',0]);
                 data = google.visualization.arrayToDataTable(data);
 
                 var view = new google.visualization.DataView(data);
@@ -103,6 +122,9 @@ function getCountryList()
                 var chart = new google.visualization.BarChart(document.getElementById("countryList"));
                 chart.draw(view, options);
                 //Build the countries table.
+
+                countryMap = new Map();
+                gdpData = {};
                 for (i = 0; i < countryList.length; i++) //Add the list to the view.
                 {
                     countryMap.set(countryList[i].Country.toUpperCase(), countryList[i].visits);
@@ -113,14 +135,19 @@ function getCountryList()
             }
         };
     };
-    var params = "siteId="  + getSiteId();
+
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
     sendHttpRequest(path,callbackWraper,params);
+    markOptionAsSelected(chart_div,getClassByChoice(choice));
 }
 
 
 
-function getScrolling()
+function getScrolling(choice = 3)
 {
+
+    var chart_div = "scrolling_chart-div";
+
     var path =  "/dashboard/scrolling";
 
     var wraper =function(xhr) {
@@ -129,6 +156,8 @@ function getScrolling()
             var data = []
             data.push(['Page', 'Percentage']);
             data = data.concat(resp.map(x => [x.PageID, x.scroll]));
+            if(data.length == 1)
+                data.push(['',0]);
             data = google.visualization.arrayToDataTable(data);
 
 
@@ -141,12 +170,14 @@ function getScrolling()
 
             }
 
-            var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+            var chart = new google.visualization.ColumnChart(document.getElementById("scrolling_chart"));
             chart.draw(view, options);
         };
     };
-    var params = "siteId=" + getSiteId();
+
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
     sendHttpRequest(path,wraper,params);
+    markOptionAsSelected(chart_div,getClassByChoice(choice));
 }
 
 
@@ -207,42 +238,49 @@ function drawLineChart() {
 }
 
 
-function drawPieChart() {
+function drawPieChart(choice = 3) {
 
-        var path = "/dashboard/pieChart";
-        var wraper = function (xhr) {
-            return function (e)
+
+    var chart_div = "donutchart-div";
+
+    var path = "/dashboard/pieChart";
+    var wraper = function (xhr) {
+        return function (e)
+        {
+            var data = xhr.response;
+            data = data.filter(x => x.Os);
+            if(data!=null)
             {
-                var data = xhr.response;
-                data = data.filter(x => x.Os);
-                if(data!=null)
-                {
-                    data = data.map(x => [x.Os , x.visits]);
-                }
-                data.unshift(['OS','Visits']);
-                var readyData = google.visualization.arrayToDataTable(data);
+                data = data.map(x => [x.Os , x.visits]);
+            }
+            data.unshift(['OS','Visits']);
+            var readyData = google.visualization.arrayToDataTable(data);
 
-                var options = {
-                    title: 'OS Distribution',
-                    backgroundColor:"transparent",
-                    legend :{ alignment:'center', textStyle: {fontSize : 12, color: "black"}},
-                    titleTextStyle:{ fontSize : 15, color: "black"},
-                    chartArea:{width:'100%',height:'75%'},
-                    pieHole: 0.4
-                };
-
-                var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-                chart.draw(readyData, options);
+            var options = {
+                title: 'OS Distribution',
+                backgroundColor:"transparent",
+                legend :{ alignment:'center', textStyle: {fontSize : 12, color: "black"}},
+                titleTextStyle:{ fontSize : 15, color: "black"},
+                chartArea:{width:'100%',height:'75%'},
+                pieHole: 0.4
             };
-        };
 
-        var params = "siteId=" + getSiteId();
-        sendHttpRequest(path,wraper,params);
+            var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+            chart.draw(readyData, options);
+        };
+    };
+
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
+    sendHttpRequest(path,wraper,params);
+    markOptionAsSelected(chart_div,getClassByChoice(choice));
 }
 
 
-function getRefererList()
+function getRefererList(choice = 3)
 {
+
+    var chart_div = "referres-div";
+
     var path = "/dashboard/ReferrList";
     var wraper  = function (xhr)
     {
@@ -253,6 +291,8 @@ function getRefererList()
             var data = []
             data.push(['Referr','Visits'])
             data = data.concat(list.map(x => [x.Referr, x.visits]));
+            if(data.length == 1)
+                data.push(['',0]);
             data = google.visualization.arrayToDataTable(data);
 
             var view = new google.visualization.DataView(data);
@@ -267,23 +307,32 @@ function getRefererList()
         };
     };
 
-
-    var params = "siteId=" + getSiteId();
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
     sendHttpRequest(path,wraper,params);
+    markOptionAsSelected(chart_div,getClassByChoice(choice));
 }
 
-function getPageViews()
+function getDaysFromChoice(choice) {
+    var days = [1,7,30,356];
+    return days[choice];
+}
+
+function getPageViews(choice = 3)
 {
+
+    var chart_div = "pageViewsChart-div";
+
     var path = "/dashboard/pageViews";
     var wraper = function (xhr)
     {
         return function (e)
         {
             var list = xhr.response;
-
             var data = []
             data.push(['Page','Visits'])
             data = data.concat(list.map(x => [x.PageID, x.popularity]));
+            if(data.length == 1)
+                data.push(['',0]);
             data = google.visualization.arrayToDataTable(data);
 
             var view = new google.visualization.DataView(data);
@@ -297,8 +346,9 @@ function getPageViews()
         }
     };
 
-    var params = "siteId=" + getSiteId();
+    var params = "siteId=" + getSiteId() + "&time=" + getDaysFromChoice(choice);
     sendHttpRequest(path,wraper,params);
+    markOptionAsSelected(chart_div,getClassByChoice(choice));
 }
 
 function getHeatmap()
@@ -378,8 +428,9 @@ function drawHourOfTheDayChartByDay(day)
     day = getDayName(day);
     var colChart = new google.visualization.ColumnChart(document.getElementById("hourOfTheDayChart"));
     colChart.draw(view,{
-        title: day,
+        title : day,
         legend : {position: 'none'},
+        bar: {groupWidth: "95%"},
         hAxis: {ticks : [0,3,6,9,12,15,18,21,24]},
 
     });
@@ -388,8 +439,19 @@ function drawHourOfTheDayChartByDay(day)
 function hoursByDay(data,day)
 {
     var resData = [['Hour','Visits']];
-    resData = resData.concat(hourOfTheDayData.map(x =>  {if (x.day == day) return [x.hour,x.visits]}));
+    var sum = hourOfTheDayData.filter(x =>x.day == day ).reduce((x,y)=> x+y.visits ,0);
+
+    resData = resData.concat(hourOfTheDayData.map(x =>  {if (x.day == day) return [x.hour,x.visits/sum]}));
     resData = resData.filter(x => x!=undefined);
+    var i = 0;
+    loop1:
+        for(;i < 24; i++) {
+            for(var el in resData) {
+                if (el[0] == i)
+                    continue loop1;
+            }
+            resData.push([i,0]);
+    }
     return resData;
 }
 

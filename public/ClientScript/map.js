@@ -16,13 +16,19 @@ jQuery(document).ready(function() {
 
     );
 
-
+    colors = {}
     paintMap  =  function()
     {
-        var sum = 0,
-        cc,
+
+        var sum = 0, cc;
+
+        for(var color in colors)
+            colors[color] = 'black';
+
+        jQuery('#vmap').vectorMap('set', 'colors' , colors);
+
         colors = {};
-        //find maximum and minimum values
+        //find smaximum and minimum values
         for (cc in gdpData)
         {
             sum += parseFloat(gdpData[cc]);
@@ -30,6 +36,7 @@ jQuery(document).ready(function() {
         }
 
         //set colors according to values of GDP
+        console.log(gdpData);
         for (cc in gdpData)
         {
             colors[cc] = shade('#FF0000' ,1 - (parseFloat(gdpData[cc]))/sum);

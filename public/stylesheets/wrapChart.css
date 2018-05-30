@@ -19,6 +19,10 @@ body {
     height: 220px;
 }
 
+.chartt{
+    height: 90%;
+}
+
 .chart-wrap {
     width: 33.3%;
     height: 100%;
