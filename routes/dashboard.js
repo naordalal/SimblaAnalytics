@@ -1,8 +1,8 @@
 var express = require('express');
-const rp = require('request-promise')
+const rp = require('request-promise');
 
-var URL = require('url')
-const  jsdom = require('jsdom')
+var URL = require('url');
+const  jsdom = require('jsdom');
 const {JSDOM} = jsdom;
 var router = express.Router();
 var bigquery = require('../queries');
@@ -20,11 +20,12 @@ router.get('/heatmap',async function (req,res,next) {
         res.send('URL not found!')
         return;
     }
-    var promise = getHtml(url);
+
+    var promise = getHtml(url); //The html content of the required url.
     var points = await bigquery.getAllPointsOfSite(siteId);
     promise.then((dom)=>
     {
-        dom = new JSDOM(dom).window.document
+        dom = new JSDOM(dom).window.document; //The dom of the html. Used to query the html in convenient way.
         appendTheURL(dom,url);
 
 
@@ -61,40 +62,31 @@ function extractURL(url)
     var q =URL.parse(url);
     return q.protocol+'//'+q.host+'/';
 }
+
+/*
+  Changes all realative paths in the html , in a way that the heatmap stub will be able
+  to download it. The purpose is to show the page like it seen by a regular visitor.
+
+  In example : url = google.com <img src = "/a.png"/> ==> <img src = "google.com/a.png">
+
+  Moreover, the function delete the script that used for monitor the site.
+ */
 function appendTheURL(dom,url)
 {
     url = extractURL(url);
-    scripts = dom.getElementsByTagName('script');
-    styles = dom.getElementsByTagName('link')
-    images = dom.getElementsByTagName('image')
 
+    updateScripts(dom,url);
+    updateStyles(dom,url);
+    updateImages(dom,url);
+}
 
-    
-    for(let i = scripts.length-1 ; i >= 0; i--)
-    {
-        var script = scripts[i];
+/*
+    Update the relative paths that used to download css files.
+ */
+function updateStyles(dom,url)
+{
+    styles = dom.getElementsByTagName('link');
 
-        var q = undefined;
-        if(script.getAttribute('src') != null) {
-            q = URL.parse(script.getAttribute('src'));
-
-            if (!q.host)
-                if (script.getAttribute('src').startsWith('//'))
-                    script.setAttribute('src', 'http://' + script.getAttribute('src').substring(2));
-                else if(script.getAttribute('src').startsWith('/'))
-                    script.setAttribute('src', url + script.getAttribute('src').substring(1));
-                else
-                    script.setAttribute('src', url + script.getAttribute('src'));
-
-        }
-
-
-        if (script.innerHTML.includes('87f2f749d683945ddcf25ec6a473b9bc')) {
-            var father = script.parentElement;
-            father.removeChild(script);
-        }
-
-    }
     for(let i = 0 ; i < styles.length; i++)
     {
         var style = styles[i];
@@ -113,6 +105,13 @@ function appendTheURL(dom,url)
         }
 
     }
+}
+/*
+    Update the relative paths that used to download images to the browser.
+ */
+function updateImages(dom,url)
+{
+    images = dom.getElementsByTagName('image')
 
     for(let i = 0 ; i < images.length; i++)
     {
@@ -132,36 +131,90 @@ function appendTheURL(dom,url)
     }
 }
 
+/*
+    Update the relative paths that used to download scripts, and delete the script that used for monitoring the site.
+ */
+function updateScripts(dom,url)
+{
+    scripts = dom.getElementsByTagName('script');
+
+    for(let i = scripts.length-1 ; i >= 0; i--)
+    {
+        var script = scripts[i];
+
+        var q = undefined;
+        if(script.getAttribute('src') != null) {
+            q = URL.parse(script.getAttribute('src'));
+
+            if (!q.host)
+                if (script.getAttribute('src').startsWith('//'))
+                    script.setAttribute('src', 'http://' + script.getAttribute('src').substring(2));
+                else if(script.getAttribute('src').startsWith('/'))
+                    script.setAttribute('src', url + script.getAttribute('src').substring(1));
+                else
+                    script.setAttribute('src', url + script.getAttribute('src'));
+
+        }
+
+        if (script.innerHTML.includes('87f2f749d683945ddcf25ec6a473b9bc')) {
+            var father = script.parentElement;
+            father.removeChild(script);
+        }
+
+    }
+}
+
 /* GET dashboard page. */
 router.get('/:siteId', async function(req, res, next) {
-    var visits,firstVisits,bounceRate,engaRate,recencyRate,loadTime;
-    //res.render('index', { title: 'Visits: '+require('./users').getVisits()});
+
+
     var visits = require('./visit').getVisits(req.params.siteId);
     var firstVisits = require('./visit').getFirstVisits(req.params.siteId);
     var bounceRate = require('./visit').getBounceRate(req.params.siteId);
     var engaRate = require('./visit').getEngagementRate(req.params.siteId);
     var recencyRate = require('./visit').getRecencyRate(req.params.siteId);
     var loadTime = require('./visit').getAverageLoadTime(req.params.siteId);
+    var bestDay  = bigquery.getVisitsByHourOfTheDay(req.params.siteId);
+    
+
+    bounceRate = await bounceRate;
+    bounceRate = Math.round(bounceRate*100)/100;
+
+    engaRate = await engaRate;
+    engaRate = Math.round(engaRate[0].avg*100)/100;
+
+    recencyRate = await recencyRate;
+    recencyRate = Math.round(recencyRate*100)/100;
+
+    loadTime = await loadTime;
+    loadTime = Math.round(loadTime[0].avg*100)/100;
+
+    bestDay = await bestDay;
+
+    array = [];
+    for(var i = 0 ; i < 7 ; i++)
+    {
+        var sum = bestDay.filter(el => el.day == i).reduce((x,y) => x + y.visits , 0);
+        array.push(sum);
+    }
+
+    bestDay = array.indexOf(Math.max(...array));
 
     visits = await visits;
     firstVisits = await firstVisits;
-    bounceRate = await bounceRate;
-    engaRate = await engaRate;
-    recencyRate = await recencyRate;
-    loadTime = await loadTime;
-
-    bounceRate = Math.round(bounceRate*100)/100;
-    loadTime = Math.round(loadTime[0].avg*100)/100;
-    engaRate = Math.round(engaRate[0].avg*100)/100;
-    recencyRate = Math.round(recencyRate*100)/100;
 
     res.render('dashboard', {visits : visits[0].visits , firstVisits : firstVisits[0].visits, bounceRate : bounceRate,
         engagementRate: engaRate, recencyRate : recencyRate/*[0].visits*/,
-        loadTime : loadTime , siteId : req.params.siteId});
-    //res.render('dashboard', {visits : require('./visit').getVisits(req.params.siteId) , firstVisits : require('./visit').getFirstVisits(req.params.siteId),
-    //siteId : req.params.siteId})
-
+        loadTime : loadTime , siteId : req.params.siteId, bestDay: getDayName(bestDay+1)});
 });
+
+function getDayName(day)
+{
+    if(day>7)
+        return "";
+    var days = ["","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    return days[day];
+}
 
 
 router.get('/', function(req, res, next) {
@@ -172,54 +225,63 @@ router.get('/', function(req, res, next) {
     res.redirect('/dashboard/3')
 });
 
-//Send countryList to the client.
-router.post('/countryList',function (req,res,next) {
-    bigquery.getVistsCountByCountry(req.body.siteId).then(function (results) {
 
+/*
+    The post methods that used to get information for the graphs on the dashboard.
+ */
+
+//Send countryList to the client as array of jsons : {Country , visits}
+router.post('/countryList',function (req,res,next) {
+    bigquery.getVistsCountByCountry(req.body.siteId,req.body.time).then(function (results) {
         res.send(JSON.stringify(results));
     });
 });
 
+//Array of json : {PageID , popularity}
 router.post('/PageList',function (req,res,next) {
     bigquery.getPagePopularity(req.body.siteId).then(function (results) {
         res.send(JSON.stringify(results));
     });
 });
 
-//Send Referr data
+//Send Referr data as : [ { Referr , visits } ]
 router.post('/ReferrList',function (req,res,next) {
-    bigquery.getVisitsCountByReferr(req.body.siteId).then(function (results) {
+    bigquery.getVisitsCountByReferr(req.body.siteId,req.body.time).then(function (results) {
         res.send(JSON.stringify(results));
     });
 });
 
-//Send visits by hour
+//Send visits by hour , array of jsons  : { Timer , _f0 }
 router.post('/graph',function (req,res,next) {
-    bigquery.getVisitsByHours(req.body.siteId).then(function (results) {
+    bigquery.getVisitsInTheLast24Hours(req.body.siteId).then(function (results) {
         res.send(JSON.stringify(results));
     });
 
 });
 
-//Send visits by OS
+//Send visits by OS , array of jsons : { Os , visits }
 router.post('/pieChart',function (req,res,next) {
-    bigquery.getVisitsCountByOs(req.body.siteId).then(function (results) {
+    bigquery.getVisitsCountByOs(req.body.siteId,req.body.time).then(function (results) {
         res.send(JSON.stringify(results));
     });
 });
 
+//Array of json : {PageID , popularity} when popularity is actually visits.
 router.post('/pageViews',function (req,res,next) {
-    bigquery.getPagePopularity(req.body.siteId).then(function (results) {
+    bigquery.getPagePopularity(req.body.siteId,req.body.time).then(function (results) {
         res.send(JSON.stringify(results));
     });
 });
 
+//Array of jsons : {PageId , scroll} when scroll is the average percentage of scrolling in the page.
 router.post('/scrolling',async function (req,res,next) {
-    var results = await bigquery.getSiteScrollingPercentage(req.body.siteId);
+    var results = await bigquery.getSiteScrollingPercentage(req.body.siteId,req.body.time);
     res.send(JSON.stringify(results));
 });
 
-
+/*
+    This method send the campaign data. The data format matches to google charts treemap format.
+ */
 router.post('/Campaigns',async function (req,res,next) {
     var results = [['Global',null,0]];
     var results1 = bigquery.getSourcesCampaigns(req.body.siteId);
@@ -234,7 +296,6 @@ router.post('/Campaigns',async function (req,res,next) {
     
     results1 = results1.map(res => [{v:res.utm_source + "_" + res.utm_campaign,f : res.utm_campaign} , res.utm_source , res.count]);
 
-
     results2 = await results2;
     results2 = results2.map(res => [{v:res.utm_source + "_" + res.utm_campaign + "_" + res.utm_medium, f: res.utm_medium} , res.utm_source + "_" + res.utm_campaign , res.count]);
 
@@ -243,6 +304,17 @@ router.post('/Campaigns',async function (req,res,next) {
     res.send(JSON.stringify(results));
 });
 
+/*
+    Send the data about each hour of week days, Calculates the popularity of the site in a way
+    that peak in a single day of the year will not affect the results.
+
+    For example if every tuesday at 5 pm the site has 50 visits and suddenly week after
+    in the same hours the site has 500 visits, the results from this query will be affect in a minor way.
+  */
+router.post('/houroftheday',async function (req,res,next) {
+    var results = await bigquery.getVisitsByHourOfTheDay(req.body.siteId);
+    res.send(JSON.stringify(results));
+});
 
 
 //+++++++++++HEATMAP+++++
