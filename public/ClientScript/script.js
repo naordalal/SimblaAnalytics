@@ -50,19 +50,29 @@ window.onload = function() {
     }
 
 };
-
+var quarters = 0
 window.onscroll = function() {
     var scrollPercentage = window.scrollY / (document.documentElement.scrollHeight - document.body.clientHeight) * 100;
 
-    if(maxScrollPercentage < scrollPercentage)
+    if(maxScrollPercentage < scrollPercentage) {
+
+        if(scrollPercentage / 25 > quarters && SiteId != null) {
+            quarters++;
+            maxScrollPercentage = scrollPercentage;
+            sendScrolling();
+
+        }
         maxScrollPercentage = scrollPercentage;
+
+    }
 }
 
-window.onbeforeunload = function()
+//window.onbeforeunload = function()
+var sendScrolling = function()
 {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.open('POST',serverURL+"/scrolling",false); //TODO : Change URL.
+    xhr.open('POST',serverURL+"/scrolling",true); //TODO : Change URL.
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     var params = "siteId=" + SiteId;

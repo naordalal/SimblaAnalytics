@@ -43,8 +43,8 @@ router.route('/').post(function(req, res, next) {
         ipAddr = ipAddr[0]
         if(ipAddr) {
 
-            countryCode = 'IL';
-            //countryCode = geoip.lookup(ipAddr).country;
+            //countryCode = 'IL';
+            countryCode = geoip.lookup(ipAddr).country;
             //Will not work with LAN ip (return null);
             countries.getName(countryCode);
             country = countries.getName(countryCode);
