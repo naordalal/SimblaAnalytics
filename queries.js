@@ -74,6 +74,26 @@ module.exports.insertMouseLoc = function (siteId, X, Y) {
         });
 }
 
+module.exports.insertVisit = function (siteId, siteURL, date , country, firstVisit, referr, os,loadTime) {
+    bigquery
+        .dataset(datasetId)
+        .table("visits")
+        .insert([{SiteID: siteId, SiteURL: siteURL, Time: date, Country: country, FirstVisit: firstVisit,
+                           Referr: referr, Os:os ,LoadTime: loadTime}])
+        .then(() => {
+            console.log(`Inserted visit`);
+        })
+        .catch(err => {
+            if (err && err.name === 'PartialFailureError') {
+                if (err.errors && err.errors.length > 0) {
+                    console.log('Insert errors:');
+                    err.errors.forEach(err => console.error(err));
+                }
+            } else {
+                console.error('ERROR:', err);
+            }
+        });
+}
 
 module.exports.insertCampaignData = function (siteId, utm_source, utm_campaign , utm_medium, utm_content, utm_term,date) {
     bigquery

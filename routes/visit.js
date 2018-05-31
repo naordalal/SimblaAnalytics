@@ -42,9 +42,11 @@ router.route('/').post(function(req, res, next) {
         console.log(ipAddr[0]);
         ipAddr = ipAddr[0]
         if(ipAddr) {
-            countryCode = geoip.lookup(ipAddr).country;
+
+            countryCode = 'IL';
+            //countryCode = geoip.lookup(ipAddr).country;
             //Will not work with LAN ip (return null);
-            var country = 'Israel';//countries.getName(countryCode);
+            countries.getName(countryCode);
             country = countries.getName(countryCode);
             console.log(country);
         }
@@ -55,11 +57,13 @@ router.route('/').post(function(req, res, next) {
         ipAddr = req.connection.remoteAddress;
         countryCode = geoip.lookup(ipAddr).country;
         //Will not work with LAN ip (return null);
-        var country = 'Israel';//countries.getName(countryCode);
+        countries.getName(countryCode);
         country = countries.getName(countryCode);
         console.log(country);
+
     }
 
+    console.log("Went good!");
 
     if(req.session.first == undefined)
     {
@@ -116,7 +120,9 @@ router.route('/').post(function(req, res, next) {
 function insertCampaign(siteUrl,siteId)
 {
     var urlObject = URL.parse(siteUrl);
-    var params = urlObject.query; //Return empty jsom if there is no parameters.
+    var params = urlObject.query; //Return empty json if there is no parameters.
+    if(params == null)
+        return;
     var utm_source = params.utm_source; //The site that send the traffic. required.
     if(utm_source == undefined)
         return;
