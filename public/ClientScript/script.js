@@ -1,6 +1,6 @@
 var findMe = '87f2f749d683945ddcf25ec6a473b9bc';
 var timerStart = Date.now();
-const serverURL = "http://simbla-analytics.appspot.com" //http://localhost:3000'
+const serverURL = "https://simbla-analytics.appspot.com" //http://localhost:3000'
 
 var maxScrollPercentage = 0;
 
