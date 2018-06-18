@@ -140,7 +140,7 @@ module.exports.getPagePopularity = function(siteid, time) {
     var sqlQuery = "SELECT PageID , COUNT(pageID) as popularity FROM " +
         "(SELECT PageID FROM [simbla-analytics:test_dataset.pages] " +
         "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(Time) > (TIMESTAMP_TO_SEC(current_timestamp()) - 60*60*24*" + time + ")) " +
-        "GROUP BY PageID ORDER BY PageID";
+        "GROUP BY PageID ORDER BY popularity DESC ";
 
     const options = {
         query: sqlQuery,
@@ -398,7 +398,7 @@ module.exports.getVisitsCountByReferr = function(siteid, time) {
     var sqlQuery = "SELECT Referr, COUNT(Referr) as visits " +
         "FROM [simbla-analytics:test_dataset.visits] "+
         "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > (TIMESTAMP_TO_SEC(current_timestamp()) - 60*60*24*" + time + ") " +
-        " GROUP BY Referr ORDER BY visits DESC;";
+        " GROUP BY Referr ORDER BY visits DESC LIMIT 5;";
 
     const options = {
         query: sqlQuery,

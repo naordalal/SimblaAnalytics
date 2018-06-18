@@ -108,9 +108,11 @@ function getCountryList(choice = 3)
 
                 var data = []
                 data.push(['Country','Visits'])
-                data = data.concat(countryList.map(x => [x.Country, x.visits]));
+                data = data.concat(countryList.slice(0,5).map(x => [x.Country, x.visits]));
+
                 if(data.length == 1)
                     data.push(['',0]);
+
                 data = google.visualization.arrayToDataTable(data);
 
                 var view = new google.visualization.DataView(data);
@@ -334,7 +336,7 @@ function getPageViews(choice = 3)
             if(data.length == 1)
                 data.push(['',0]);
             pushPagesToHeatmapListDOM(data);
-            data = google.visualization.arrayToDataTable(data);
+            data = google.visualization.arrayToDataTable(data.slice(0,6));
 
             var view = new google.visualization.DataView(data);
 
@@ -354,6 +356,10 @@ function getPageViews(choice = 3)
 
 function pushPagesToHeatmapListDOM(data)
 {
+    data = data.slice(1);
+    data = data.sort(function(a,b) {
+        return (""+a[0]).localeCompare(b[0]);
+    });
     let DOMList = document.querySelector('.heatmap-content');
     for(var i =1 ; i<data.length; i++)
     {
@@ -362,7 +368,6 @@ function pushPagesToHeatmapListDOM(data)
         span.innerHTML = page;
         span.onclick = function() {getHeatmap(''+page);};
         DOMList.appendChild(span);
-
     }
 }
 function getHeatmap(page)
