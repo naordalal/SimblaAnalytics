@@ -333,6 +333,7 @@ function getPageViews(choice = 3)
             data = data.concat(list.map(x => [x.PageID, x.popularity]));
             if(data.length == 1)
                 data.push(['',0]);
+            pushPagesToHeatmapListDOM(data);
             data = google.visualization.arrayToDataTable(data);
 
             var view = new google.visualization.DataView(data);
@@ -351,9 +352,22 @@ function getPageViews(choice = 3)
     markOptionAsSelected(chart_div,getClassByChoice(choice));
 }
 
-function getHeatmap()
+function pushPagesToHeatmapListDOM(data)
 {
-    window.open('heatmap?siteId='+getSiteId());
+    let DOMList = document.querySelector('.heatmap-content');
+    for(var i =1 ; i<data.length; i++)
+    {
+        let span = document.createElement('span');
+        let page = data[i][0];
+        span.innerHTML = page;
+        span.onclick = function() {getHeatmap(''+page);};
+        DOMList.appendChild(span);
+
+    }
+}
+function getHeatmap(page)
+{
+    window.open('heatmap?siteId='+getSiteId()+'&page='+page);
 }
 
 var tree_table;
