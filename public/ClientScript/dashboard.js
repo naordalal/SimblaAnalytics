@@ -23,6 +23,42 @@ google.charts.setOnLoadCallback(getHourOfTheDay);
 
 $(window).load(function(){
 
+    $('.counters').each(function () {
+        $(this).prop('Counter',0).animate({
+            Counter: $(this).text()
+        }, {
+            duration: 3000,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now));
+            }
+        });
+    });
+
+    $('.rate').each(function () {
+        $(this).prop('Counter',0).animate({
+            Counter: $(this).text()
+        }, {
+            duration: 3000,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now) + "%");
+            }
+        });
+    });
+
+    $('.time').each(function () {
+        $(this).prop('Counter',0).animate({
+            Counter: $(this).text()
+        }, {
+            duration: 3000,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now) + " ms");
+            }
+        });
+    });
+
     var siteId = getSiteId();
 //Subscribe to the event of visit (SSE).
     es.addEventListener('NewVisit/' + siteId, function (event) {
@@ -137,6 +173,9 @@ function getCountryList(choice = 3)
                 gdpData = {};
                 for (i = 0; i < countryList.length; i++) //Add the list to the view.
                 {
+                    if(!countryList[i].Country)
+                        continue;
+
                     countryMap.set(countryList[i].Country.toUpperCase(), countryList[i].visits);
                     gdpData[getCountryCode(countryList[i].Country).toLowerCase()] = countryList[i].visits;
                 }
