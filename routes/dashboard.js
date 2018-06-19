@@ -177,16 +177,29 @@ router.get('/:siteId', async function(req, res, next) {
     var recencyRate = require('./visit').getRecencyRate(req.params.siteId);
     var loadTime = require('./visit').getAverageLoadTime(req.params.siteId);
     var bestDay  = bigquery.getVisitsByHourOfTheDay(req.params.siteId);
+
+    var yestVisits = bigquery.getYesterdayTotalVisits(req.params.siteId);
+    var yestFirstVisits = bigquery.getYesterdayTotalFirstVisits(req.params.siteId);
+    var yestbounceRate = bigquery.getYesterdayBounceRate(req.params.siteId);
+    var yestrecencyRate = bigquery.getYesterdayRecencyRate(req.params.siteId);
+    var yestengaRate = bigquery.getYesterdayEngagementRate(req.params.siteId);
     
 
     bounceRate = await bounceRate;
     bounceRate = Math.round(bounceRate*100)/100;
+    yestbounceRate = await yestbounceRate;
+    yestbounceRate = Math.round(yestbounceRate*100)/100;
+
 
     engaRate = await engaRate;
     engaRate = Math.round(engaRate[0].avg*100)/100;
+    yestengaRate = await yestengaRate;
+    yestengaRate = Math.round(yestengaRate[0].avg * 100)/100;
 
     recencyRate = await recencyRate;
     recencyRate = Math.round(recencyRate*100)/100;
+    yestrecencyRate = await yestrecencyRate;
+    yestrecencyRate = Math.round(yestrecencyRate*100)/100;
 
     loadTime = await loadTime;
     loadTime = Math.round(loadTime[0].avg*100)/100;
@@ -203,10 +216,20 @@ router.get('/:siteId', async function(req, res, next) {
     bestDay = array.indexOf(Math.max(...array));
 
     visits = await visits;
-    firstVisits = await firstVisits;
+    yestVisits = await yestVisits;
 
-    res.render('dashboard', {visits : visits[0].visits , firstVisits : firstVisits[0].visits, bounceRate : bounceRate,
-        engagementRate: engaRate, recencyRate : recencyRate/*[0].visits*/,
+    let visitsGrowth = (visits[0].visits / (visits[0].visits - yestVisits[0].visits) -1) * 100;
+
+    firstVisits = await firstVisits;
+    yestFirstVisits = await yestFirstVisits;
+
+    let firstVisitsGrowth = (firstVisits[0].visits / (firstVisits[0].visits - yestFirstVisits[0].visits) -1) * 100;
+
+    res.render('dashboard', {visits : visits[0].visits , visitsGrowth : Math.ceil(visitsGrowth)
+        ,firstVisits : firstVisits[0].visits, firstVisitsGrowth : Math.ceil(firstVisitsGrowth),
+        bounceRate : bounceRate, bounceRateGrowth : Math.ceil(((bounceRate/yestbounceRate) - 1 )* 100) ,
+        engagementRate: engaRate,engagementRateGrowth : Math.ceil(((engaRate/yestengaRate) -1 )* 100),
+        recencyRate : recencyRate/*[0].visits*/,recencyRateGrowth : Math.ceil(((recencyRate/yestrecencyRate)-1)*100),
         loadTime : loadTime , siteId : req.params.siteId, bestDay: getDayName(bestDay+1)});
 });
 

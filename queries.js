@@ -191,6 +191,23 @@ module.exports.getSessionCount = function(siteid) {
     return runQuery(options);
 }
 
+module.exports.getYesterdaySessionCount = function(siteid) {
+    var nowTime = new Date().toLocaleString();
+    var sqlQuery =
+        "SELECT SessionID, COUNT(*) as count " +
+        "FROM [simbla-analytics:test_dataset.pages] " +
+        "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) < TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24 " +
+        "GROUP BY SessionID ";
+
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+
+
+    return runQuery(options);
+}
+
 module.exports.getVisitsInTheLast24Hours = function(siteid) {
     var nowTime = new Date().toLocaleString();
     var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer , COUNT(*) " +
@@ -280,13 +297,34 @@ module.exports.getVisitsByHourOfTheDay = function (siteid , option) {
 }
 
 
-module.exports.getBounceRate = function(siteid) {
+module.exports.getYesterdayBounceRate = function(siteid) {
+    let nowTime = new Date().toLocaleString();
     var sqlQuery =
         "SELECT count " +
         "FROM (SELECT COUNT(*) as count " +
               "FROM [simbla-analytics:test_dataset.pages] " +
-              "WHERE SiteID = '" + siteid + "' " +
+              "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) < TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24" +
               "GROUP BY SessionID) " +
+        "WHERE count = 1 ";
+
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options).then(function (results) {
+        return module.exports.getYesterdaySessionCount(siteid).then((results2) => {return results.length / results2.length * 100});
+    });
+}
+
+module.exports.getBounceRate = function(siteid) {
+    let nowTime = new Date().toLocaleString();
+    var sqlQuery =
+        "SELECT count " +
+        "FROM (SELECT COUNT(*) as count " +
+        "FROM [simbla-analytics:test_dataset.pages] " +
+        "WHERE SiteID = '" + siteid + "' " +
+        "GROUP BY SessionID) " +
         "WHERE count = 1 ";
 
     const options = {
@@ -301,7 +339,7 @@ module.exports.getBounceRate = function(siteid) {
 
 
 module.exports.getFirstVisitsByHours = function(siteid) {
-    var nowTime = new Date().toLocaleString();
+    let nowTime = new Date().toLocaleString();
     var sqlQuery = "SELECT HOUR(TIMESTAMP(Time)) as timer, COUNT(HOUR(TIMESTAMP(Time))) " +
                    "FROM (SELECT Time FROM [simbla-analytics:test_dataset.visits] " +
                    "WHERE  FirstVisit = true && SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24) " +
@@ -322,6 +360,30 @@ module.exports.getTotalVisits = function(siteid) {
         query: sqlQuery,
         useQueryCache : false, //Default is True.
         useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getYesterdayTotalVisits = function(siteid) {
+    let nowTime = new Date().toLocaleString();
+    var sqlQuery = "SELECT COUNT(Time) as visits " +
+        "FROM [simbla-analytics:test_dataset.visits] WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24"
+        "";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getYesterdayTotalFirstVisits = function(siteid) {
+    let nowTime = new Date().toLocaleString();
+    var sqlQuery = "SELECT COUNT(Time) as visits " +
+        "FROM [simbla-analytics:test_dataset.visits] WHERE SiteID = '" + siteid +
+        "' && FirstVisit = true && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) > TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
     };
     return runQuery(options);
 }
@@ -353,6 +415,33 @@ module.exports.getRecencyRate = function(siteid) {
 
 }
 
+module.exports.getYesterdayRecencyRate = function(siteid) {
+    let nowTime = new Date().toLocaleString();
+    var sqlQuery = "SELECT COUNT(Time) as visits " +
+        "FROM [simbla-analytics:test_dataset.visits] WHERE SiteID = '" + siteid +
+        "' && FirstVisit = false && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) < TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+
+    return runQuery(options).then(function (results) {
+        return module.exports.getFromYesterdayTotalFirstVisits(siteid).then((results2) => {return (results[0].visits / (results2[0].visits + results[0].visits)) * 100});
+    });
+
+}
+module.exports.getFromYesterdayTotalFirstVisits = function(siteid) {
+    let nowTime = new Date().toLocaleString();
+    var sqlQuery = "SELECT COUNT(Time) as visits " +
+        "FROM [simbla-analytics:test_dataset.visits] WHERE SiteID = '" + siteid +
+        "' && FirstVisit = true && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) < TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24";
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
 module.exports.getAverageLoadTime = function(siteid)
 {
     var sqlQuery = "SELECT AVG(LoadTime) AS avg " +
@@ -370,9 +459,25 @@ module.exports.getEngagementRate = function(siteid) {
     var sqlQuery =
         "SELECT AVG(max - min) / 60000000 as avg " +
         "FROM (SELECT SessionID, MAX(Time) as max, MIN(Time) as min " +
-              "FROM [simbla-analytics:test_dataset.pages] " +
-              "WHERE SiteID = '" + siteid + "' " +
-              "GROUP BY SessionID) ";
+        "FROM [simbla-analytics:test_dataset.pages] " +
+        "WHERE SiteID = '" + siteid + "' " +
+        "GROUP BY SessionID) ";
+
+    const options = {
+        query: sqlQuery,
+        useLegacySql: true, // Use standard SQL syntax for queries.
+    };
+    return runQuery(options);
+}
+
+module.exports.getYesterdayEngagementRate = function(siteid) {
+    let nowTime = new Date().toLocaleString();
+    var sqlQuery =
+        "SELECT AVG(max - min) / 60000000 as avg " +
+        "FROM (SELECT SessionID, MAX(Time) as max, MIN(Time) as min " +
+        "FROM [simbla-analytics:test_dataset.pages] " +
+        "WHERE SiteID = '" + siteid + "' && TIMESTAMP_TO_SEC(TIMESTAMP(Time)) < TIMESTAMP_TO_SEC(TIMESTAMP('" + nowTime + "')) - 60*60*24  " +
+        "GROUP BY SessionID) ";
 
     const options = {
         query: sqlQuery,
