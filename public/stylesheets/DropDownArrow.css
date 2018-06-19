@@ -40,11 +40,11 @@
     display: block;
 }
 
-.dropdown-heatmap:hover .dropdown-content{
+/*.dropdown-heatmap:hover .dropdown-content{
     display: block;
     position: center;
     top : 2%;
-}
+}*/
 
 .dd-visits{
     float: left;
