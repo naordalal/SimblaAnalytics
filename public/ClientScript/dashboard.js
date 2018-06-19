@@ -458,9 +458,9 @@ function pushPagesToHeatmapListDOM(data)
         DOMList.appendChild(span);
     }
 }
-function getHeatmap(page)
+function getHeatmap()
 {
-    window.open('heatmap?siteId='+getSiteId()+'&page='+page);
+    window.open('heatmap?siteId='+getSiteId());
 }
 
 var tree_table;

@@ -13,7 +13,7 @@ var unique = require('array-unique');
 router.get('/heatmap',async function (req,res,next) {
 
     var siteId = req.query.siteId;
-    var pageName = req.query.page;
+    //var pageName = req.query.page;
     //Get points from bigquery
 
     var url = await getURLFromSiteId(siteId);
@@ -22,8 +22,8 @@ router.get('/heatmap',async function (req,res,next) {
         return;
     }
 
-    var promise = getHtml(extractURL(url)+pageName);
-    //var promise = getHtml(url); //The html content of the required url.
+    //var promise = getHtml(extractURL(url)+pageName);
+    var promise = getHtml(url); //The html content of the required url.
     var points = await bigquery.getAllPointsOfSite(siteId);
     promise.then((dom)=>
     {
