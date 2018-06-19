@@ -194,7 +194,7 @@ router.get('/:siteId', async function(req, res, next) {
     bestDay = await bestDay;
 
     array = [];
-    for(var i = 0 ; i < 7 ; i++)
+    for(var i = 1 ; i <= 7 ; i++)
     {
         var sum = bestDay.filter(el => el.day == i).reduce((x,y) => x + y.visits , 0);
         array.push(sum);
