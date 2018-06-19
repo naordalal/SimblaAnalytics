@@ -106,6 +106,8 @@ function getCountryList(choice = 3)
                 // var list = document.getElementById('countries');
                 var i;
 
+
+
                 var data = []
                 data.push(['Country','Visits'])
                 data = data.concat(countryList.slice(0,5).map(x => [x.Country, x.visits]));
@@ -119,7 +121,13 @@ function getCountryList(choice = 3)
 
                 var options = {
                     title: "Country List",
-                    legend : {position: 'none'}
+                    legend : {position: 'none'},
+                    animation:{
+                        startup : true,
+                        duration: 1000,
+                        easing: 'out',
+                    }
+
                 };
                 var chart = new google.visualization.BarChart(document.getElementById("countryList"));
                 chart.draw(view, options);
@@ -168,7 +176,12 @@ function getScrolling(choice = 3)
             var options = {
                 title: "Scrolling Percentage",
                 legend: {position: "none"},
-                vAxis: {direction: -1}
+                vAxis: {direction: -1},
+                animation:{
+                    startup : true,
+                    duration: 1000,
+                    easing: 'out',
+                }
 
             }
 
@@ -227,7 +240,13 @@ function drawLineChart() {
                     titleTextStyle : {bold : true}
                 },
                 backgroundColor:'transparent',
-                titleTextStyle:{ fontSize : 15, color: "black"}
+                titleTextStyle:{ fontSize : 15, color: "black"},
+                animation:{
+                    startup : true,
+                    duration: 1000,
+                    easing: 'in',
+                }
+
 
             };
 
@@ -264,7 +283,13 @@ function drawPieChart(choice = 3) {
                 legend :{ alignment:'center', textStyle: {fontSize : 12, color: "black"}},
                 titleTextStyle:{ fontSize : 15, color: "black"},
                 chartArea:{width:'100%',height:'75%'},
-                pieHole: 0.4
+                pieHole: 0.4,
+                animation:{
+                    startup : true,
+                    duration: 1000,
+                    easing: 'out',
+                }
+
             };
 
             var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
@@ -301,7 +326,13 @@ function getRefererList(choice = 3)
 
             var options = {
                 title: "Referrers",
-                legend : {position: 'none'}
+                legend : {position: 'none'},
+                animation:{
+                    startup : true,
+                    duration: 1000,
+                    easing: 'out',
+                }
+
             };
             var chart = new google.visualization.BarChart(document.getElementById("referres_barchart"));
             chart.draw(view, options);
@@ -342,7 +373,13 @@ function getPageViews(choice = 3)
 
             var options = {
                 title: "Page visits",
-                legend : {position: 'none'}
+                legend : {position: 'none'},
+                animation:{
+                    startup : true,
+                    duration: 1000,
+                    easing: 'out',
+                }
+
             };
             var chart = new google.visualization.BarChart(document.getElementById("pageViewsChart"));
             chart.draw(view, options);
@@ -400,6 +437,12 @@ function getCampaigns()
                 title : 'Campaigns',
                 generateTooltip: showFullTooltip,
                 highlightOnMouseOver: true,
+                animation:{
+                    startup : true,
+                    duration: 1000,
+                    easing: 'out',
+                }
+
             });
 
 
@@ -451,6 +494,12 @@ function drawHourOfTheDayChartByDay(day)
         legend : {position: 'none'},
         bar: {groupWidth: "95%"},
         hAxis: {ticks : [0,3,6,9,12,15,18,21,24]},
+        animation:{
+            startup : true,
+            duration: 1000,
+            easing: 'out',
+        }
+
 
     });
 }
