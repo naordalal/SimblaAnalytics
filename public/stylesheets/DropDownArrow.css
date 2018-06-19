@@ -42,7 +42,7 @@
 
 .dropdown-heatmap:hover .dropdown-content{
     display: block;
-    position: relative;
+    position: center;
     top : 2%;
 }
 
