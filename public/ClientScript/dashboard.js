@@ -47,7 +47,7 @@ $(window).load(function(){
         });
     });
 
-    $('.time').each(function () {
+    $('.timeMS').each(function () {
         $(this).prop('Counter',0).animate({
             Counter: $(this).text()
         }, {
@@ -55,6 +55,18 @@ $(window).load(function(){
             easing: 'swing',
             step: function (now) {
                 $(this).text(Math.ceil(now) + " ms");
+            }
+        });
+    });
+
+    $('.timeMIN').each(function () {
+        $(this).prop('Counter', 0).animate({
+            Counter: $(this).text()
+        }, {
+            duration: 3000,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now) + " minutes");
             }
         });
     });
