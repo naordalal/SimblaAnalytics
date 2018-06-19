@@ -37,25 +37,25 @@
 <div class="container card-list">
     <div class="card totalVisits tooltip">
         <div class="title">Visits</div><span class="glyphicon glyphicon-upload"></span>
-        <div class="value"><%=visits%></div>
+        <div class="value counters"><%=visits%></div>
         <div class="stat"><b><%=visitsGrowth%></b>% increase from yesterday</div>
         <div class="tooltiptext">Total Visits</div>
     </div>
     <div class="card totalFirstVisits tooltip">
         <div class="title">First Visits</div><span class="glyphicon glyphicon-upload"></span>
-        <div class="value"><%=firstVisits%></div>
+        <div class="value counters"><%=firstVisits%></div>
         <div class="stat"><b><%=firstVisitsGrowth%></b>% increase from yesterday</div>
         <div class="tooltiptext">Total First Visits</div>
     </div>
     <div class="card bounceRate tooltip">
         <div class="title">Bounce Rate</div><span class="glyphicon glyphicon-download"></span>
-        <div class="value"><%=bounceRate%>%</div>
+        <div class="value rate"><%=bounceRate%>%</div>
         <div class="stat"><b><%=bounceRateGrowth%></b>% increase from yesterday</div>
         <div class="tooltiptext">Single-page sessions divided by all sessions.</div>
     </div>
     <div class="card loadTime tooltip">
         <div class="title">Load Time</div><span class="glyphicon glyphicon-download"></span>
-        <div class="value"><%=loadTime%>ms</div>
+        <div class="value time"><%=loadTime%>ms</div>
         <div class="stat"><br></div>
         <div class="tooltiptext">Average loading time</div>
     </div>
@@ -69,13 +69,13 @@
     </div>
     <div class="card engagementRate tooltip">
         <div class="title">Engagement rate</div><span class="glyphicon glyphicon-upload"></span>
-        <div class="value"><%=engagementRate%> minutes</div>
+        <div class="value rate"><%=engagementRate%></div>
         <div class="stat"><b><%=engagementRateGrowth%></b>% increase from yesterday</div>
         <div class="tooltiptext">The time visitors spent on the site</div>
     </div>
     <div class="card recencyRate tooltip">
         <div class="title">Recency rate</div><span class="glyphicon glyphicon-download"></span>
-        <div class="value"><%=recencyRate%>%</div>
+        <div class="value rate"><%=recencyRate%>%</div>
         <div class="stat"><b><%=recencyRateGrowth%></b>% increase from yesterday</div>
         <div class="tooltiptext">The percentage of visitors who returned to the site</div>
     </div>
