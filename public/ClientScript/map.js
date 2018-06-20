@@ -17,7 +17,7 @@ jQuery(document).ready(function() {
     );
 
     colors = {}
-    paintMap  =  function()
+    paintMap  =  async function()
     {
 
         var sum = 0, cc;
@@ -43,10 +43,24 @@ jQuery(document).ready(function() {
 
         }
 
-        jQuery('#vmap').vectorMap('set', 'colors' , colors)
+        var keys = Object.keys(colors);
+        for(var i = 1 ; i <= keys.length ; i++)
+        {
+            subColors = {}
+            subKeys = keys.slice(0,i);
+            subKeys.forEach((k) => subColors[k] = colors[k]);
+
+            await sleep(20);
+            jQuery('#vmap').vectorMap('set', 'colors' , subColors);
+        }
+
     }
 
 });
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function shadeColor2(color, percent) {
     var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;

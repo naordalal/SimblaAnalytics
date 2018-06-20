@@ -31,7 +31,7 @@
 <body>
 
 <center>
-    <h1 class="titleHeader">DASHBOARD</h1>
+    <h1 class="titleHeader">Simbla Analytics</h1>
 </center>
 
 <div class="container card-list">
@@ -84,7 +84,7 @@
         <div class="title"></br></div><span class="glyphicon glyphicon-download"></span>
         <div class="value">HEATMAP</div>
         <div class="stat"><br></div>
-        <div class="tooltiptext">Choose page to show Heatmap</div>
+        <div class="tooltiptext">Heatmap for the most common page</div>
         <div class="dropdown-content heatmap-content">
         </div>
     </div>
@@ -99,6 +99,7 @@
 <div class=" doubleRow-div">
     <div class="col-div">
         <div class="countryList-div chart-wrap vertical-chart">
+            <div class="title-chart">Country list</div>
             <div class="dropdown">
                 <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
                 <div class="dropdown-content">
@@ -112,7 +113,8 @@
         </div>
 
 
-        <div class="referres-div chart-wrap  vertical-chart">
+        <div class="referres-div  chart-wrap vertical-chart">
+            <div class="title-chart">Referrers</div>
             <div class="dropdown">
                 <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
                 <div class="dropdown-content">
@@ -133,7 +135,8 @@
 </div>
 
 <div class="row-div">
-    <div class="donutchart-div chart-wrap">
+    <div class="donutchart-div chart-wrap ">
+        <div class="title-chart">OS Distribution</div>
         <div class="dropdown">
             <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
             <div class="dropdown-content">
@@ -143,7 +146,7 @@
                 <span class="year" onclick=drawPieChart(3)>Last year</span>
             </div>
         </div>
-        <div id="donutchart" class="donut-chart"></div>
+        <div id="donutchart"></div>
     </div>
 
 
@@ -152,19 +155,23 @@
 
 <div class="row-div">
     <div class="scrolling_chart-div chart-wrap">
-        <div class="dropdown">
-            <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
-            <div class="dropdown-content">
-                <span class="day" onclick=getScrolling(0)>Last day</span>
-                <span class="week" onclick=getScrolling(1)>Last week</span>
-                <span class="month" onclick=getScrolling(2)>Last month</span>
-                <span class="year" onclick=getScrolling(3)>Last year</span>
+        <div>
+            <div class="title-chart">Scrolling Percentage</div>
+            <div class="dropdown">
+                <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
+                <div class="dropdown-content">
+                    <span class="day" onclick=getScrolling(0)>Last day</span>
+                    <span class="week" onclick=getScrolling(1)>Last week</span>
+                    <span class="month" onclick=getScrolling(2)>Last month</span>
+                    <span class="year" onclick=getScrolling(3)>Last year</span>
+                </div>
             </div>
         </div>
         <div id ='scrolling_chart' class="chartt"></div>
     </div>
 
-    <div class="pageViewsChart-div chart-wrap">
+    <div class="pageViewsChart-div chart-wrap" style="margin: 1% 0% 1% 5%;">
+        <div class="title-chart">Page visits</div>
         <div class="dropdown">
             <button class="dropbtn"><img style="height: 16px; width: 16px" src="/stylesheets/settingsImage.jpg"/></button>
             <div class="dropdown-content">
@@ -177,12 +184,16 @@
         <div id = 'pageViewsChart' class="chartt"></div>
     </div>
 
-    <div id = 'hourOfTheDayChart' class="chart-wrap">
+    <div class="chart-wrap" style="margin: 1% 0% 1% 5%;">
+        <button class="dayBtn" onclick=previousDay()> < </button>
+        <div id = "day" class="dayTitle"><center>Wednesday</center></div>
+        <button class="dayBtn" onclick=nextDay()> > </button>
+        <div id = 'hourOfTheDayChart' class="chartt" ></div>
     </div>
 </div>
 
 <div class="doubleRow-div">
-    <div id = 'campaigns' class="chart-wrap">
+    <div id = 'campaigns' class="chart-wrap" style="width: 99.9%">
         <button class ="dropbtn" onclick="tree_table.goUpAndDraw();"><img style="height: 32px; width: 32px" src="/stylesheets/black-arrow.png"/></button>
         <div id ='inner_campaigns'></div>
     </div>

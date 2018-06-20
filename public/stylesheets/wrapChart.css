@@ -11,6 +11,7 @@ html {
 body {
     font-family: 'Open Sans', sans-serif;
     color: #4e555f;
+
 }
 
 .row-div {
@@ -21,17 +22,43 @@ body {
 
 .chartt{
     height: 90%;
+    margin-top: 5%;
 }
 
 .chart-wrap {
-    width: 33.3%;
+    width: 30%;
     height: 100%;
-    margin: 0 auto;
     background-color: white;
+    margin: 1% 0% 1% 0%;
     float: left;
     position: relative;
-    border: 10px solid #ebebeb;
+    /*border: 10px solid;*/
     padding: 10px;
+    box-shadow: 1px 1px 2px black, 0 0 100px white, 0 0 20px darkblue;
+}
+
+.title-chart{
+    width: 95% ;
+    position: relative;
+    float:left;
+    font-weight: bold;
+    font-size: medium;
+    color:black;
+}
+
+.dayBtn{
+    width: 5% ;
+    position: relative;
+    float:left;
+}
+
+.dayTitle{
+    width: 90% ;
+    position: relative;
+    float:left;
+    font-weight: bold;
+    font-size: medium;
+    color:black;
 }
 
 .vertical-chart{
@@ -41,7 +68,7 @@ body {
 }
 
 .col-div{
-    width: 33.3%;
+    width: 30%;
     height: 100%;
     margin: 0 auto;
     float: left;
@@ -61,8 +88,9 @@ body {
 }
 #vmap
 {
-    width: 66.6%;
+    width: 65%;
     height: 100%;
+    margin-left: 5%;
 }
 
 .chart-title {

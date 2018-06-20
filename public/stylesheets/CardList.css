@@ -10,14 +10,15 @@ body{
     margin: 0 auto;
 }
 .card {
-    border: 10px solid;
     border-radius: 16px;
     color: #ebebeb;
     float: left;
     padding: 10px;
     position: relative;
-    width: 25%;
-    background-color: #5A738E;
+    width: 23%;
+    background-color: #004e8e;
+    margin: 1%;
+    box-shadow: 1px 1px 2px black, 0 0 100px white, 0 0 20px darkblue;
 }
 .glyphicon {
     color: white;
@@ -28,6 +29,7 @@ body{
     top: 13px;
 }
 .stat {
+    /*rgba(255, 255, 255, 0.3)*/
     border-top: 1px solid rgba(255, 255, 255, 0.3);
     font-size: 8px;
     margin-top: 25px;

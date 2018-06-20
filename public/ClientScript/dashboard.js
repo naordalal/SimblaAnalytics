@@ -146,7 +146,7 @@ function getCountryList(choice = 3)
     var path = "/dashboard/countryList";
     var callbackWraper = function (xhr)
     {
-        return function(next) {
+        return async function(next) {
             //response is ready
             if(xhr.readyState==4) {
                 var countryList = xhr.response;
@@ -168,7 +168,6 @@ function getCountryList(choice = 3)
                 var view = new google.visualization.DataView(data);
 
                 var options = {
-                    title: "Country List",
                     legend : {position: 'none'},
                     animation:{
                         startup : true,
@@ -192,7 +191,7 @@ function getCountryList(choice = 3)
                     gdpData[getCountryCode(countryList[i].Country).toLowerCase()] = countryList[i].visits;
                 }
                 //Paint the map.
-                paintMap();
+                await paintMap();
             }
         };
     };
@@ -225,7 +224,6 @@ function getScrolling(choice = 3)
             var view = new google.visualization.DataView(data);
 
             var options = {
-                title: "Scrolling Percentage",
                 legend: {position: "none"},
                 vAxis: {direction: -1},
                 animation:{
@@ -286,12 +284,9 @@ function drawLineChart() {
             dataTable.addColumn('number', '');
             dataTable.addRows(data);
             var options = {
-                chart: {
-                    title: 'Visits per hour',
-                    titleTextStyle : {bold : true}
-                },
+                title: 'Visits per hour',
                 backgroundColor:'transparent',
-                titleTextStyle:{ fontSize : 15, color: "black"},
+                titleTextStyle:{ fontSize : "medium", color: "black" , bold : true, fontName: 'sans-serif'},
                 animation:{
                     startup : true,
                     duration: 1000,
@@ -329,10 +324,8 @@ function drawPieChart(choice = 3) {
             var readyData = google.visualization.arrayToDataTable(data);
 
             var options = {
-                title: 'OS Distribution',
                 backgroundColor:"transparent",
                 legend :{ alignment:'center', textStyle: {fontSize : 12, color: "black"}},
-                titleTextStyle:{ fontSize : 15, color: "black"},
                 chartArea:{width:'100%',height:'75%'},
                 pieHole: 0.4,
                 animation:{
@@ -376,7 +369,6 @@ function getRefererList(choice = 3)
             var view = new google.visualization.DataView(data);
 
             var options = {
-                title: "Referrers",
                 legend : {position: 'none'},
                 animation:{
                     startup : true,
@@ -423,7 +415,6 @@ function getPageViews(choice = 3)
             var view = new google.visualization.DataView(data);
 
             var options = {
-                title: "Page visits",
                 legend : {position: 'none'},
                 animation:{
                     startup : true,
@@ -514,7 +505,7 @@ function getCampaigns()
 }
 
 var hourOfTheDayData;
-function getHourOfTheDay()
+function getHourOfTheDay(day)
 {
     var path  = "/dashboard/houroftheday";
     var wraper = function(xhr)
@@ -523,7 +514,9 @@ function getHourOfTheDay()
         {
             hourOfTheDayData = xhr.response;
             var today = new Date().getDay()+1;
-            drawHourOfTheDayChartByDay(today);
+            day = (day) ? day : today;
+            drawHourOfTheDayChartByDay(day);
+            setCurrentDay(getDayName(day));
         }
     }
 
@@ -541,7 +534,6 @@ function drawHourOfTheDayChartByDay(day)
     day = getDayName(day);
     var colChart = new google.visualization.ColumnChart(document.getElementById("hourOfTheDayChart"));
     colChart.draw(view,{
-        title : day,
         legend : {position: 'none'},
         bar: {groupWidth: "95%"},
         hAxis: {ticks : [0,3,6,9,12,15,18,21,24]},
@@ -583,5 +575,34 @@ function getDayName(day)
     return days[day];
 }
 
+function getDayIndex(dayName)
+{
+    var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    return days.indexOf(dayName);
+}
+
+function previousDay()
+{
+    var day = getCurrentDay();
+    day = (day + 6) % 7 + 1;
+    getHourOfTheDay(day);
+}
+
+function nextDay()
+{
+    var day = getCurrentDay();
+    day = (day + 1) % 7 + 1;
+    getHourOfTheDay(day);
+}
+
+function getCurrentDay()
+{
+    return getDayIndex($("#day").text());
+}
+
+function setCurrentDay(day)
+{
+    return $("#day").html("<center>" + day + "</center>");
+}
 
 

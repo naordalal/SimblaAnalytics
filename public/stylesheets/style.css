@@ -2,6 +2,7 @@ body {
   padding: 50px;
   font: 12px "Lucida Grande", Helvetica, Arial, sans-serif;
   background : #300032;
+  background: linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
   color: black;
   font-family: "Arial Rounded MT Bold";
 }
@@ -9,6 +10,15 @@ body {
 @font-face {
   font-family: abelFont;
   src: url(abel-regular.ttf);
+}
+
+.titleHeader{
+  font-weight:bold;
+  font-size:200px;
+  font-family: abelFont;
+  margin: 0 auto;
+  color:white;
+  text-shadow: 1px 1px 2px black, 0 0 100px white, 0 0 20px darkblue;
 }
 
 table {
