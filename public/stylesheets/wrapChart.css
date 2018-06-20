@@ -22,7 +22,7 @@ body {
 
 .chartt{
     height: 90%;
-    margin-top: 5%;
+    margin-top: 6%;
 }
 
 .chart-wrap {
@@ -47,13 +47,13 @@ body {
 }
 
 .dayBtn{
-    width: 5% ;
+    width: 10% ;
     position: relative;
     float:left;
 }
 
 .dayTitle{
-    width: 90% ;
+    width: 75% ;
     position: relative;
     float:left;
     font-weight: bold;

@@ -71,6 +71,9 @@ $(window).load(function(){
         });
     });
 
+    var today = new Date().getDay()+1;
+    setCurrentDay(getDayName(today));
+
     var siteId = getSiteId();
 //Subscribe to the event of visit (SSE).
     es.addEventListener('NewVisit/' + siteId, function (event) {
